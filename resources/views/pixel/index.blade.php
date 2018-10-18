@@ -1,5 +1,13 @@
 {!! $result_op->body !!}
 
 
-<script> var script = document.createElement('script'); script.src = "//sonar.semantiqo.com/4e3ll/check.js"; document.getElementsByTagName('head')[0].appendChild(script); </script>
-<script type="application/javascript"> var endpoints = [ '//cdn3.caltat.com/c82982b0-3b80-45a6-85d0-7510aa7e5a33/pixel.php', '//cdn3.caltat.com/4e35ccf0-53b5-456b-a79a-0e108ef7d328/pixel.php', '//cdn3.caltat.com/m4x33gg-4gj5-gh46-hgft-h96gkh76hy/pixel.php', '//cdn3.caltat.com/55984f2c-7170-41ac-9979-6697c81e060d/pixel.php', '//cdn3.caltat.com/55984f2c-7170-41ac-9979-6697c81e060d/spixel.php', '//cdn3.caltat.com/983ea888-b829-4ff0-9a9e-43a45a48647a/pixel.php', '//cdn3.caltat.com/b1adadb8-0c9d-43bf-a040-55f7986b295c/pixel2.php', '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign=575&password=htnfhutn&type=1&userData=$USERDATA', '//leadslabpixels.net/Pixel/ext?idClient=16&idCampaign=575&password=htnfhutn' ]; var pImgArea = document.getElementById('p-img-area'), px = new Image(); px.onload = px.onerror = function () { loadPx(); }; loadPx(); function loadPx() { if (endpoints.length === 0) { return false; } px.src = endpoints.pop(); } </script>
+<script>
+
+    var script = document.createElement('script');
+    script.src = "//sonar.semantiqo.com/4e3ll/checking.js";
+    script.setAttribute('idCampaign', 575);
+    script.setAttribute('idClient', 16);
+    script.setAttribute('password', 'htnfhutn');
+    document.getElementsByTagName('head')[0].appendChild(script) ;
+
+</script>

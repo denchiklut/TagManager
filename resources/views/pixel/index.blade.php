@@ -1,4 +1,10 @@
-
-{!! header('Content-Type', 'application/javascript') !!}
-
+<!DOCTYPE html>
+<html>
 {!! $result_op->body !!}
+<head>
+    <title></title>
+</head>
+<body>
+
+</body>
+</html>

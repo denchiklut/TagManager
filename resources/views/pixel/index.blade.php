@@ -1,0 +1,1 @@
+{!! $result_op->body ? $result_op->body : 0 !!}

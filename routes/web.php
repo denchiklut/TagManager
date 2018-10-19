@@ -21,8 +21,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 
-Route::group(['prefix' => 'pixel'], function () {
+Route::group(['prefix' => 'pixel', 'middleware' => 'cors'], function () {
 
     Route::get('/tags/{hash_advertisings}', 'AdvertisingCampaigns@index');
 
 });
+

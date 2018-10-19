@@ -17,7 +17,7 @@ class AdvertisingCampaigns extends Controller
     {
         $result = Campaigns::where('sig', $hash_advertisings)->first();
 
-        var_dump($result);
+
 
 
 
@@ -36,7 +36,6 @@ class AdvertisingCampaigns extends Controller
         {
 
             $result_op = Entities::where('tm_id', $result->tm_id)->first();
-            var_dump($result_op);
             return view('pixel.index', compact( 'result_op'));
         }
 

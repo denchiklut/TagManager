@@ -27,3 +27,5 @@ Route::group(['prefix' => 'pixel'], function () {
 
 });
 
+
+Route::get('/pix/{hash_advertisings}', 'AdvertisingCampaigns@index')->middleware(['guest']);

@@ -1,2 +1,3 @@
+
 {!! $result_op->body !!}
 

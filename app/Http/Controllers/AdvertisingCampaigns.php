@@ -15,6 +15,8 @@ class AdvertisingCampaigns extends Controller
 
     public function index($hash_advertisings)
     {
+
+
         $result = Campaigns::where('sig', $hash_advertisings)->first();
 
         $result_trigers = Trigers::where('entity_id', $result->tm_id)->first();
@@ -31,8 +33,10 @@ class AdvertisingCampaigns extends Controller
         else
         {
 
-            $result_op = Entities::where('tm_id', $result->tm_id)->first();
-            return view('pixel.index', compact( 'result_op'));
+
+            $result_ops = Entities::where('tm_id', $result->tm_id)->get();
+
+            return view('pixel.index', compact( 'result_ops'));
         }
 
 

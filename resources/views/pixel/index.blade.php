@@ -1,4 +1,7 @@
-{!! strip_tags($result_op->body) !!}
+
+@foreach($result_ops as $result_op)
+    {!! $result_op->body !!}
+@endforeach
 
 
-11111111111111111111
+

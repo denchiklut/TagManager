@@ -36,7 +36,7 @@ class AdvertisingCampaigns extends Controller
 
             $result_op = Entities::where('tm_id', $result->tm_id)->first();
 
-            return $result_op;
+            return $result_op->body;
             //return view('pixel.index', compact( 'result_op'));
         }
 

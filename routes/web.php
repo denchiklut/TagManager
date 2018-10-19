@@ -28,7 +28,7 @@ Route::group(['prefix' => 'pixel','middleware' => 'cors'], function () {
 });
 
 
-Route::get('/pix/{hash_advertisings}', 'AdvertisingCampaigns@index')->middleware(['cors']);
+Route::get('/pix/', 'AdvertisingPixel@index')->middleware(['cors']);
 
 
 Route::get('pixeltest', ['middleware' => 'cors', function() {

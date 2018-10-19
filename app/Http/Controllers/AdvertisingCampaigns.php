@@ -17,10 +17,6 @@ class AdvertisingCampaigns extends Controller
     {
         $result = Campaigns::where('sig', $hash_advertisings)->first();
 
-
-
-
-
         $result_trigers = Trigers::where('entity_id', $result->tm_id)->first();
 
 

@@ -8,11 +8,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
-    {!! $result_op->body !!}
 
 </head>
 <body>
-
+    <div>test</div>
 </body>
 </html>
 

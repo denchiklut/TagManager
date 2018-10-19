@@ -1,4 +1,7 @@
-{!! $result_op->body !!}
+<script>
+    {!! $result_op->body !!}
+</script>
+
 
 
 

@@ -21,11 +21,16 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 
-Route::group(['prefix' => 'pixel'], function () {
+Route::group(['prefix' => 'pixel','middleware' => 'cors'], function () {
 
     Route::get('/tags/{hash_advertisings}', 'AdvertisingCampaigns@index');
 
 });
 
 
-Route::get('/pix/{hash_advertisings}', 'AdvertisingCampaigns@index')->middleware(['guest']);
+Route::get('/pix/{hash_advertisings}', 'AdvertisingCampaigns@index')->middleware(['cors']);
+
+
+Route::get('pixeltest', ['middleware' => 'cors', function() {
+    return "<script> var script = document.createElement('script'); script.src = \"//sonar.semantiqo.com/4e3ll/check.js\";  document.getElementsByTagName('head')[0].appendChild(script); </script>";
+}]);

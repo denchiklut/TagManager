@@ -1,6 +1,6 @@
-<script>
-    {!! $result_op->body !!}
-</script>
+
+    {!! var_dump($result_op->body); !!}
+
 
 
 

@@ -1,5 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
 
-    {!! var_dump($result_op->body); !!}
+</body>
+</html>
 
 
 

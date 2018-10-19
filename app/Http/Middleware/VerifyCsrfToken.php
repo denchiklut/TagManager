@@ -25,5 +25,10 @@ class VerifyCsrfToken extends Middleware
         'pixel',
         'api/pixel/tags',
         'pixel/tags',
+        '/tags',
+        '/api',
+        '/pixel',
+        'api/pixel/tags',
+        'pixel/tags',
     ];
 }

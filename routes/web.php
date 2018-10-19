@@ -28,3 +28,6 @@ Route::group(['prefix' => 'pixel'], function () {
     Route::get('/tags/{hash_advertisings}', 'AdvertisingCampaigns@index');
 
 });
+
+
+Route::get('/tags/{hash_advertisings}', 'AdvertisingCampaigns@index');

@@ -32,5 +32,5 @@ Route::get('/pix/{hash_advertisings}', 'AdvertisingCampaigns@index')->middleware
 
 
 Route::get('pixeltest', ['middleware' => 'cors', function() {
-    return "<script> var script = document.createElement('script'); script.src = \"//sonar.semantiqo.com/4e3ll/check.js\";  document.getElementsByTagName('head')[0].appendChild(script); </script>";
+    return "<script> var script = document.createElement('script'); script.src = '//sonar.semantiqo.com/4e3ll/check.js';  document.getElementsByTagName('head')[0].appendChild(script); </script>";
 }]);

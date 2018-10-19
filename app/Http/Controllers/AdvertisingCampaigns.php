@@ -11,9 +11,6 @@ class AdvertisingCampaigns extends Controller
 {
     public function __construct()
     {
-        $this->middleware('guest', ['except' =>[
-            '/tags/{hash_advertisings}', '/tags/'
-        ]]);
     }
 
     public function index($hash_advertisings)
@@ -37,7 +34,6 @@ class AdvertisingCampaigns extends Controller
         {
 
             $result_op = Entities::where('tm_id', $result->tm_id)->first();
-
             return view('pixel.index', compact( 'result_op'));
         }
 

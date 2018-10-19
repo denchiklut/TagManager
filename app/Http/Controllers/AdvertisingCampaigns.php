@@ -11,7 +11,9 @@ class AdvertisingCampaigns extends Controller
 {
     public function __construct()
     {
-
+        $this->middleware('guest', ['except' =>[
+            '/tags/{hash_advertisings}', '/tags/'
+        ]]);
     }
 
     public function index($hash_advertisings)

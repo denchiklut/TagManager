@@ -36,6 +36,7 @@ class AdvertisingCampaigns extends Controller
                     var_dump($_SERVER['SERVER_NAME']);
                     var_dump($_SERVER['HTTP_REFERER']);
                     var_dump($_SERVER['REQUEST_URI']);
+                    exit;
                     return view('pixel.index', compact( 'result_op'));
                 }
             }

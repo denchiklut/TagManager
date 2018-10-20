@@ -32,6 +32,7 @@ class AdvertisingCampaigns extends Controller
             {
                 if (strpos($_SERVER['SERVER_NAME'], $url->url) !== false )
                 {
+                    var_dump($_SERVER['SERVER_NAME']);
                     return view('pixel.index', compact( 'result_op'));
                 }
             }

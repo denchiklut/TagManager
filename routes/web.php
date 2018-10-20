@@ -29,4 +29,6 @@ Route::group(['prefix' => 'pixel'], function () {
 
 });
 
-
+Route::group(['prefix' => 'add'], function () {
+    Route::get('/pixel/{compaigns_url}', 'AddPixel@index');
+});

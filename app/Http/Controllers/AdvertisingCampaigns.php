@@ -18,28 +18,24 @@ class AdvertisingCampaigns extends Controller
 
 
         $result = Campaigns::where('sig', $hash_advertisings)->first();
+        $result_ops = Entities::where('tm_id', $result->tm_id)->get();
 
-        $result_trigers = Trigers::where('entity_id', $result->tm_id)->first();
 
-
-        if (isset($result_trigers->url))
+        foreach ($result_ops as $result_op)
         {
-            if (strpos($_SERVER['SERVER_NAME'], $result_trigers->url) >=0)
+            if ($result_op->entity_id)
             {
-                $result_op = Entities::where('tm_id', $result->tm_id)->first();
-                return view('pixel.index', compact( 'result_op'));
+                $url = Trigers::where('entity_id', $result_op->entity_id)->first();
+                $trigers = $url->url;
+
+                if (strpos($_SERVER['SERVER_NAME'], $trigers) >=0)
+                {
+                    return view('pixel.index', compact( 'result_op'));
+                }
             }
+
+            return view('pixel.index', compact( 'result_op'));
+
         }
-        else
-        {
-
-
-            $result_ops = Entities::where('tm_id', $result->tm_id)->get();
-
-            return view('pixel.index', compact( 'result_ops'));
-        }
-
-
-        return view('pixel.index', compact( 'result_op'));
     }
 }

@@ -30,21 +30,8 @@ class AdvertisingCampaigns extends Controller
 
             if (isset($url->url))
             {
-                var_dump($_SERVER['SERVER_NAME']);
-                var_dump("------");
-                var_dump($_SERVER['HTTP_REFERER']);
-                var_dump("------");
-                var_dump($_SERVER['REQUEST_URI']);
-                var_dump("------");
-                var_dump($url->url);
-                exit;
-                if (strpos($_SERVER['SERVER_NAME'], $url->url) !== false )
+                if (strpos($_SERVER['HTTP_REFERER'], $url->url) !== false )
                 {
-
-                    var_dump($_SERVER['SERVER_NAME']);
-                    var_dump($_SERVER['HTTP_REFERER']);
-                    var_dump($_SERVER['REQUEST_URI']);
-                    exit;
                     return view('pixel.index', compact( 'result_op'));
                 }
             }

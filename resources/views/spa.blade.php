@@ -15,7 +15,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="hold-transition sidebar-mini">
-<div class="wrapper">
+<div class="wrapper" id="app">
 
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
@@ -175,16 +175,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/analytics" class="nav-link active">
-                                    <i class="fa fa-circle-o nav-icon"></i>
-                                    <p>Analytics</p>
-                                </a>
+                                <router-link :to="{ name: 'analytics' }" class="nav-link active">Analytics</router-link>
                             </li>
                             <li class="nav-item">
-                                <a href="/companies" class="nav-link">
-                                    <i class="fa fa-circle-o nav-icon"></i>
-                                    <p>Companies</p>
-                                </a>
+                                <router-link :to="{ name: 'companies' }" class="nav-link">Companies</router-link>
                             </li>
                         </ul>
                     </li>
@@ -207,26 +201,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">Starter Page</h1>
-                    </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Starter Page</li>
-                        </ol>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </div>
+        {{--<div class="content-header">--}}
+            {{--<div class="container-fluid">--}}
+                {{--<div class="row mb-2">--}}
+                    {{--<div class="col-sm-6">--}}
+                        {{--<h1 class="m-0 text-dark">Starter Page</h1>--}}
+                    {{--</div><!-- /.col -->--}}
+                    {{--<div class="col-sm-6">--}}
+                        {{--<ol class="breadcrumb float-sm-right">--}}
+                            {{--<li class="breadcrumb-item"><a href="#">Home</a></li>--}}
+                            {{--<li class="breadcrumb-item active">Starter Page</li>--}}
+                        {{--</ol>--}}
+                    {{--</div><!-- /.col -->--}}
+                {{--</div><!-- /.row -->--}}
+            {{--</div><!-- /.container-fluid -->--}}
+        {{--</div>--}}
         <!-- /.content-header -->
 
         <!-- Main content -->
         <div class="content">
-            <div id="app">
+            <div class="mt-2">
                 <app></app>
             </div>
         </div>

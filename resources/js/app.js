@@ -6,21 +6,22 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 import App from './views/App'
-import Hello from './views/Hello'
-import Home from './views/Home'
+import Analytics from './views/Analytics'
+import Companies from './views/Companies'
+
 
 const router = new VueRouter({
     mode: 'history',
     routes: [
         {
             path: '/',
-            name: 'home',
-            component: Home
+            name: 'analytics',
+            component: Analytics
         },
         {
-            path: '/hello',
-            name: 'hello',
-            component: Hello,
+            path: '/companies',
+            name: 'companies',
+            component: Companies,
         },
     ],
 });

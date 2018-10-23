@@ -11,24 +11,4 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
-
-
-Route::group(['prefix' => 'pixel'], function () {
-
-    Route::get('/tags/{hash_advertisings}', 'AdvertisingCampaigns@index');
-
-});
-
-Route::group(['prefix' => 'add'], function () {
-    Route::get('/pixel/{compaigns_url}', 'AddPixel@index');
-});
+Route::get('/{any}', 'SpaController@index')->where('any', '.*');

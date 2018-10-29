@@ -8,6 +8,7 @@ Vue.use(VueRouter)
 import App from './views/App'
 import Analytics from './views/Analytics'
 import Companies from './views/Companies'
+import UsersIndex from './views/UsersIndex'
 
 
 const router = new VueRouter({
@@ -22,6 +23,11 @@ const router = new VueRouter({
             path: '/companies',
             name: 'companies',
             component: Companies,
+        },
+        {
+            path: '/users',
+            name: 'users.index',
+            component: UsersIndex,
         },
     ],
 });

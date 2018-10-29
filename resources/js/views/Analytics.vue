@@ -100,8 +100,6 @@
                                 </p>
 
                                 <div class="chart">
-                                    <!-- Sales Chart Canvas -->
-                                    <canvas id="salesChart" height="198" style="height: 198px; width: 1050px;" width="1050"></canvas>
                                 </div>
                                 <!-- /.chart-responsive -->
                             </div>
@@ -299,3 +297,6 @@
         </div>
     </div>
 </template>
+<script>
+
+</script>

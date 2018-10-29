@@ -1,78 +1,131 @@
 <template>
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Bordered Table</h3>
+    <div class="users">
+        <div class="loading" v-if="loading">
+            Loading...
         </div>
-        <!-- /.card-header -->
-        <div class="card-body p-0">
-            <table class="table table-striped table-bordered">
-                <tbody><tr>
-                    <th style="width: 10px">#</th>
-                    <th>Task</th>
-                    <th>Progress</th>
-                    <th style="width: 40px">Label</th>
-                </tr>
-                <tr>
-                    <td>1.</td>
-                    <td>Update software</td>
-                    <td>
-                        <div class="progress progress-xs">
-                            <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                        </div>
-                    </td>
-                    <td><span class="badge bg-danger">55%</span></td>
-                </tr>
-                <tr>
-                    <td>2.</td>
-                    <td>Clean database</td>
-                    <td>
-                        <div class="progress progress-xs">
-                            <div class="progress-bar bg-warning" style="width: 70%"></div>
-                        </div>
-                    </td>
-                    <td><span class="badge bg-warning">70%</span></td>
-                </tr>
-                <tr>
-                    <td>3.</td>
-                    <td>Cron job running</td>
-                    <td>
-                        <div class="progress progress-xs progress-striped active">
-                            <div class="progress-bar bg-primary" style="width: 30%"></div>
-                        </div>
-                    </td>
-                    <td><span class="badge bg-primary">30%</span></td>
-                </tr>
-                <tr>
-                    <td>4.</td>
-                    <td>Fix and squish bugs</td>
-                    <td>
-                        <div class="progress progress-xs progress-striped active">
-                            <div class="progress-bar bg-success" style="width: 90%"></div>
-                        </div>
-                    </td>
-                    <td><span class="badge bg-success">90%</span></td>
-                </tr>
-                </tbody></table>
+
+        <div v-if="error" class="error">
+            <p>{{ error }}</p>
+
+            <p>
+                <button @click.prevent="fetchData">
+                    Try Again
+                </button>
+            </p>
         </div>
-        <!-- /.card-body -->
-        <div class="card-footer clearfix">
-            <ul class="pagination pagination-sm m-0 float-right">
-                <li class="page-item"><a class="page-link" href="#">«</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">»</a></li>
-            </ul>
+
+        <ul v-if="componies">
+            <li v-for="{ id_client, id_campaign, password, signature, url, sig } in componies">
+                <strong>id_client:</strong> {{ id_client }},
+                <strong>id_campaign:</strong> {{ id_campaign }}
+                <strong>password:</strong> {{ password }}
+                <strong>signature:</strong> {{ signature }}
+                <strong>url:</strong> {{ url }}
+                <strong>sig:</strong> {{ sig }}
+            </li>
+        </ul>
+
+        <div class="pagination">
+            <button :disabled="! prevPage" @click.prevent="goToPrev">Previous</button>
+            {{ paginatonCount }}
+            <button :disabled="! nextPage" @click.prevent="goToNext">Next</button>
         </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios';
+
+    const getUsers = (page, callback) => {
+        const params = { page };
+
+        axios
+            .get('/api/companies', { params })
+            .then(response => {
+                callback(null, response.data);
+            }).catch(error => {
+            callback(error, error.response.data);
+        });
+    };
+
     export default {
-        name: "Companies"
+        data() {
+            return {
+                componies: null,
+                meta: null,
+                links: {
+                    first: null,
+                    last: null,
+                    next: null,
+                    prev: null,
+                },
+                error: null,
+            };
+        },
+        computed: {
+            nextPage() {
+                if (! this.meta || this.meta.current_page === this.meta.last_page) {
+                    return;
+                }
+
+                return this.meta.current_page + 1;
+            },
+            prevPage() {
+                if (! this.meta || this.meta.current_page === 1) {
+                    return;
+                }
+
+                return this.meta.current_page - 1;
+            },
+            paginatonCount() {
+                if (! this.meta) {
+                    return;
+                }
+
+                const { current_page, last_page } = this.meta;
+
+                return `${current_page} of ${last_page}`;
+            },
+        },
+        beforeRouteEnter (to, from, next) {
+            getUsers(to.query.page, (err, data) => {
+                next(vm => vm.setData(err, data));
+            });
+        },
+        // when route changes and this component is already rendered,
+        // the logic will be slightly different.
+        beforeRouteUpdate (to, from, next) {
+            this.users = this.links = this.meta = null
+            getUsers(to.query.page, (err, data) => {
+                this.setData(err, data);
+                next();
+            });
+        },
+        methods: {
+            goToNext() {
+                this.$router.push({
+                    query: {
+                        page: this.nextPage,
+                    },
+                });
+            },
+            goToPrev() {
+                this.$router.push({
+                    name: 'companies',
+                    query: {
+                        page: this.prevPage,
+                    }
+                });
+            },
+            setData(err, { data: componies, links, meta }) {
+                if (err) {
+                    this.error = err.toString();
+                } else {
+                    this.componies = componies;
+                    this.links = links;
+                    this.meta = meta;
+                }
+            },
+        }
     }
 </script>
-
-<style scoped>
-
-</style>

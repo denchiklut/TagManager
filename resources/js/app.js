@@ -29,6 +29,11 @@ const router = new VueRouter({
             name: 'users.index',
             component: UsersIndex,
         },
+        {
+            path: '/users',
+            name: 'users.index',
+            component: UsersIndex,
+        },
     ],
 });
 

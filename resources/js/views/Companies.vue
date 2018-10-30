@@ -14,21 +14,54 @@
             </p>
         </div>
 
-        <ul v-if="componies">
-            <li v-for="{ id_client, id_campaign, password, signature, url, sig } in componies">
-                <strong>id_client:</strong> {{ id_client }},
-                <strong>id_campaign:</strong> {{ id_campaign }}
-                <strong>password:</strong> {{ password }}
-                <strong>signature:</strong> {{ signature }}
-                <strong>url:</strong> {{ url }}
-                <strong>sig:</strong> {{ sig }}
-            </li>
-        </ul>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Componies</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>id_client</th>
+                            <th>id_campaign</th>
+                            <th>password</th>
+                            <th>signature</th>
+                            <th>sig</th>
+                            <th>url</th>
+                            <th>tm_id</th>
+                            <th>created_at</th>
+                        </tr>
+                    </thead>
+                    <tbody v-if="componies">
 
-        <div class="pagination">
-            <button :disabled="! prevPage" @click.prevent="goToPrev">Previous</button>
-            {{ paginatonCount }}
-            <button :disabled="! nextPage" @click.prevent="goToNext">Next</button>
+
+                    <tr v-for="{ id, id_client, id_campaign, password, signature, sig, url, tm_id, created_at, updated_at } in componies">
+                        <td>{{id}}</td>
+                        <td>{{id_client}}</td>
+                        <td>{{id_campaign}}</td>
+                        <td>{{password}}</td>
+                        <td>{{signature}}</td>
+                        <td>{{sig}}</td>
+                        <td>{{url}}</td>
+                        <td>{{tm_id}}</td>
+                        <td>{{created_at.date}}</td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- /.card-body -->
+            <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-right">
+                    <li class="page-item" ><button class="page-link" :disabled="! prevPage" @click.prevent="goToPrev">«</button></li>
+                    <li class="page-item">{{ paginatonCount }}</li>
+                    <li class="page-item" ><button class="page-link" :disabled="! nextPage" @click.prevent="goToNext">»</button></li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>

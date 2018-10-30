@@ -54100,6 +54100,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -54244,66 +54277,132 @@ var render = function() {
         ])
       : _vm._e(),
     _vm._v(" "),
-    _vm.componies
-      ? _c(
-          "ul",
-          _vm._l(_vm.componies, function(ref) {
-            var id_client = ref.id_client
-            var id_campaign = ref.id_campaign
-            var password = ref.password
-            var signature = ref.signature
-            var url = ref.url
-            var sig = ref.sig
-            return _c("li", [
-              _c("strong", [_vm._v("id_client:")]),
-              _vm._v(" " + _vm._s(id_client) + ",\n            "),
-              _c("strong", [_vm._v("id_campaign:")]),
-              _vm._v(" " + _vm._s(id_campaign) + "\n            "),
-              _c("strong", [_vm._v("password:")]),
-              _vm._v(" " + _vm._s(password) + "\n            "),
-              _c("strong", [_vm._v("signature:")]),
-              _vm._v(" " + _vm._s(signature) + "\n            "),
-              _c("strong", [_vm._v("url:")]),
-              _vm._v(" " + _vm._s(url) + "\n            "),
-              _c("strong", [_vm._v("sig:")]),
-              _vm._v(" " + _vm._s(sig) + "\n        ")
-            ])
-          })
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _c("div", { staticClass: "pagination" }, [
-      _c(
-        "button",
-        {
-          attrs: { disabled: !_vm.prevPage },
-          on: {
-            click: function($event) {
-              $event.preventDefault()
-              return _vm.goToPrev($event)
-            }
-          }
-        },
-        [_vm._v("Previous")]
-      ),
-      _vm._v("\n        " + _vm._s(_vm.paginatonCount) + "\n        "),
-      _c(
-        "button",
-        {
-          attrs: { disabled: !_vm.nextPage },
-          on: {
-            click: function($event) {
-              $event.preventDefault()
-              return _vm.goToNext($event)
-            }
-          }
-        },
-        [_vm._v("Next")]
-      )
+    _c("div", { staticClass: "card" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-body p-0" }, [
+        _c("table", { staticClass: "table table-striped table-bordered" }, [
+          _vm._m(1),
+          _vm._v(" "),
+          _vm.componies
+            ? _c(
+                "tbody",
+                _vm._l(_vm.componies, function(ref) {
+                  var id = ref.id
+                  var id_client = ref.id_client
+                  var id_campaign = ref.id_campaign
+                  var password = ref.password
+                  var signature = ref.signature
+                  var sig = ref.sig
+                  var url = ref.url
+                  var tm_id = ref.tm_id
+                  var created_at = ref.created_at
+                  var updated_at = ref.updated_at
+                  return _c("tr", [
+                    _c("td", [_vm._v(_vm._s(id))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(id_client))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(id_campaign))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(password))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(signature))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(sig))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(url))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(tm_id))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(created_at.date))])
+                  ])
+                })
+              )
+            : _vm._e()
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-footer clearfix" }, [
+        _c("ul", { staticClass: "pagination pagination-sm m-0 float-right" }, [
+          _c("li", { staticClass: "page-item" }, [
+            _c(
+              "button",
+              {
+                staticClass: "page-link",
+                attrs: { disabled: !_vm.prevPage },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.goToPrev($event)
+                  }
+                }
+              },
+              [_vm._v("«")]
+            )
+          ]),
+          _vm._v(" "),
+          _c("li", { staticClass: "page-item" }, [
+            _vm._v(_vm._s(_vm.paginatonCount))
+          ]),
+          _vm._v(" "),
+          _c("li", { staticClass: "page-item" }, [
+            _c(
+              "button",
+              {
+                staticClass: "page-link",
+                attrs: { disabled: !_vm.nextPage },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.goToNext($event)
+                  }
+                }
+              },
+              [_vm._v("»")]
+            )
+          ])
+        ])
+      ])
     ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title" }, [_vm._v("Componies")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { staticStyle: { width: "10px" } }, [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("id_client")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("id_campaign")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("password")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("signature")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("sig")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("url")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("tm_id")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("created_at")])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {

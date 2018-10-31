@@ -12,6 +12,6 @@ class ComponiesController extends Controller
 {
     public function index()
     {
-        return ComponyResource::collection(Campaigns::paginate(10));
+        return ComponyResource::collection(Campaigns::all());
     }
 }

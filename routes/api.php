@@ -28,10 +28,7 @@ Route::group(['prefix' => 'add'], function () {
 });
 
 Route::namespace('Api')->group(function () {
-    Route::get('/users', 'UsersController@index');
-});
-
-Route::namespace('Api')->group(function () {
-    Route::get('/companies', 'ComponiesController@index');
+    Route::resource('users', 'UsersController');
+    Route::resource('companies', 'ComponiesController');
 });
 

@@ -1,6 +1,12 @@
 <template>
     <div>
-        <md-card class="md-accent" md-with-hover>
+        <!--Add Form-->
+        <div>
+            <add @AddCompaing="fetchData"></add>
+        </div>
+
+        <!--Data Table-->
+        <md-card class="md-accent mt-15" md-with-hover>
 
             <md-ripple>
                 <md-toolbar class="md-accent" md-elevation="1">
@@ -27,29 +33,32 @@
                         <md-table-cell md-label="id_client" md-sort-by="id_client">{{ item.id_client }}</md-table-cell>
                         <md-table-cell md-label="id_campaign" md-sort-by="id_campaign">{{ item.id_campaign }}</md-table-cell>
                         <md-table-cell md-label="password" md-sort-by="password">{{ item.password }}</md-table-cell>
-                        <md-table-cell md-label="signature" md-sort-by="signature">{{ item.signature }}</md-table-cell>
-                        <md-table-cell md-label="sig" md-sort-by="sig">{{ item.sig }}</md-table-cell>
+                        <!--<md-table-cell md-label="signature" md-sort-by="signature">{{ item.signature }}</md-table-cell>-->
+                        <!--<md-table-cell md-label="sig" md-sort-by="sig">{{ item.sig }}</md-table-cell>-->
                         <md-table-cell md-label="url" md-sort-by="url">{{ item.url }}</md-table-cell>
                         <md-table-cell md-label="tm_id" md-sort-by="tm_id">{{ item.tm_id }}</md-table-cell>
-                        <md-table-cell md-label="created_at" md-sort-by="created_at.date" md-numeric>{{ item.created_at.date }}</md-table-cell>
-                        <md-table-cell md-label="edit"><md-button class="md-fab md-mini md-primary"><md-icon>edit</md-icon></md-button></md-table-cell>
+                        <md-table-cell md-label="created_at" md-sort-by="created_at.date" md-numeric>{{ item.created_at.date | formatDate }}</md-table-cell>
+                        <md-table-cell md-label="edit">
+                            <md-button class="md-fab md-mini md-primary" @click="showEditForm(item)"><md-icon>edit</md-icon></md-button>
+                            <md-button class="md-fab md-mini" @click="deleteItem(item)"><md-icon>delete</md-icon></md-button>
+                        </md-table-cell>
                     </md-table-row>
                 </md-table>
             </md-card-content>
-
         </md-card>
 
-        <div class="mt-15">
-            <add></add>
-        </div>
-
-
+        <!--Edit Dialog-->
+        <md-dialog :md-active.sync="showDialog">
+            <edit @CloseDialog="closeDialog" @ShowLogSave="LogSave" @editCompanyE="fetchData" :form="editCompain"></edit>
+            <md-snackbar :md-active.sync="userSaved">Pixel {{`${this.lastUser}`}} был изменен успешно!</md-snackbar>
+        </md-dialog>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
     import AddCompany from './../components/AddCompany'
+    import EditCompany from './../components/EditCompany'
 
     const toLower = text => {
         return text.toString().toLowerCase()
@@ -69,9 +78,14 @@
             search: null,
             searched: [],
             users: [],
+            showDialog: false,
+            editCompain: null,
+            userSaved: false,
+            lastUser: null,
         }),
         components: {
-            'add': AddCompany
+            'add':  AddCompany,
+            'edit': EditCompany,
         },
         methods: {
             newUser () {
@@ -86,8 +100,30 @@
                     .then(response => {
                         this.users = response.data.data;
                         this.searched = this.users;
+                        console.log(this.users)
                     });
             },
+            deleteItem(item) {
+                axios.delete('/api/companies/' + item.id)
+                    .then(response => {
+                        let index = this.searched.indexOf(item);
+                        this.searched.splice(index, 1);
+                        console.log(response.data)
+                    });
+            },
+            closeDialog() {
+                this.fetchData();
+                this.showDialog = false;
+            },
+            showEditForm(compaing) {
+
+                this.editCompain = compaing;
+                this.showDialog = true;
+            },
+            LogSave(data) {
+                this.lastUser = data.data;
+                this.userSaved = true;
+            }
         },
         created () {
             this.fetchData();
@@ -107,5 +143,9 @@
 
     .md-card-content {
         padding: 0;
+    }
+
+    .md-dialog {
+        max-width: 768px;
     }
 </style>

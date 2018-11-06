@@ -13,7 +13,7 @@
 
         <md-drawer :md-active.sync="showNavigation">
             <md-toolbar class="md-transparent" md-elevation="0">
-                <span class="md-title">My App name</span>
+                <span class="md-title">TAG Manager</span>
             </md-toolbar>
 
             <md-list>

@@ -1,11 +1,18 @@
 require('./bootstrap');
 
 import Vue from 'vue'
+import moment from 'moment'
 import VueRouter from 'vue-router'
 import VueMaterial from 'vue-material'
 
 Vue.use(VueRouter);
 Vue.use(VueMaterial);
+
+Vue.filter('formatDate', function(value) {
+    if (value) {
+        return moment(String(value)).format('MM/DD/YYYY hh:mm')
+    }
+});
 
 
 import App from './views/App'

@@ -29,6 +29,11 @@ Route::group(['prefix' => 'add'], function () {
 
 Route::namespace('Api')->group(function () {
     Route::resource('users', 'UsersController');
-    Route::resource('companies', 'ComponiesController');
+    //Route::resource('companies', 'AddPixel');
+    Route::resource('test', 'TestController');
 });
+
+
+Route::resource('companies', 'AddPixel');
+
 

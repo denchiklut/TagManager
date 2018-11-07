@@ -19,6 +19,7 @@ import App from './views/App'
 import Analytics from './views/Analytics'
 import Companies from './views/Companies'
 import UsersIndex from './views/UsersIndex'
+import Containers from './views/Containers'
 
 
 const router = new VueRouter({
@@ -38,6 +39,11 @@ const router = new VueRouter({
             path: '/users',
             name: 'users.index',
             component: UsersIndex,
+        },
+        {
+            path: '/containers/:id',
+            name: 'containers',
+            component: Containers,
         },
     ],
 });

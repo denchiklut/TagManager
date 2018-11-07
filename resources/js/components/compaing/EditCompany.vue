@@ -55,7 +55,7 @@
 
                         <div class="md-layout-item md-small-size-100">
                             <md-field :class="getValidationClass('url')" md-theme="myTheme">
-                                <label for="url">url</label>
+                                <label for="url">url_pixel</label>
                                 <md-input name="url" id="url" autocomplete="url" v-model="form.url" :disabled="sending" />
                                 <span class="md-error" v-if="!$v.form.url.required">The url is required</span>
                                 <span class="md-error" v-else-if="!$v.form.url.minlength">Invalid url</span>
@@ -156,6 +156,7 @@
                     this.close();
                 }, 1500)
             },
+
             validateUser () {
                 this.$v.$touch();
 
@@ -163,11 +164,13 @@
                     this.updatePixel()
                 }
             },
+
             close() {
                 this.$emit('CloseDialog')
             },
+
             showSave() {
-                this.lastUser = `${this.form.signature} ${this.form.password}`;
+                this.lastUser = `${this.form.url}`;
                 console.log(this.lastUser);
                 console.log('lastUser');
                 this.$emit('ShowLogSave', {data: this.lastUser})
@@ -179,7 +182,7 @@
 <style lang="scss" scoped>
 
     // Import the theme engine
-    @import "~vue-material/dist/theme/engine";
+    @import "../../../../node_modules/vue-material/dist/theme/engine";
 
     @include md-register-theme("myTheme", (
 
@@ -191,5 +194,5 @@
     ));
 
     // Apply the theme
-    @import "~vue-material/dist/theme/all";
+    @import "../../../../node_modules/vue-material/dist/theme/all";
 </style>

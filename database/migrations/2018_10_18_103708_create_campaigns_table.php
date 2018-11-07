@@ -15,14 +15,15 @@ class CreateCampaignsTable extends Migration
     {
         Schema::create('campaigns', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('id_client');
-            $table->string('id_campaign');
-            $table->string('password');
+            $table->string('id_client')->default('15');
+            $table->string('id_campaign')->default('555');
+            $table->string('password')->default('qwerty22');
             $table->string('signature');
             $table->string('sig');
             $table->string('url');
             $table->string('tm_id');
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

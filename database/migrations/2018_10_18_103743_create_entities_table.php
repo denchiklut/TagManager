@@ -18,7 +18,8 @@ class CreateEntitiesTable extends Migration
             $table->string('tm_id');
             $table->string('entity_id');
             $table->text('body');
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

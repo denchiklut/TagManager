@@ -1,7 +1,12 @@
 <template>
   <div>
-      <md-toolbar class="md-accent" md-elevation="1">
-          <h3 class="md-title" style="flex: 1">Title</h3>
+      <md-toolbar class="md-transparent" md-elevation="0">
+          <div class="md-title" style="flex: 1">
+              <md-field>
+                  <label>Тригеры</label>
+                  <md-input placeholder="Введите уникальное имя проекта лиюо id компании" v-model="search" @input="searchOnTable"></md-input>
+              </md-field>
+          </div>
           <md-button><router-link :to="{ name: 'companies' }"  class="nav-link active">Назад</router-link></md-button>
           <md-button class="md-primary md-raised" @click="showAddDialog = true">Создать</md-button>
       </md-toolbar>
@@ -11,10 +16,10 @@
               <md-card class="md-accent" md-theme="myTheme" md-with-hover>
                   <md-card-media>
                       <md-toolbar class="md-dense md-primary" md-theme="myTheme">
-                          <div class="md-layout-item md-size-80">
+                          <div class="md-layout-item md-size-50">
                               <h3 class="md-title">Фильтр:</h3>
                           </div>
-                          <div class="md-layout-item md-size-20 text-right">
+                          <div class="md-layout-item md-size-50 text-right">
                               <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{url}}</md-chip>
                           </div>
                       </md-toolbar>
@@ -72,14 +77,14 @@
               </md-card>
           </div>
 
-          <div  v-for="item in containers" class="md-layout-item">
+          <div  v-for="item in searched" class="md-layout-item">
               <md-card class="md-accent" md-theme="myTheme" md-with-hover>
                   <md-card-media>
                       <md-toolbar class="md-dense md-primary" md-theme="myTheme">
-                          <div class="md-layout-item md-size-80">
+                          <div class="md-layout-item md-size-50">
                               <h3 class="md-title">Фильтр:</h3>
                           </div>
-                          <div class="md-layout-item md-size-20 text-right">
+                          <div class="md-layout-item md-size-50 text-right">
                               <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{item.trigger}}</md-chip>
                           </div>
                       </md-toolbar>
@@ -155,11 +160,26 @@
     import axios from 'axios'
     import AddTrigeger from '../components/containers/AddTrigger'
     import EditTrigger from '../components/containers/EditTrigger'
+
+    const toLower = text => {
+        return text.toString().toLowerCase()
+    };
+
+    const searchByName = (items, term) => {
+        if (term) {
+            return items.filter(item => toLower(JSON.stringify(item)).includes(toLower(term)))
+        }
+
+        return items
+    };
+
     export default {
         props: ['url', 'id'],
         name: "Containers",
         data () {
             return {
+                search: null,
+                searched: [],
                 containers: [],
                 showAddDialog: false,
                 showEditDialog: false,
@@ -181,7 +201,11 @@
                     .get('/api/containers/' + this.id, this.id)
                     .then(response => {
                         this.containers = response.data.data;
+                        this.searched = this.containers;
                     });
+            },
+            searchOnTable () {
+                this.searched = searchByName(this.containers, this.search)
             },
             showEditFilterDialog(item) {
                 this.editTrigger = item;
@@ -247,21 +271,22 @@
     // Apply the theme
     @import "../../../node_modules/vue-material/dist/theme/all";
     .md-card {
-        max-width: 600px;
+        max-width: 575px;
         margin: 4px;
         display: inline-block;
         vertical-align: top;
     }
 
     .md-content {
-        max-width: 600px;
-        height: 350px;
+        /*max-width: 600px;*/
+        height: 300px;
         overflow: auto;
         background: #282c33!important;
     }
 
     .md-card-header {
-        background: #9E9E9E;
+        /*background: #5d3666e3;*/
+        background: #e1515a3b;
         margin-bottom: 0;
     }
 
@@ -301,5 +326,8 @@
     }
     .has_n {
         color: orange;
+    }
+    .text-right {
+        text-align: right;
     }
 </style>

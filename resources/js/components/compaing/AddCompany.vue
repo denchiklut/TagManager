@@ -157,4 +157,8 @@
 
     // Apply the theme
     @import "../../../../node_modules/vue-material/dist/theme/all";
+
+    .text-right {
+        text-align: right;
+    }
 </style>

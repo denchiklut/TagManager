@@ -62,14 +62,14 @@
                             </md-field>
                         </div>
 
-                        <div class="md-layout-item md-small-size-100">
-                            <md-field :class="getValidationClass('tm_id')" md-theme="myTheme">
-                                <label for="tm_id">tm_id</label>
-                                <md-input type="number" id="tm_id" name="age" autocomplete="age" v-model="form.tm_id" :disabled="sending" />
-                                <span class="md-error" v-if="!$v.form.tm_id.required">The tm_id is required</span>
-                                <span class="md-error" v-else-if="!$v.form.tm_id.maxlength">Invalid tm_id</span>
-                            </md-field>
-                        </div>
+                        <!--<div class="md-layout-item md-small-size-100">-->
+                            <!--<md-field :class="getValidationClass('tm_id')" md-theme="myTheme">-->
+                                <!--<label for="tm_id">tm_id</label>-->
+                                <!--<md-input type="number" id="tm_id" name="trigger" autocomplete="trigger" v-model="form.trigger" :disabled="sending" />-->
+                                <!--<span class="md-error" v-if="!$v.form.trigger.required">The trigger is required</span>-->
+                                <!--<span class="md-error" v-else-if="!$v.form.trigger.maxlength">Invalid trigger</span>-->
+                            <!--</md-field>-->
+                        <!--</div>-->
 
                     </div>
 
@@ -80,7 +80,7 @@
 
                 <md-card-actions>
                     <md-button class="md-primary" md-theme="myTheme" @click="close">Отмена</md-button>
-                    <md-button type="submit" class="md-primary" md-theme="myTheme" :disabled="sending" @click="showSave">Сохранить</md-button>
+                    <md-button type="submit" class="md-primary" md-theme="myTheme" :disabled="sending">Сохранить</md-button>
                 </md-card-actions>
             </md-card>
 
@@ -127,9 +127,9 @@
                 url: {
                     required
                 },
-                tm_id: {
-                    required
-                },
+                // trigger: {
+                //     required
+                // },
             }
         },
         methods: {
@@ -148,7 +148,9 @@
                 axios.patch('/api/companies/' + this.form.id, this.form)
                      .then(response => {
                          console.log(response.data);
-                         this.$emit('editCompanyE')
+                         this.$emit('editCompanyE');
+                         this.lastUser = `${this.form.url}`;
+                         this.$emit('ShowLogSave', {data: this.lastUser})
                      });
 
                 window.setTimeout(() => {
@@ -168,13 +170,6 @@
             close() {
                 this.$emit('CloseDialog')
             },
-
-            showSave() {
-                this.lastUser = `${this.form.url}`;
-                console.log(this.lastUser);
-                console.log('lastUser');
-                this.$emit('ShowLogSave', {data: this.lastUser})
-            }
         }
     }
 </script>

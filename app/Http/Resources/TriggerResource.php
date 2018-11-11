@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
-class ComponyResource extends Resource
+class TriggerResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +16,9 @@ class ComponyResource extends Resource
     {
         return [
             'id' => $this->id,
-            'id_client' => $this->id_client,
             'id_campaign' => $this->id_campaign,
-            'password' => $this->password,
-            'signature' => $this->signature,
-            'sig' => $this->sig,
-            'url' => $this->url,
             'trigger' => $this->trigger,
+            'new_campaign' => $this->new_campaign,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

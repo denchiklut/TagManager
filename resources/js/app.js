@@ -41,7 +41,8 @@ const router = new VueRouter({
             component: UsersIndex,
         },
         {
-            path: '/containers/:id',
+            path: '/containers/:url/:id',
+            props: true,
             name: 'containers',
             component: Containers,
         },

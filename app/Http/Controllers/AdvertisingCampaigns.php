@@ -21,6 +21,7 @@ class AdvertisingCampaigns extends Controller
 
 
 
+
         $result_ops = Entities::where('tm_id', $result->tm_id)->get();
 
 

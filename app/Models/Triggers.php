@@ -1,14 +1,12 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Campaigns extends Model
+class Triggers extends Model
 {
-
-    protected $table = 'campaigns';
+    protected $table = 'triggers';
 
     protected $guarded = ['id'];
-
 }

@@ -1,115 +1,68 @@
 <template>
     <div>
+        <!--<pre>-->
+        <!--{{this.metrics_list.query}}-->
+        <!--</pre>-->
+        <div class="container">
 
-        <md-card class="md-accent" md-with-hover>
-            <md-ripple>
-                <md-card-header>
-                    <div class="md-title">Accent color</div>
-                    <div class="md-subhead">With hover and ripple effects</div>
-                </md-card-header>
+            <div class="card text-center">
+                <div class="card-header">
+                    Долгосрочные интересы
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Категория интересов</th>
+                            <th>Визиты</th>
+                            <th>Посетители</th>
+                            <th>Аффинити‑индекс  </th>
+                            <th>Отказы</th>
+                            <th>Глубина просмотра</th>
+                            <th>Время на сайте</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="item in this.metrics_list.data">
+                            <td>{{item.dimensions[0]['name']}}</td>
+                            <td>{{item.metrics[0]}}</td>
+                            <td>{{item.metrics[1]}}</td>
+                            <td>{{Math.round(item.metrics[2]) + '%'}}</td>
+                            <td>{{Math.round(item.metrics[3]) + '%'}}</td>
+                            <td>{{item.metrics[4].toFixed(2)}}</td>
+                            <td>{{Math.round(item.metrics[5])/100}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-muted">
+                    {{`С ${this.metrics_list.query.date1} по ${this.metrics_list.query.date2}`}}
+                </div>
+            </div>
+        </div>
 
-                <md-card-content>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.
-                </md-card-content>
-
-                <md-card-actions>
-                    <md-button>Action</md-button>
-                    <md-button>Action</md-button>
-                </md-card-actions>
-            </md-ripple>
-        </md-card>
-
-        <md-card class="md-primary" md-theme="purple-card" md-with-hover>
-            <md-ripple>
-                <md-card-header>
-                    <div class="md-title">Purple primary color</div>
-                    <div class="md-subhead">With hover and ripple effects</div>
-                </md-card-header>
-
-                <md-card-content>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.
-                </md-card-content>
-            </md-ripple>
-        </md-card>
-
-        <md-card class="md-primary" md-theme="orange-card" md-with-hover>
-            <md-ripple>
-                <md-card-header>
-                    <div class="md-title">Orange primary color</div>
-                    <div class="md-subhead">With hover and ripple effects</div>
-                </md-card-header>
-
-                <md-card-content>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.
-                </md-card-content>
-            </md-ripple>
-        </md-card>
-
-        <md-card>
-            <md-card-media-cover md-text-scrim>
-                <md-card-media md-ratio="16:9">
-                    <img src="/img/card-sky.jpg" alt="Skyscraper">
-                </md-card-media>
-
-                <md-card-area>
-                    <md-card-header>
-                        <span class="md-title">Gradient background</span>
-                        <span class="md-subhead">16/9 image</span>
-                    </md-card-header>
-
-                    <md-card-actions>
-                        <md-button>Action</md-button>
-                        <md-button>Action</md-button>
-                    </md-card-actions>
-                </md-card-area>
-            </md-card-media-cover>
-        </md-card>
-
-        <md-card>
-            <md-card-media-cover md-solid>
-                <md-card-media md-ratio="4:3">
-                    <img src="/img/card-sky.jpg" alt="Skyscraper">
-                </md-card-media>
-
-                <md-card-area>
-                    <md-card-header>
-                        <span class="md-title">Solid background</span>
-                        <span class="md-subhead">4/3 image</span>
-                    </md-card-header>
-                </md-card-area>
-            </md-card-media-cover>
-        </md-card>
-
-        <md-card>
-            <md-card-media-cover md-solid>
-                <md-card-media md-ratio="1:1">
-                    <img src="/img/card-sky.jpg" alt="Skyscraper">
-                </md-card-media>
-
-                <md-card-area>
-                    <md-card-header>
-                        <span class="md-title">Solid background</span>
-                        <span class="md-subhead">1/1 image</span>
-                    </md-card-header>
-
-                    <md-card-actions>
-                        <md-button class="md-icon-button">
-                            <md-icon>favorite</md-icon>
-                        </md-button>
-
-                        <md-button class="md-icon-button">
-                            <md-icon>share</md-icon>
-                        </md-button>
-                    </md-card-actions>
-                </md-card-area>
-            </md-card-media-cover>
-        </md-card>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
-        name: 'ThemeColors'
+        data: () => ({
+            metrics_list: [],
+        }),
+        methods: {
+            fetchData() {
+                axios
+                    .get('/api')
+                    .then(responce => {
+                        this.metrics_list = JSON.parse(responce.data.data);
+                        console.log(responce.data.data)
+                    })
+            }
+        },
+        created() {
+            this.fetchData();
+        }
     }
 </script>
 
@@ -140,5 +93,8 @@
         margin: 4px;
         display: inline-block;
         vertical-align: top;
+    }
+    .card {
+        box-shadow: 0 0 15px -6px black;
     }
 </style>

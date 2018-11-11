@@ -1,0 +1,129 @@
+<template>
+    <div>
+
+        <form novalidate class="md-layout" @submit.prevent="validateUser">
+            <md-card class="md-layout-item md-small-size-100" md-with-hover>
+                <md-toolbar class="md-primary" md-theme="myTheme" md-aligment="space-between">
+                    <div class="md-title">Редактировать Фильтр</div>
+                </md-toolbar>
+                <md-card-content>
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-100">
+                            <md-field :class="getValidationClass('trigger')" md-theme="myTheme">
+                                <label for="trigger">trigger</label>
+                                <md-input name="trigger" id="trigger" autocomplete="trigger" v-model="form.trigger" :disabled="sending" />
+                                <span class="md-error" v-if="!$v.form.trigger.required">The trigger is required</span>
+                                <span class="md-error" v-else-if="!$v.form.trigger.minLength">Invalid trigger</span>
+                            </md-field>
+                        </div>
+
+                        <div class="md-layout-item md-small-size-100">
+                            <md-field :class="getValidationClass('id_campaign')" md-theme="myTheme">
+                                <label for="new_campaign">new_campaign</label>
+                                <md-input name="new_campaign" id="new_campaign" autocomplete="new_campaign" v-model="form.new_campaign" :disabled="sending" />
+                                <span class="md-error" v-if="!$v.form.new_campaign.required">The new_campaign is required</span>
+                                <span class="md-error" v-else-if="!$v.form.new_campaign.minLength">Invalid new_campaign</span>
+                            </md-field>
+                        </div>
+                    </div>
+                </md-card-content>
+
+                <md-progress-bar md-mode="indeterminate" v-if="sending" />
+
+                <md-card-actions>
+                    <md-button class="md-primary" md-theme="myTheme" @click="close">Отмена</md-button>
+                    <md-button type="submit" class="md-primary" md-theme="myTheme" :disabled="sending">Сохранить</md-button>
+                </md-card-actions>
+            </md-card>
+        </form>
+    </div>
+</template>
+
+<script>
+    import axios from 'axios'
+    import { validationMixin } from 'vuelidate'
+    import {
+        required,
+        minLength,
+
+    } from 'vuelidate/lib/validators'
+
+    export default {
+        props: ['form'],
+        mixins: [validationMixin],
+        data: () => ({
+            userSaved: false,
+            lastUser: null,
+            sending: false,
+        }),
+        validations: {
+            form: {
+                trigger: {
+                    required
+                },
+                new_campaign: {
+                    required
+                }
+            }
+        },
+        methods: {
+            getValidationClass (fieldName) {
+                const field = this.$v.form[fieldName];
+
+                if (field) {
+                    return {
+                        'md-invalid': field.$invalid && field.$dirty
+                    }
+                }
+            },
+
+            savePixel () {
+                this.sending = true;
+                this.sending = true;
+                axios.patch('/api/containers/' + this.form.id, this.form)
+                    .then(response => {
+                        console.log(this.form);
+                        this.$emit('editTriggerE');
+                        this.lastUser = `${this.form.trigger}`;
+                        this.$emit('ShowLogEdit', {data: this.lastUser})
+                    });
+
+                window.setTimeout(() => {
+                    this.sending = false;
+                    this.close();
+                }, 1500)
+            },
+            validateUser () {
+
+                this.$v.$touch();
+
+                if (!this.$v.$invalid) {
+
+                    this.savePixel()
+                }
+            },
+            close() {
+                this.$emit('editTriggerE')
+            },
+        }
+    }
+</script>
+
+
+<style lang="scss" scoped>
+
+    // Import the theme engine
+    @import "../../../../node_modules/vue-material/dist/theme/engine";
+
+    @include md-register-theme("myTheme", (
+
+        // The primary color of your brand
+        primary: #9C27B0,
+
+        // The secondary color of your brand
+        accent: #E91E63
+    ));
+
+    // Apply the theme
+    @import "../../../../node_modules/vue-material/dist/theme/all";
+</style>

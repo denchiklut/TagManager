@@ -4574,7 +4574,7 @@
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)(module)))
 
 /***/ }),
 /* 1 */
@@ -4663,7 +4663,7 @@ exports.regex = regex;
 "use strict";
 
 
-var bind = __webpack_require__(12);
+var bind = __webpack_require__(14);
 var isBuffer = __webpack_require__(151);
 
 /*global toString:true*/
@@ -4968,6 +4968,12 @@ module.exports = {
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(150);
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports) {
 
 /* globals __VUE_SSR_CONTEXT__ */
@@ -5073,33 +5079,6 @@ module.exports = function normalizeComponent (
     options: options
   }
 }
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
 
 
 /***/ }),
@@ -5414,9 +5393,30 @@ function applyToTag (styleElement, obj) {
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__(150);
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
 
 /***/ }),
 /* 8 */
@@ -5442,10 +5442,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(14);
+    adapter = __webpack_require__(16);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(14);
+    adapter = __webpack_require__(16);
   }
   return adapter;
 }
@@ -5520,10 +5520,879 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Vuelidate = Vuelidate;
+Object.defineProperty(exports, "withParams", {
+  enumerable: true,
+  get: function get() {
+    return _params.withParams;
+  }
+});
+exports.default = exports.validationMixin = void 0;
+
+var _vval = __webpack_require__(192);
+
+var _params = __webpack_require__(144);
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+var NIL = function NIL() {
+  return null;
+};
+
+var buildFromKeys = function buildFromKeys(keys, fn, keyFn) {
+  return keys.reduce(function (build, key) {
+    build[keyFn ? keyFn(key) : key] = fn(key);
+    return build;
+  }, {});
+};
+
+function isFunction(val) {
+  return typeof val === 'function';
+}
+
+function isObject(val) {
+  return val !== null && (_typeof(val) === 'object' || isFunction(val));
+}
+
+function isPromise(object) {
+  return isObject(object) && isFunction(object.then);
+}
+
+var getPath = function getPath(ctx, obj, path, fallback) {
+  if (typeof path === 'function') {
+    return path.call(ctx, obj, fallback);
+  }
+
+  path = Array.isArray(path) ? path : path.split('.');
+
+  for (var i = 0; i < path.length; i++) {
+    if (obj && _typeof(obj) === 'object') {
+      obj = obj[path[i]];
+    } else {
+      return fallback;
+    }
+  }
+
+  return typeof obj === 'undefined' ? fallback : obj;
+};
+
+var __isVuelidateAsyncVm = '__isVuelidateAsyncVm';
+
+function makePendingAsyncVm(Vue, promise) {
+  var asyncVm = new Vue({
+    data: {
+      p: true,
+      v: false
+    }
+  });
+  promise.then(function (value) {
+    asyncVm.p = false;
+    asyncVm.v = value;
+  }, function (error) {
+    asyncVm.p = false;
+    asyncVm.v = false;
+    throw error;
+  });
+  asyncVm[__isVuelidateAsyncVm] = true;
+  return asyncVm;
+}
+
+var validationGetters = {
+  $invalid: function $invalid() {
+    var _this = this;
+
+    var proxy = this.proxy;
+    return this.nestedKeys.some(function (nested) {
+      return _this.refProxy(nested).$invalid;
+    }) || this.ruleKeys.some(function (rule) {
+      return !proxy[rule];
+    });
+  },
+  $dirty: function $dirty() {
+    var _this2 = this;
+
+    if (this.dirty) {
+      return true;
+    }
+
+    if (this.nestedKeys.length === 0) {
+      return false;
+    }
+
+    return this.nestedKeys.every(function (key) {
+      return _this2.refProxy(key).$dirty;
+    });
+  },
+  $anyDirty: function $anyDirty() {
+    var _this3 = this;
+
+    if (this.dirty) {
+      return true;
+    }
+
+    if (this.nestedKeys.length === 0) {
+      return false;
+    }
+
+    return this.nestedKeys.some(function (key) {
+      return _this3.refProxy(key).$anyDirty;
+    });
+  },
+  $error: function $error() {
+    return this.$dirty && !this.$pending && this.$invalid;
+  },
+  $anyError: function $anyError() {
+    return this.$anyDirty && !this.$pending && this.$invalid;
+  },
+  $pending: function $pending() {
+    var _this4 = this;
+
+    return this.ruleKeys.some(function (key) {
+      return _this4.getRef(key).$pending;
+    }) || this.nestedKeys.some(function (key) {
+      return _this4.refProxy(key).$pending;
+    });
+  },
+  $params: function $params() {
+    var _this5 = this;
+
+    var vals = this.validations;
+    return _objectSpread({}, buildFromKeys(this.nestedKeys, function (key) {
+      return vals[key] && vals[key].$params || null;
+    }), buildFromKeys(this.ruleKeys, function (key) {
+      return _this5.getRef(key).$params;
+    }));
+  }
+};
+
+function setDirtyRecursive(newState) {
+  this.dirty = newState;
+  var proxy = this.proxy;
+  var method = newState ? '$touch' : '$reset';
+  this.nestedKeys.forEach(function (key) {
+    proxy[key][method]();
+  });
+}
+
+var validationMethods = {
+  $touch: function $touch() {
+    setDirtyRecursive.call(this, true);
+  },
+  $reset: function $reset() {
+    setDirtyRecursive.call(this, false);
+  },
+  $flattenParams: function $flattenParams() {
+    var proxy = this.proxy;
+    var params = [];
+
+    for (var key in this.$params) {
+      if (this.isNested(key)) {
+        var childParams = proxy[key].$flattenParams();
+
+        for (var j = 0; j < childParams.length; j++) {
+          childParams[j].path.unshift(key);
+        }
+
+        params = params.concat(childParams);
+      } else {
+        params.push({
+          path: [],
+          name: key,
+          params: this.$params[key]
+        });
+      }
+    }
+
+    return params;
+  }
+};
+var getterNames = Object.keys(validationGetters);
+var methodNames = Object.keys(validationMethods);
+var _cachedComponent = null;
+
+var getComponent = function getComponent(Vue) {
+  if (_cachedComponent) {
+    return _cachedComponent;
+  }
+
+  var VBase = Vue.extend({
+    computed: {
+      refs: function refs() {
+        var oldVval = this._vval;
+        this._vval = this.children;
+        (0, _vval.patchChildren)(oldVval, this._vval);
+        var refs = {};
+
+        this._vval.forEach(function (c) {
+          refs[c.key] = c.vm;
+        });
+
+        return refs;
+      }
+    },
+    beforeCreate: function beforeCreate() {
+      this._vval = null;
+    },
+    beforeDestroy: function beforeDestroy() {
+      if (this._vval) {
+        (0, _vval.patchChildren)(this._vval);
+        this._vval = null;
+      }
+    },
+    methods: {
+      getModel: function getModel() {
+        return this.lazyModel ? this.lazyModel(this.prop) : this.model;
+      },
+      getModelKey: function getModelKey(key) {
+        var model = this.getModel();
+
+        if (model) {
+          return model[key];
+        }
+      },
+      hasIter: function hasIter() {
+        return false;
+      }
+    }
+  });
+  var ValidationRule = VBase.extend({
+    data: function data() {
+      return {
+        rule: null,
+        lazyModel: null,
+        model: null,
+        lazyParentModel: null,
+        rootModel: null
+      };
+    },
+    methods: {
+      runRule: function runRule(parent) {
+        var model = this.getModel();
+        (0, _params.pushParams)();
+        var rawOutput = this.rule.call(this.rootModel, model, parent);
+        var output = isPromise(rawOutput) ? makePendingAsyncVm(Vue, rawOutput) : rawOutput;
+        var rawParams = (0, _params.popParams)();
+        var params = rawParams && rawParams.$sub ? rawParams.$sub.length > 1 ? rawParams : rawParams.$sub[0] : null;
+        return {
+          output: output,
+          params: params
+        };
+      }
+    },
+    computed: {
+      run: function run() {
+        var _this6 = this;
+
+        var parent = this.lazyParentModel();
+
+        var isArrayDependant = Array.isArray(parent) && parent.__ob__;
+
+        if (isArrayDependant) {
+          var arrayDep = parent.__ob__.dep;
+          arrayDep.depend();
+          var target = arrayDep.constructor.target;
+
+          if (!this._indirectWatcher) {
+            var Watcher = target.constructor;
+            this._indirectWatcher = new Watcher(this, function () {
+              return _this6.runRule(parent);
+            }, null, {
+              lazy: true
+            });
+          }
+
+          var model = this.getModel();
+
+          if (!this._indirectWatcher.dirty && this._lastModel === model) {
+            this._indirectWatcher.depend();
+
+            return target.value;
+          }
+
+          this._lastModel = model;
+
+          this._indirectWatcher.evaluate();
+
+          this._indirectWatcher.depend();
+        } else if (this._indirectWatcher) {
+          this._indirectWatcher.teardown();
+
+          this._indirectWatcher = null;
+        }
+
+        return this._indirectWatcher ? this._indirectWatcher.value : this.runRule(parent);
+      },
+      $params: function $params() {
+        return this.run.params;
+      },
+      proxy: function proxy() {
+        var output = this.run.output;
+
+        if (output[__isVuelidateAsyncVm]) {
+          return !!output.v;
+        }
+
+        return !!output;
+      },
+      $pending: function $pending() {
+        var output = this.run.output;
+
+        if (output[__isVuelidateAsyncVm]) {
+          return output.p;
+        }
+
+        return false;
+      }
+    },
+    destroyed: function destroyed() {
+      if (this._indirectWatcher) {
+        this._indirectWatcher.teardown();
+
+        this._indirectWatcher = null;
+      }
+    }
+  });
+  var Validation = VBase.extend({
+    data: function data() {
+      return {
+        dirty: false,
+        validations: null,
+        lazyModel: null,
+        model: null,
+        prop: null,
+        lazyParentModel: null,
+        rootModel: null
+      };
+    },
+    methods: _objectSpread({}, validationMethods, {
+      refProxy: function refProxy(key) {
+        return this.getRef(key).proxy;
+      },
+      getRef: function getRef(key) {
+        return this.refs[key];
+      },
+      isNested: function isNested(key) {
+        return typeof this.validations[key] !== 'function';
+      }
+    }),
+    computed: _objectSpread({}, validationGetters, {
+      nestedKeys: function nestedKeys() {
+        return this.keys.filter(this.isNested);
+      },
+      ruleKeys: function ruleKeys() {
+        var _this7 = this;
+
+        return this.keys.filter(function (k) {
+          return !_this7.isNested(k);
+        });
+      },
+      keys: function keys() {
+        return Object.keys(this.validations).filter(function (k) {
+          return k !== '$params';
+        });
+      },
+      proxy: function proxy() {
+        var _this8 = this;
+
+        var keyDefs = buildFromKeys(this.keys, function (key) {
+          return {
+            enumerable: true,
+            configurable: true,
+            get: function get() {
+              return _this8.refProxy(key);
+            }
+          };
+        });
+        var getterDefs = buildFromKeys(getterNames, function (key) {
+          return {
+            enumerable: true,
+            configurable: true,
+            get: function get() {
+              return _this8[key];
+            }
+          };
+        });
+        var methodDefs = buildFromKeys(methodNames, function (key) {
+          return {
+            enumerable: false,
+            configurable: true,
+            get: function get() {
+              return _this8[key];
+            }
+          };
+        });
+        var iterDefs = this.hasIter() ? {
+          $iter: {
+            enumerable: true,
+            value: Object.defineProperties({}, _objectSpread({}, keyDefs))
+          }
+        } : {};
+        return Object.defineProperties({}, _objectSpread({}, keyDefs, iterDefs, {
+          $model: {
+            enumerable: true,
+            get: function get() {
+              var parent = _this8.lazyParentModel();
+
+              if (parent != null) {
+                return parent[_this8.prop];
+              } else {
+                return null;
+              }
+            },
+            set: function set(value) {
+              var parent = _this8.lazyParentModel();
+
+              if (parent != null) {
+                parent[_this8.prop] = value;
+
+                _this8.$touch();
+              }
+            }
+          }
+        }, getterDefs, methodDefs));
+      },
+      children: function children() {
+        var _this9 = this;
+
+        return _toConsumableArray(this.nestedKeys.map(function (key) {
+          return renderNested(_this9, key);
+        })).concat(_toConsumableArray(this.ruleKeys.map(function (key) {
+          return renderRule(_this9, key);
+        }))).filter(Boolean);
+      }
+    })
+  });
+  var GroupValidation = Validation.extend({
+    methods: {
+      isNested: function isNested(key) {
+        return typeof this.validations[key]() !== 'undefined';
+      },
+      getRef: function getRef(key) {
+        var vm = this;
+        return {
+          get proxy() {
+            return vm.validations[key]() || false;
+          }
+
+        };
+      }
+    }
+  });
+  var EachValidation = Validation.extend({
+    computed: {
+      keys: function keys() {
+        var model = this.getModel();
+
+        if (isObject(model)) {
+          return Object.keys(model);
+        } else {
+          return [];
+        }
+      },
+      tracker: function tracker() {
+        var _this10 = this;
+
+        var trackBy = this.validations.$trackBy;
+        return trackBy ? function (key) {
+          return "".concat(getPath(_this10.rootModel, _this10.getModelKey(key), trackBy));
+        } : function (x) {
+          return "".concat(x);
+        };
+      },
+      getModelLazy: function getModelLazy() {
+        var _this11 = this;
+
+        return function () {
+          return _this11.getModel();
+        };
+      },
+      children: function children() {
+        var _this12 = this;
+
+        var def = this.validations;
+        var model = this.getModel();
+
+        var validations = _objectSpread({}, def);
+
+        delete validations['$trackBy'];
+        var usedTracks = {};
+        return this.keys.map(function (key) {
+          var track = _this12.tracker(key);
+
+          if (usedTracks.hasOwnProperty(track)) {
+            return null;
+          }
+
+          usedTracks[track] = true;
+          return (0, _vval.h)(Validation, track, {
+            validations: validations,
+            prop: key,
+            lazyParentModel: _this12.getModelLazy,
+            model: model[key],
+            rootModel: _this12.rootModel
+          });
+        }).filter(Boolean);
+      }
+    },
+    methods: {
+      isNested: function isNested() {
+        return true;
+      },
+      getRef: function getRef(key) {
+        return this.refs[this.tracker(key)];
+      },
+      hasIter: function hasIter() {
+        return true;
+      }
+    }
+  });
+
+  var renderNested = function renderNested(vm, key) {
+    if (key === '$each') {
+      return (0, _vval.h)(EachValidation, key, {
+        validations: vm.validations[key],
+        lazyParentModel: vm.lazyParentModel,
+        prop: key,
+        lazyModel: vm.getModel,
+        rootModel: vm.rootModel
+      });
+    }
+
+    var validations = vm.validations[key];
+
+    if (Array.isArray(validations)) {
+      var root = vm.rootModel;
+      var refVals = buildFromKeys(validations, function (path) {
+        return function () {
+          return getPath(root, root.$v, path);
+        };
+      }, function (v) {
+        return Array.isArray(v) ? v.join('.') : v;
+      });
+      return (0, _vval.h)(GroupValidation, key, {
+        validations: refVals,
+        lazyParentModel: NIL,
+        prop: key,
+        lazyModel: NIL,
+        rootModel: root
+      });
+    }
+
+    return (0, _vval.h)(Validation, key, {
+      validations: validations,
+      lazyParentModel: vm.getModel,
+      prop: key,
+      lazyModel: vm.getModelKey,
+      rootModel: vm.rootModel
+    });
+  };
+
+  var renderRule = function renderRule(vm, key) {
+    return (0, _vval.h)(ValidationRule, key, {
+      rule: vm.validations[key],
+      lazyParentModel: vm.lazyParentModel,
+      lazyModel: vm.getModel,
+      rootModel: vm.rootModel
+    });
+  };
+
+  _cachedComponent = {
+    VBase: VBase,
+    Validation: Validation
+  };
+  return _cachedComponent;
+};
+
+var _cachedVue = null;
+
+function getVue(rootVm) {
+  if (_cachedVue) return _cachedVue;
+  var Vue = rootVm.constructor;
+
+  while (Vue.super) {
+    Vue = Vue.super;
+  }
+
+  _cachedVue = Vue;
+  return Vue;
+}
+
+var validateModel = function validateModel(model, validations) {
+  var Vue = getVue(model);
+
+  var _getComponent = getComponent(Vue),
+      Validation = _getComponent.Validation,
+      VBase = _getComponent.VBase;
+
+  var root = new VBase({
+    computed: {
+      children: function children() {
+        var vals = typeof validations === 'function' ? validations.call(model) : validations;
+        return [(0, _vval.h)(Validation, '$v', {
+          validations: vals,
+          lazyParentModel: NIL,
+          prop: '$v',
+          model: model,
+          rootModel: model
+        })];
+      }
+    }
+  });
+  return root;
+};
+
+var validationMixin = {
+  data: function data() {
+    var vals = this.$options.validations;
+
+    if (vals) {
+      this._vuelidate = validateModel(this, vals);
+    }
+
+    return {};
+  },
+  beforeCreate: function beforeCreate() {
+    var options = this.$options;
+    var vals = options.validations;
+    if (!vals) return;
+    if (!options.computed) options.computed = {};
+    if (options.computed.$v) return;
+
+    options.computed.$v = function () {
+      return this._vuelidate ? this._vuelidate.refs.$v.proxy : null;
+    };
+  },
+  beforeDestroy: function beforeDestroy() {
+    if (this._vuelidate) {
+      this._vuelidate.$destroy();
+
+      this._vuelidate = null;
+    }
+  }
+};
+exports.validationMixin = validationMixin;
+
+function Vuelidate(Vue) {
+  Vue.mixin(validationMixin);
+}
+
+var _default = Vuelidate;
+exports.default = _default;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "alpha", {
+  enumerable: true,
+  get: function get() {
+    return _alpha.default;
+  }
+});
+Object.defineProperty(exports, "alphaNum", {
+  enumerable: true,
+  get: function get() {
+    return _alphaNum.default;
+  }
+});
+Object.defineProperty(exports, "numeric", {
+  enumerable: true,
+  get: function get() {
+    return _numeric.default;
+  }
+});
+Object.defineProperty(exports, "between", {
+  enumerable: true,
+  get: function get() {
+    return _between.default;
+  }
+});
+Object.defineProperty(exports, "email", {
+  enumerable: true,
+  get: function get() {
+    return _email.default;
+  }
+});
+Object.defineProperty(exports, "ipAddress", {
+  enumerable: true,
+  get: function get() {
+    return _ipAddress.default;
+  }
+});
+Object.defineProperty(exports, "macAddress", {
+  enumerable: true,
+  get: function get() {
+    return _macAddress.default;
+  }
+});
+Object.defineProperty(exports, "maxLength", {
+  enumerable: true,
+  get: function get() {
+    return _maxLength.default;
+  }
+});
+Object.defineProperty(exports, "minLength", {
+  enumerable: true,
+  get: function get() {
+    return _minLength.default;
+  }
+});
+Object.defineProperty(exports, "required", {
+  enumerable: true,
+  get: function get() {
+    return _required.default;
+  }
+});
+Object.defineProperty(exports, "requiredIf", {
+  enumerable: true,
+  get: function get() {
+    return _requiredIf.default;
+  }
+});
+Object.defineProperty(exports, "requiredUnless", {
+  enumerable: true,
+  get: function get() {
+    return _requiredUnless.default;
+  }
+});
+Object.defineProperty(exports, "sameAs", {
+  enumerable: true,
+  get: function get() {
+    return _sameAs.default;
+  }
+});
+Object.defineProperty(exports, "url", {
+  enumerable: true,
+  get: function get() {
+    return _url.default;
+  }
+});
+Object.defineProperty(exports, "or", {
+  enumerable: true,
+  get: function get() {
+    return _or.default;
+  }
+});
+Object.defineProperty(exports, "and", {
+  enumerable: true,
+  get: function get() {
+    return _and.default;
+  }
+});
+Object.defineProperty(exports, "not", {
+  enumerable: true,
+  get: function get() {
+    return _not.default;
+  }
+});
+Object.defineProperty(exports, "minValue", {
+  enumerable: true,
+  get: function get() {
+    return _minValue.default;
+  }
+});
+Object.defineProperty(exports, "maxValue", {
+  enumerable: true,
+  get: function get() {
+    return _maxValue.default;
+  }
+});
+Object.defineProperty(exports, "integer", {
+  enumerable: true,
+  get: function get() {
+    return _integer.default;
+  }
+});
+Object.defineProperty(exports, "decimal", {
+  enumerable: true,
+  get: function get() {
+    return _decimal.default;
+  }
+});
+exports.helpers = void 0;
+
+var _alpha = _interopRequireDefault(__webpack_require__(193));
+
+var _alphaNum = _interopRequireDefault(__webpack_require__(196));
+
+var _numeric = _interopRequireDefault(__webpack_require__(197));
+
+var _between = _interopRequireDefault(__webpack_require__(198));
+
+var _email = _interopRequireDefault(__webpack_require__(199));
+
+var _ipAddress = _interopRequireDefault(__webpack_require__(200));
+
+var _macAddress = _interopRequireDefault(__webpack_require__(201));
+
+var _maxLength = _interopRequireDefault(__webpack_require__(202));
+
+var _minLength = _interopRequireDefault(__webpack_require__(203));
+
+var _required = _interopRequireDefault(__webpack_require__(204));
+
+var _requiredIf = _interopRequireDefault(__webpack_require__(205));
+
+var _requiredUnless = _interopRequireDefault(__webpack_require__(206));
+
+var _sameAs = _interopRequireDefault(__webpack_require__(207));
+
+var _url = _interopRequireDefault(__webpack_require__(208));
+
+var _or = _interopRequireDefault(__webpack_require__(209));
+
+var _and = _interopRequireDefault(__webpack_require__(210));
+
+var _not = _interopRequireDefault(__webpack_require__(211));
+
+var _minValue = _interopRequireDefault(__webpack_require__(212));
+
+var _maxValue = _interopRequireDefault(__webpack_require__(213));
+
+var _integer = _interopRequireDefault(__webpack_require__(214));
+
+var _decimal = _interopRequireDefault(__webpack_require__(215));
+
+var helpers = _interopRequireWildcard(__webpack_require__(1));
+
+exports.helpers = helpers;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -5551,7 +6420,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8089,10 +8958,10 @@ Popper.Defaults = Defaults;
 /* harmony default export */ __webpack_exports__["default"] = (Popper);
 //# sourceMappingURL=popper.js.map
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(7)))
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -18463,7 +19332,7 @@ return jQuery;
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18481,7 +19350,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -18671,7 +19540,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18682,7 +19551,7 @@ var settle = __webpack_require__(154);
 var buildURL = __webpack_require__(156);
 var parseHeaders = __webpack_require__(157);
 var isURLSameOrigin = __webpack_require__(158);
-var createError = __webpack_require__(15);
+var createError = __webpack_require__(17);
 var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(159);
 
 module.exports = function xhrAdapter(config) {
@@ -18858,7 +19727,7 @@ module.exports = function xhrAdapter(config) {
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18883,7 +19752,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18895,7 +19764,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18921,7 +19790,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29884,10 +30753,10 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(168).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(168).setImmediate))
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29964,7 +30833,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30103,7 +30972,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30166,7 +31035,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30229,7 +31098,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30355,7 +31224,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30418,7 +31287,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30526,7 +31395,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30589,7 +31458,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30698,7 +31567,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30834,7 +31703,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30928,7 +31797,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30990,7 +31859,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31113,7 +31982,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31236,7 +32105,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31348,7 +32217,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31503,7 +32372,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31595,7 +32464,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31778,7 +32647,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31845,7 +32714,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31929,7 +32798,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31993,7 +32862,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32073,7 +32942,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32153,7 +33022,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32233,7 +33102,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32336,7 +33205,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32440,7 +33309,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32511,7 +33380,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32578,7 +33447,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32649,7 +33518,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32720,7 +33589,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32786,7 +33655,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32857,7 +33726,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32932,7 +33801,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33028,7 +33897,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33124,7 +33993,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33211,7 +34080,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33295,7 +34164,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33365,7 +34234,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33475,7 +34344,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33588,7 +34457,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33652,7 +34521,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33739,7 +34608,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33817,7 +34686,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33899,7 +34768,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33978,7 +34847,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34058,7 +34927,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34139,7 +35008,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34266,7 +35135,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34394,7 +35263,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34495,7 +35364,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34623,7 +35492,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34781,7 +35650,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34895,7 +35764,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34994,7 +35863,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35080,7 +35949,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35216,7 +36085,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35289,7 +36158,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35385,7 +36254,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35471,7 +36340,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35564,7 +36433,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35655,7 +36524,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35769,7 +36638,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35899,7 +36768,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35984,7 +36853,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36075,7 +36944,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36215,7 +37084,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36289,7 +37158,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36411,7 +37280,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36512,7 +37381,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36628,7 +37497,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36696,7 +37565,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36790,7 +37659,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36875,7 +37744,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36983,7 +37852,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37147,7 +38016,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37233,7 +38102,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37319,7 +38188,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37383,7 +38252,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37480,7 +38349,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37546,7 +38415,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37673,7 +38542,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37764,7 +38633,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37855,7 +38724,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37919,7 +38788,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38047,7 +38916,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38177,7 +39046,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38246,7 +39115,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38311,7 +39180,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38390,7 +39259,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38576,7 +39445,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38678,7 +39547,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38742,7 +39611,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38817,7 +39686,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -38977,7 +39846,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 113 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39154,7 +40023,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 114 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39226,7 +40095,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 115 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39341,7 +40210,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 116 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39456,7 +40325,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 117 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39548,7 +40417,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 118 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39621,7 +40490,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 119 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39684,7 +40553,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 120 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39817,7 +40686,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 121 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39910,7 +40779,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 122 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -39981,7 +40850,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 123 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -40101,7 +40970,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 124 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -40172,7 +41041,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -40238,7 +41107,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -40364,7 +41233,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -40462,7 +41331,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -40557,7 +41426,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -40619,7 +41488,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -40681,7 +41550,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js language configuration
@@ -40804,7 +41673,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -40959,7 +41828,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -41061,7 +41930,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -41123,7 +41992,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -41185,7 +42054,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 136 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -41268,7 +42137,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 137 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -41340,7 +42209,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -41404,7 +42273,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -41518,7 +42387,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -41625,7 +42494,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -41732,688 +42601,7 @@ module.exports = Vue;
 
 
 /***/ }),
-/* 142 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Vuelidate = Vuelidate;
-Object.defineProperty(exports, "withParams", {
-  enumerable: true,
-  get: function get() {
-    return _params.withParams;
-  }
-});
-exports.default = exports.validationMixin = void 0;
-
-var _vval = __webpack_require__(192);
-
-var _params = __webpack_require__(143);
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-var NIL = function NIL() {
-  return null;
-};
-
-var buildFromKeys = function buildFromKeys(keys, fn, keyFn) {
-  return keys.reduce(function (build, key) {
-    build[keyFn ? keyFn(key) : key] = fn(key);
-    return build;
-  }, {});
-};
-
-function isFunction(val) {
-  return typeof val === 'function';
-}
-
-function isObject(val) {
-  return val !== null && (_typeof(val) === 'object' || isFunction(val));
-}
-
-function isPromise(object) {
-  return isObject(object) && isFunction(object.then);
-}
-
-var getPath = function getPath(ctx, obj, path, fallback) {
-  if (typeof path === 'function') {
-    return path.call(ctx, obj, fallback);
-  }
-
-  path = Array.isArray(path) ? path : path.split('.');
-
-  for (var i = 0; i < path.length; i++) {
-    if (obj && _typeof(obj) === 'object') {
-      obj = obj[path[i]];
-    } else {
-      return fallback;
-    }
-  }
-
-  return typeof obj === 'undefined' ? fallback : obj;
-};
-
-var __isVuelidateAsyncVm = '__isVuelidateAsyncVm';
-
-function makePendingAsyncVm(Vue, promise) {
-  var asyncVm = new Vue({
-    data: {
-      p: true,
-      v: false
-    }
-  });
-  promise.then(function (value) {
-    asyncVm.p = false;
-    asyncVm.v = value;
-  }, function (error) {
-    asyncVm.p = false;
-    asyncVm.v = false;
-    throw error;
-  });
-  asyncVm[__isVuelidateAsyncVm] = true;
-  return asyncVm;
-}
-
-var validationGetters = {
-  $invalid: function $invalid() {
-    var _this = this;
-
-    var proxy = this.proxy;
-    return this.nestedKeys.some(function (nested) {
-      return _this.refProxy(nested).$invalid;
-    }) || this.ruleKeys.some(function (rule) {
-      return !proxy[rule];
-    });
-  },
-  $dirty: function $dirty() {
-    var _this2 = this;
-
-    if (this.dirty) {
-      return true;
-    }
-
-    if (this.nestedKeys.length === 0) {
-      return false;
-    }
-
-    return this.nestedKeys.every(function (key) {
-      return _this2.refProxy(key).$dirty;
-    });
-  },
-  $anyDirty: function $anyDirty() {
-    var _this3 = this;
-
-    if (this.dirty) {
-      return true;
-    }
-
-    if (this.nestedKeys.length === 0) {
-      return false;
-    }
-
-    return this.nestedKeys.some(function (key) {
-      return _this3.refProxy(key).$anyDirty;
-    });
-  },
-  $error: function $error() {
-    return this.$dirty && !this.$pending && this.$invalid;
-  },
-  $anyError: function $anyError() {
-    return this.$anyDirty && !this.$pending && this.$invalid;
-  },
-  $pending: function $pending() {
-    var _this4 = this;
-
-    return this.ruleKeys.some(function (key) {
-      return _this4.getRef(key).$pending;
-    }) || this.nestedKeys.some(function (key) {
-      return _this4.refProxy(key).$pending;
-    });
-  },
-  $params: function $params() {
-    var _this5 = this;
-
-    var vals = this.validations;
-    return _objectSpread({}, buildFromKeys(this.nestedKeys, function (key) {
-      return vals[key] && vals[key].$params || null;
-    }), buildFromKeys(this.ruleKeys, function (key) {
-      return _this5.getRef(key).$params;
-    }));
-  }
-};
-
-function setDirtyRecursive(newState) {
-  this.dirty = newState;
-  var proxy = this.proxy;
-  var method = newState ? '$touch' : '$reset';
-  this.nestedKeys.forEach(function (key) {
-    proxy[key][method]();
-  });
-}
-
-var validationMethods = {
-  $touch: function $touch() {
-    setDirtyRecursive.call(this, true);
-  },
-  $reset: function $reset() {
-    setDirtyRecursive.call(this, false);
-  },
-  $flattenParams: function $flattenParams() {
-    var proxy = this.proxy;
-    var params = [];
-
-    for (var key in this.$params) {
-      if (this.isNested(key)) {
-        var childParams = proxy[key].$flattenParams();
-
-        for (var j = 0; j < childParams.length; j++) {
-          childParams[j].path.unshift(key);
-        }
-
-        params = params.concat(childParams);
-      } else {
-        params.push({
-          path: [],
-          name: key,
-          params: this.$params[key]
-        });
-      }
-    }
-
-    return params;
-  }
-};
-var getterNames = Object.keys(validationGetters);
-var methodNames = Object.keys(validationMethods);
-var _cachedComponent = null;
-
-var getComponent = function getComponent(Vue) {
-  if (_cachedComponent) {
-    return _cachedComponent;
-  }
-
-  var VBase = Vue.extend({
-    computed: {
-      refs: function refs() {
-        var oldVval = this._vval;
-        this._vval = this.children;
-        (0, _vval.patchChildren)(oldVval, this._vval);
-        var refs = {};
-
-        this._vval.forEach(function (c) {
-          refs[c.key] = c.vm;
-        });
-
-        return refs;
-      }
-    },
-    beforeCreate: function beforeCreate() {
-      this._vval = null;
-    },
-    beforeDestroy: function beforeDestroy() {
-      if (this._vval) {
-        (0, _vval.patchChildren)(this._vval);
-        this._vval = null;
-      }
-    },
-    methods: {
-      getModel: function getModel() {
-        return this.lazyModel ? this.lazyModel(this.prop) : this.model;
-      },
-      getModelKey: function getModelKey(key) {
-        var model = this.getModel();
-
-        if (model) {
-          return model[key];
-        }
-      },
-      hasIter: function hasIter() {
-        return false;
-      }
-    }
-  });
-  var ValidationRule = VBase.extend({
-    data: function data() {
-      return {
-        rule: null,
-        lazyModel: null,
-        model: null,
-        lazyParentModel: null,
-        rootModel: null
-      };
-    },
-    methods: {
-      runRule: function runRule(parent) {
-        var model = this.getModel();
-        (0, _params.pushParams)();
-        var rawOutput = this.rule.call(this.rootModel, model, parent);
-        var output = isPromise(rawOutput) ? makePendingAsyncVm(Vue, rawOutput) : rawOutput;
-        var rawParams = (0, _params.popParams)();
-        var params = rawParams && rawParams.$sub ? rawParams.$sub.length > 1 ? rawParams : rawParams.$sub[0] : null;
-        return {
-          output: output,
-          params: params
-        };
-      }
-    },
-    computed: {
-      run: function run() {
-        var _this6 = this;
-
-        var parent = this.lazyParentModel();
-
-        var isArrayDependant = Array.isArray(parent) && parent.__ob__;
-
-        if (isArrayDependant) {
-          var arrayDep = parent.__ob__.dep;
-          arrayDep.depend();
-          var target = arrayDep.constructor.target;
-
-          if (!this._indirectWatcher) {
-            var Watcher = target.constructor;
-            this._indirectWatcher = new Watcher(this, function () {
-              return _this6.runRule(parent);
-            }, null, {
-              lazy: true
-            });
-          }
-
-          var model = this.getModel();
-
-          if (!this._indirectWatcher.dirty && this._lastModel === model) {
-            this._indirectWatcher.depend();
-
-            return target.value;
-          }
-
-          this._lastModel = model;
-
-          this._indirectWatcher.evaluate();
-
-          this._indirectWatcher.depend();
-        } else if (this._indirectWatcher) {
-          this._indirectWatcher.teardown();
-
-          this._indirectWatcher = null;
-        }
-
-        return this._indirectWatcher ? this._indirectWatcher.value : this.runRule(parent);
-      },
-      $params: function $params() {
-        return this.run.params;
-      },
-      proxy: function proxy() {
-        var output = this.run.output;
-
-        if (output[__isVuelidateAsyncVm]) {
-          return !!output.v;
-        }
-
-        return !!output;
-      },
-      $pending: function $pending() {
-        var output = this.run.output;
-
-        if (output[__isVuelidateAsyncVm]) {
-          return output.p;
-        }
-
-        return false;
-      }
-    },
-    destroyed: function destroyed() {
-      if (this._indirectWatcher) {
-        this._indirectWatcher.teardown();
-
-        this._indirectWatcher = null;
-      }
-    }
-  });
-  var Validation = VBase.extend({
-    data: function data() {
-      return {
-        dirty: false,
-        validations: null,
-        lazyModel: null,
-        model: null,
-        prop: null,
-        lazyParentModel: null,
-        rootModel: null
-      };
-    },
-    methods: _objectSpread({}, validationMethods, {
-      refProxy: function refProxy(key) {
-        return this.getRef(key).proxy;
-      },
-      getRef: function getRef(key) {
-        return this.refs[key];
-      },
-      isNested: function isNested(key) {
-        return typeof this.validations[key] !== 'function';
-      }
-    }),
-    computed: _objectSpread({}, validationGetters, {
-      nestedKeys: function nestedKeys() {
-        return this.keys.filter(this.isNested);
-      },
-      ruleKeys: function ruleKeys() {
-        var _this7 = this;
-
-        return this.keys.filter(function (k) {
-          return !_this7.isNested(k);
-        });
-      },
-      keys: function keys() {
-        return Object.keys(this.validations).filter(function (k) {
-          return k !== '$params';
-        });
-      },
-      proxy: function proxy() {
-        var _this8 = this;
-
-        var keyDefs = buildFromKeys(this.keys, function (key) {
-          return {
-            enumerable: true,
-            configurable: true,
-            get: function get() {
-              return _this8.refProxy(key);
-            }
-          };
-        });
-        var getterDefs = buildFromKeys(getterNames, function (key) {
-          return {
-            enumerable: true,
-            configurable: true,
-            get: function get() {
-              return _this8[key];
-            }
-          };
-        });
-        var methodDefs = buildFromKeys(methodNames, function (key) {
-          return {
-            enumerable: false,
-            configurable: true,
-            get: function get() {
-              return _this8[key];
-            }
-          };
-        });
-        var iterDefs = this.hasIter() ? {
-          $iter: {
-            enumerable: true,
-            value: Object.defineProperties({}, _objectSpread({}, keyDefs))
-          }
-        } : {};
-        return Object.defineProperties({}, _objectSpread({}, keyDefs, iterDefs, {
-          $model: {
-            enumerable: true,
-            get: function get() {
-              var parent = _this8.lazyParentModel();
-
-              if (parent != null) {
-                return parent[_this8.prop];
-              } else {
-                return null;
-              }
-            },
-            set: function set(value) {
-              var parent = _this8.lazyParentModel();
-
-              if (parent != null) {
-                parent[_this8.prop] = value;
-
-                _this8.$touch();
-              }
-            }
-          }
-        }, getterDefs, methodDefs));
-      },
-      children: function children() {
-        var _this9 = this;
-
-        return _toConsumableArray(this.nestedKeys.map(function (key) {
-          return renderNested(_this9, key);
-        })).concat(_toConsumableArray(this.ruleKeys.map(function (key) {
-          return renderRule(_this9, key);
-        }))).filter(Boolean);
-      }
-    })
-  });
-  var GroupValidation = Validation.extend({
-    methods: {
-      isNested: function isNested(key) {
-        return typeof this.validations[key]() !== 'undefined';
-      },
-      getRef: function getRef(key) {
-        var vm = this;
-        return {
-          get proxy() {
-            return vm.validations[key]() || false;
-          }
-
-        };
-      }
-    }
-  });
-  var EachValidation = Validation.extend({
-    computed: {
-      keys: function keys() {
-        var model = this.getModel();
-
-        if (isObject(model)) {
-          return Object.keys(model);
-        } else {
-          return [];
-        }
-      },
-      tracker: function tracker() {
-        var _this10 = this;
-
-        var trackBy = this.validations.$trackBy;
-        return trackBy ? function (key) {
-          return "".concat(getPath(_this10.rootModel, _this10.getModelKey(key), trackBy));
-        } : function (x) {
-          return "".concat(x);
-        };
-      },
-      getModelLazy: function getModelLazy() {
-        var _this11 = this;
-
-        return function () {
-          return _this11.getModel();
-        };
-      },
-      children: function children() {
-        var _this12 = this;
-
-        var def = this.validations;
-        var model = this.getModel();
-
-        var validations = _objectSpread({}, def);
-
-        delete validations['$trackBy'];
-        var usedTracks = {};
-        return this.keys.map(function (key) {
-          var track = _this12.tracker(key);
-
-          if (usedTracks.hasOwnProperty(track)) {
-            return null;
-          }
-
-          usedTracks[track] = true;
-          return (0, _vval.h)(Validation, track, {
-            validations: validations,
-            prop: key,
-            lazyParentModel: _this12.getModelLazy,
-            model: model[key],
-            rootModel: _this12.rootModel
-          });
-        }).filter(Boolean);
-      }
-    },
-    methods: {
-      isNested: function isNested() {
-        return true;
-      },
-      getRef: function getRef(key) {
-        return this.refs[this.tracker(key)];
-      },
-      hasIter: function hasIter() {
-        return true;
-      }
-    }
-  });
-
-  var renderNested = function renderNested(vm, key) {
-    if (key === '$each') {
-      return (0, _vval.h)(EachValidation, key, {
-        validations: vm.validations[key],
-        lazyParentModel: vm.lazyParentModel,
-        prop: key,
-        lazyModel: vm.getModel,
-        rootModel: vm.rootModel
-      });
-    }
-
-    var validations = vm.validations[key];
-
-    if (Array.isArray(validations)) {
-      var root = vm.rootModel;
-      var refVals = buildFromKeys(validations, function (path) {
-        return function () {
-          return getPath(root, root.$v, path);
-        };
-      }, function (v) {
-        return Array.isArray(v) ? v.join('.') : v;
-      });
-      return (0, _vval.h)(GroupValidation, key, {
-        validations: refVals,
-        lazyParentModel: NIL,
-        prop: key,
-        lazyModel: NIL,
-        rootModel: root
-      });
-    }
-
-    return (0, _vval.h)(Validation, key, {
-      validations: validations,
-      lazyParentModel: vm.getModel,
-      prop: key,
-      lazyModel: vm.getModelKey,
-      rootModel: vm.rootModel
-    });
-  };
-
-  var renderRule = function renderRule(vm, key) {
-    return (0, _vval.h)(ValidationRule, key, {
-      rule: vm.validations[key],
-      lazyParentModel: vm.lazyParentModel,
-      lazyModel: vm.getModel,
-      rootModel: vm.rootModel
-    });
-  };
-
-  _cachedComponent = {
-    VBase: VBase,
-    Validation: Validation
-  };
-  return _cachedComponent;
-};
-
-var _cachedVue = null;
-
-function getVue(rootVm) {
-  if (_cachedVue) return _cachedVue;
-  var Vue = rootVm.constructor;
-
-  while (Vue.super) {
-    Vue = Vue.super;
-  }
-
-  _cachedVue = Vue;
-  return Vue;
-}
-
-var validateModel = function validateModel(model, validations) {
-  var Vue = getVue(model);
-
-  var _getComponent = getComponent(Vue),
-      Validation = _getComponent.Validation,
-      VBase = _getComponent.VBase;
-
-  var root = new VBase({
-    computed: {
-      children: function children() {
-        var vals = typeof validations === 'function' ? validations.call(model) : validations;
-        return [(0, _vval.h)(Validation, '$v', {
-          validations: vals,
-          lazyParentModel: NIL,
-          prop: '$v',
-          model: model,
-          rootModel: model
-        })];
-      }
-    }
-  });
-  return root;
-};
-
-var validationMixin = {
-  data: function data() {
-    var vals = this.$options.validations;
-
-    if (vals) {
-      this._vuelidate = validateModel(this, vals);
-    }
-
-    return {};
-  },
-  beforeCreate: function beforeCreate() {
-    var options = this.$options;
-    var vals = options.validations;
-    if (!vals) return;
-    if (!options.computed) options.computed = {};
-    if (options.computed.$v) return;
-
-    options.computed.$v = function () {
-      return this._vuelidate ? this._vuelidate.refs.$v.proxy : null;
-    };
-  },
-  beforeDestroy: function beforeDestroy() {
-    if (this._vuelidate) {
-      this._vuelidate.$destroy();
-
-      this._vuelidate = null;
-    }
-  }
-};
-exports.validationMixin = validationMixin;
-
-function Vuelidate(Vue) {
-  Vue.mixin(validationMixin);
-}
-
-var _default = Vuelidate;
-exports.default = _default;
-
-/***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42514,199 +42702,11 @@ function withParams(paramsOrClosure, maybeValidator) {
 }
 
 /***/ }),
-/* 144 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "alpha", {
-  enumerable: true,
-  get: function get() {
-    return _alpha.default;
-  }
-});
-Object.defineProperty(exports, "alphaNum", {
-  enumerable: true,
-  get: function get() {
-    return _alphaNum.default;
-  }
-});
-Object.defineProperty(exports, "numeric", {
-  enumerable: true,
-  get: function get() {
-    return _numeric.default;
-  }
-});
-Object.defineProperty(exports, "between", {
-  enumerable: true,
-  get: function get() {
-    return _between.default;
-  }
-});
-Object.defineProperty(exports, "email", {
-  enumerable: true,
-  get: function get() {
-    return _email.default;
-  }
-});
-Object.defineProperty(exports, "ipAddress", {
-  enumerable: true,
-  get: function get() {
-    return _ipAddress.default;
-  }
-});
-Object.defineProperty(exports, "macAddress", {
-  enumerable: true,
-  get: function get() {
-    return _macAddress.default;
-  }
-});
-Object.defineProperty(exports, "maxLength", {
-  enumerable: true,
-  get: function get() {
-    return _maxLength.default;
-  }
-});
-Object.defineProperty(exports, "minLength", {
-  enumerable: true,
-  get: function get() {
-    return _minLength.default;
-  }
-});
-Object.defineProperty(exports, "required", {
-  enumerable: true,
-  get: function get() {
-    return _required.default;
-  }
-});
-Object.defineProperty(exports, "requiredIf", {
-  enumerable: true,
-  get: function get() {
-    return _requiredIf.default;
-  }
-});
-Object.defineProperty(exports, "requiredUnless", {
-  enumerable: true,
-  get: function get() {
-    return _requiredUnless.default;
-  }
-});
-Object.defineProperty(exports, "sameAs", {
-  enumerable: true,
-  get: function get() {
-    return _sameAs.default;
-  }
-});
-Object.defineProperty(exports, "url", {
-  enumerable: true,
-  get: function get() {
-    return _url.default;
-  }
-});
-Object.defineProperty(exports, "or", {
-  enumerable: true,
-  get: function get() {
-    return _or.default;
-  }
-});
-Object.defineProperty(exports, "and", {
-  enumerable: true,
-  get: function get() {
-    return _and.default;
-  }
-});
-Object.defineProperty(exports, "not", {
-  enumerable: true,
-  get: function get() {
-    return _not.default;
-  }
-});
-Object.defineProperty(exports, "minValue", {
-  enumerable: true,
-  get: function get() {
-    return _minValue.default;
-  }
-});
-Object.defineProperty(exports, "maxValue", {
-  enumerable: true,
-  get: function get() {
-    return _maxValue.default;
-  }
-});
-Object.defineProperty(exports, "integer", {
-  enumerable: true,
-  get: function get() {
-    return _integer.default;
-  }
-});
-Object.defineProperty(exports, "decimal", {
-  enumerable: true,
-  get: function get() {
-    return _decimal.default;
-  }
-});
-exports.helpers = void 0;
-
-var _alpha = _interopRequireDefault(__webpack_require__(193));
-
-var _alphaNum = _interopRequireDefault(__webpack_require__(196));
-
-var _numeric = _interopRequireDefault(__webpack_require__(197));
-
-var _between = _interopRequireDefault(__webpack_require__(198));
-
-var _email = _interopRequireDefault(__webpack_require__(199));
-
-var _ipAddress = _interopRequireDefault(__webpack_require__(200));
-
-var _macAddress = _interopRequireDefault(__webpack_require__(201));
-
-var _maxLength = _interopRequireDefault(__webpack_require__(202));
-
-var _minLength = _interopRequireDefault(__webpack_require__(203));
-
-var _required = _interopRequireDefault(__webpack_require__(204));
-
-var _requiredIf = _interopRequireDefault(__webpack_require__(205));
-
-var _requiredUnless = _interopRequireDefault(__webpack_require__(206));
-
-var _sameAs = _interopRequireDefault(__webpack_require__(207));
-
-var _url = _interopRequireDefault(__webpack_require__(208));
-
-var _or = _interopRequireDefault(__webpack_require__(209));
-
-var _and = _interopRequireDefault(__webpack_require__(210));
-
-var _not = _interopRequireDefault(__webpack_require__(211));
-
-var _minValue = _interopRequireDefault(__webpack_require__(212));
-
-var _maxValue = _interopRequireDefault(__webpack_require__(213));
-
-var _integer = _interopRequireDefault(__webpack_require__(214));
-
-var _decimal = _interopRequireDefault(__webpack_require__(215));
-
-var helpers = _interopRequireWildcard(__webpack_require__(1));
-
-exports.helpers = helpers;
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ }),
 /* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(146);
-module.exports = __webpack_require__(231);
+module.exports = __webpack_require__(236);
 
 
 /***/ }),
@@ -42715,7 +42715,7 @@ module.exports = __webpack_require__(231);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_moment__);
@@ -42769,7 +42769,8 @@ var router = new __WEBPACK_IMPORTED_MODULE_2_vue_router__["a" /* default */]({
         name: 'users.index',
         component: __WEBPACK_IMPORTED_MODULE_7__views_UsersIndex___default.a
     }, {
-        path: '/containers/:id',
+        path: '/containers/:url/:id',
+        props: true,
         name: 'containers',
         component: __WEBPACK_IMPORTED_MODULE_8__views_Containers___default.a
     }]
@@ -42787,7 +42788,7 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
 
 
 window._ = __webpack_require__(148);
-window.Popper = __webpack_require__(10).default;
+window.Popper = __webpack_require__(12).default;
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -42796,7 +42797,7 @@ window.Popper = __webpack_require__(10).default;
  */
 
 try {
-  window.$ = window.jQuery = __webpack_require__(11);
+  window.$ = window.jQuery = __webpack_require__(13);
 
   __webpack_require__(149);
 } catch (e) {}
@@ -42807,7 +42808,7 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(7);
+window.axios = __webpack_require__(3);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -59955,7 +59956,7 @@ if (token) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(9)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(11)(module)))
 
 /***/ }),
 /* 149 */
@@ -59967,7 +59968,7 @@ if (token) {
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
   */
 (function (global, factory) {
-   true ? factory(exports, __webpack_require__(11), __webpack_require__(10)) :
+   true ? factory(exports, __webpack_require__(13), __webpack_require__(12)) :
   typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'popper.js'], factory) :
   (factory((global.bootstrap = {}),global.jQuery,global.Popper));
 }(this, (function (exports,$,Popper) { 'use strict';
@@ -63915,7 +63916,7 @@ if (token) {
 
 
 var utils = __webpack_require__(2);
-var bind = __webpack_require__(12);
+var bind = __webpack_require__(14);
 var Axios = __webpack_require__(152);
 var defaults = __webpack_require__(8);
 
@@ -63950,9 +63951,9 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(17);
+axios.Cancel = __webpack_require__(19);
 axios.CancelToken = __webpack_require__(166);
-axios.isCancel = __webpack_require__(16);
+axios.isCancel = __webpack_require__(18);
 
 // Expose all/spread
 axios.all = function all(promises) {
@@ -64105,7 +64106,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 "use strict";
 
 
-var createError = __webpack_require__(15);
+var createError = __webpack_require__(17);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -64538,7 +64539,7 @@ module.exports = InterceptorManager;
 
 var utils = __webpack_require__(2);
 var transformData = __webpack_require__(163);
-var isCancel = __webpack_require__(16);
+var isCancel = __webpack_require__(18);
 var defaults = __webpack_require__(8);
 var isAbsoluteURL = __webpack_require__(164);
 var combineURLs = __webpack_require__(165);
@@ -64698,7 +64699,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 "use strict";
 
 
-var Cancel = __webpack_require__(17);
+var Cancel = __webpack_require__(19);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -64857,7 +64858,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (typeof global !== "undefined" && global.clearImmediate) ||
                          (this && this.clearImmediate);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
 /* 169 */
@@ -65050,259 +65051,259 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(13)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(15)))
 
 /***/ }),
 /* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 19,
-	"./af.js": 19,
-	"./ar": 20,
-	"./ar-dz": 21,
-	"./ar-dz.js": 21,
-	"./ar-kw": 22,
-	"./ar-kw.js": 22,
-	"./ar-ly": 23,
-	"./ar-ly.js": 23,
-	"./ar-ma": 24,
-	"./ar-ma.js": 24,
-	"./ar-sa": 25,
-	"./ar-sa.js": 25,
-	"./ar-tn": 26,
-	"./ar-tn.js": 26,
-	"./ar.js": 20,
-	"./az": 27,
-	"./az.js": 27,
-	"./be": 28,
-	"./be.js": 28,
-	"./bg": 29,
-	"./bg.js": 29,
-	"./bm": 30,
-	"./bm.js": 30,
-	"./bn": 31,
-	"./bn.js": 31,
-	"./bo": 32,
-	"./bo.js": 32,
-	"./br": 33,
-	"./br.js": 33,
-	"./bs": 34,
-	"./bs.js": 34,
-	"./ca": 35,
-	"./ca.js": 35,
-	"./cs": 36,
-	"./cs.js": 36,
-	"./cv": 37,
-	"./cv.js": 37,
-	"./cy": 38,
-	"./cy.js": 38,
-	"./da": 39,
-	"./da.js": 39,
-	"./de": 40,
-	"./de-at": 41,
-	"./de-at.js": 41,
-	"./de-ch": 42,
-	"./de-ch.js": 42,
-	"./de.js": 40,
-	"./dv": 43,
-	"./dv.js": 43,
-	"./el": 44,
-	"./el.js": 44,
-	"./en-au": 45,
-	"./en-au.js": 45,
-	"./en-ca": 46,
-	"./en-ca.js": 46,
-	"./en-gb": 47,
-	"./en-gb.js": 47,
-	"./en-ie": 48,
-	"./en-ie.js": 48,
-	"./en-il": 49,
-	"./en-il.js": 49,
-	"./en-nz": 50,
-	"./en-nz.js": 50,
-	"./eo": 51,
-	"./eo.js": 51,
-	"./es": 52,
-	"./es-do": 53,
-	"./es-do.js": 53,
-	"./es-us": 54,
-	"./es-us.js": 54,
-	"./es.js": 52,
-	"./et": 55,
-	"./et.js": 55,
-	"./eu": 56,
-	"./eu.js": 56,
-	"./fa": 57,
-	"./fa.js": 57,
-	"./fi": 58,
-	"./fi.js": 58,
-	"./fo": 59,
-	"./fo.js": 59,
-	"./fr": 60,
-	"./fr-ca": 61,
-	"./fr-ca.js": 61,
-	"./fr-ch": 62,
-	"./fr-ch.js": 62,
-	"./fr.js": 60,
-	"./fy": 63,
-	"./fy.js": 63,
-	"./gd": 64,
-	"./gd.js": 64,
-	"./gl": 65,
-	"./gl.js": 65,
-	"./gom-latn": 66,
-	"./gom-latn.js": 66,
-	"./gu": 67,
-	"./gu.js": 67,
-	"./he": 68,
-	"./he.js": 68,
-	"./hi": 69,
-	"./hi.js": 69,
-	"./hr": 70,
-	"./hr.js": 70,
-	"./hu": 71,
-	"./hu.js": 71,
-	"./hy-am": 72,
-	"./hy-am.js": 72,
-	"./id": 73,
-	"./id.js": 73,
-	"./is": 74,
-	"./is.js": 74,
-	"./it": 75,
-	"./it.js": 75,
-	"./ja": 76,
-	"./ja.js": 76,
-	"./jv": 77,
-	"./jv.js": 77,
-	"./ka": 78,
-	"./ka.js": 78,
-	"./kk": 79,
-	"./kk.js": 79,
-	"./km": 80,
-	"./km.js": 80,
-	"./kn": 81,
-	"./kn.js": 81,
-	"./ko": 82,
-	"./ko.js": 82,
-	"./ky": 83,
-	"./ky.js": 83,
-	"./lb": 84,
-	"./lb.js": 84,
-	"./lo": 85,
-	"./lo.js": 85,
-	"./lt": 86,
-	"./lt.js": 86,
-	"./lv": 87,
-	"./lv.js": 87,
-	"./me": 88,
-	"./me.js": 88,
-	"./mi": 89,
-	"./mi.js": 89,
-	"./mk": 90,
-	"./mk.js": 90,
-	"./ml": 91,
-	"./ml.js": 91,
-	"./mn": 92,
-	"./mn.js": 92,
-	"./mr": 93,
-	"./mr.js": 93,
-	"./ms": 94,
-	"./ms-my": 95,
-	"./ms-my.js": 95,
-	"./ms.js": 94,
-	"./mt": 96,
-	"./mt.js": 96,
-	"./my": 97,
-	"./my.js": 97,
-	"./nb": 98,
-	"./nb.js": 98,
-	"./ne": 99,
-	"./ne.js": 99,
-	"./nl": 100,
-	"./nl-be": 101,
-	"./nl-be.js": 101,
-	"./nl.js": 100,
-	"./nn": 102,
-	"./nn.js": 102,
-	"./pa-in": 103,
-	"./pa-in.js": 103,
-	"./pl": 104,
-	"./pl.js": 104,
-	"./pt": 105,
-	"./pt-br": 106,
-	"./pt-br.js": 106,
-	"./pt.js": 105,
-	"./ro": 107,
-	"./ro.js": 107,
-	"./ru": 108,
-	"./ru.js": 108,
-	"./sd": 109,
-	"./sd.js": 109,
-	"./se": 110,
-	"./se.js": 110,
-	"./si": 111,
-	"./si.js": 111,
-	"./sk": 112,
-	"./sk.js": 112,
-	"./sl": 113,
-	"./sl.js": 113,
-	"./sq": 114,
-	"./sq.js": 114,
-	"./sr": 115,
-	"./sr-cyrl": 116,
-	"./sr-cyrl.js": 116,
-	"./sr.js": 115,
-	"./ss": 117,
-	"./ss.js": 117,
-	"./sv": 118,
-	"./sv.js": 118,
-	"./sw": 119,
-	"./sw.js": 119,
-	"./ta": 120,
-	"./ta.js": 120,
-	"./te": 121,
-	"./te.js": 121,
-	"./tet": 122,
-	"./tet.js": 122,
-	"./tg": 123,
-	"./tg.js": 123,
-	"./th": 124,
-	"./th.js": 124,
-	"./tl-ph": 125,
-	"./tl-ph.js": 125,
-	"./tlh": 126,
-	"./tlh.js": 126,
-	"./tr": 127,
-	"./tr.js": 127,
-	"./tzl": 128,
-	"./tzl.js": 128,
-	"./tzm": 129,
-	"./tzm-latn": 130,
-	"./tzm-latn.js": 130,
-	"./tzm.js": 129,
-	"./ug-cn": 131,
-	"./ug-cn.js": 131,
-	"./uk": 132,
-	"./uk.js": 132,
-	"./ur": 133,
-	"./ur.js": 133,
-	"./uz": 134,
-	"./uz-latn": 135,
-	"./uz-latn.js": 135,
-	"./uz.js": 134,
-	"./vi": 136,
-	"./vi.js": 136,
-	"./x-pseudo": 137,
-	"./x-pseudo.js": 137,
-	"./yo": 138,
-	"./yo.js": 138,
-	"./zh-cn": 139,
-	"./zh-cn.js": 139,
-	"./zh-hk": 140,
-	"./zh-hk.js": 140,
-	"./zh-tw": 141,
-	"./zh-tw.js": 141
+	"./af": 21,
+	"./af.js": 21,
+	"./ar": 22,
+	"./ar-dz": 23,
+	"./ar-dz.js": 23,
+	"./ar-kw": 24,
+	"./ar-kw.js": 24,
+	"./ar-ly": 25,
+	"./ar-ly.js": 25,
+	"./ar-ma": 26,
+	"./ar-ma.js": 26,
+	"./ar-sa": 27,
+	"./ar-sa.js": 27,
+	"./ar-tn": 28,
+	"./ar-tn.js": 28,
+	"./ar.js": 22,
+	"./az": 29,
+	"./az.js": 29,
+	"./be": 30,
+	"./be.js": 30,
+	"./bg": 31,
+	"./bg.js": 31,
+	"./bm": 32,
+	"./bm.js": 32,
+	"./bn": 33,
+	"./bn.js": 33,
+	"./bo": 34,
+	"./bo.js": 34,
+	"./br": 35,
+	"./br.js": 35,
+	"./bs": 36,
+	"./bs.js": 36,
+	"./ca": 37,
+	"./ca.js": 37,
+	"./cs": 38,
+	"./cs.js": 38,
+	"./cv": 39,
+	"./cv.js": 39,
+	"./cy": 40,
+	"./cy.js": 40,
+	"./da": 41,
+	"./da.js": 41,
+	"./de": 42,
+	"./de-at": 43,
+	"./de-at.js": 43,
+	"./de-ch": 44,
+	"./de-ch.js": 44,
+	"./de.js": 42,
+	"./dv": 45,
+	"./dv.js": 45,
+	"./el": 46,
+	"./el.js": 46,
+	"./en-au": 47,
+	"./en-au.js": 47,
+	"./en-ca": 48,
+	"./en-ca.js": 48,
+	"./en-gb": 49,
+	"./en-gb.js": 49,
+	"./en-ie": 50,
+	"./en-ie.js": 50,
+	"./en-il": 51,
+	"./en-il.js": 51,
+	"./en-nz": 52,
+	"./en-nz.js": 52,
+	"./eo": 53,
+	"./eo.js": 53,
+	"./es": 54,
+	"./es-do": 55,
+	"./es-do.js": 55,
+	"./es-us": 56,
+	"./es-us.js": 56,
+	"./es.js": 54,
+	"./et": 57,
+	"./et.js": 57,
+	"./eu": 58,
+	"./eu.js": 58,
+	"./fa": 59,
+	"./fa.js": 59,
+	"./fi": 60,
+	"./fi.js": 60,
+	"./fo": 61,
+	"./fo.js": 61,
+	"./fr": 62,
+	"./fr-ca": 63,
+	"./fr-ca.js": 63,
+	"./fr-ch": 64,
+	"./fr-ch.js": 64,
+	"./fr.js": 62,
+	"./fy": 65,
+	"./fy.js": 65,
+	"./gd": 66,
+	"./gd.js": 66,
+	"./gl": 67,
+	"./gl.js": 67,
+	"./gom-latn": 68,
+	"./gom-latn.js": 68,
+	"./gu": 69,
+	"./gu.js": 69,
+	"./he": 70,
+	"./he.js": 70,
+	"./hi": 71,
+	"./hi.js": 71,
+	"./hr": 72,
+	"./hr.js": 72,
+	"./hu": 73,
+	"./hu.js": 73,
+	"./hy-am": 74,
+	"./hy-am.js": 74,
+	"./id": 75,
+	"./id.js": 75,
+	"./is": 76,
+	"./is.js": 76,
+	"./it": 77,
+	"./it.js": 77,
+	"./ja": 78,
+	"./ja.js": 78,
+	"./jv": 79,
+	"./jv.js": 79,
+	"./ka": 80,
+	"./ka.js": 80,
+	"./kk": 81,
+	"./kk.js": 81,
+	"./km": 82,
+	"./km.js": 82,
+	"./kn": 83,
+	"./kn.js": 83,
+	"./ko": 84,
+	"./ko.js": 84,
+	"./ky": 85,
+	"./ky.js": 85,
+	"./lb": 86,
+	"./lb.js": 86,
+	"./lo": 87,
+	"./lo.js": 87,
+	"./lt": 88,
+	"./lt.js": 88,
+	"./lv": 89,
+	"./lv.js": 89,
+	"./me": 90,
+	"./me.js": 90,
+	"./mi": 91,
+	"./mi.js": 91,
+	"./mk": 92,
+	"./mk.js": 92,
+	"./ml": 93,
+	"./ml.js": 93,
+	"./mn": 94,
+	"./mn.js": 94,
+	"./mr": 95,
+	"./mr.js": 95,
+	"./ms": 96,
+	"./ms-my": 97,
+	"./ms-my.js": 97,
+	"./ms.js": 96,
+	"./mt": 98,
+	"./mt.js": 98,
+	"./my": 99,
+	"./my.js": 99,
+	"./nb": 100,
+	"./nb.js": 100,
+	"./ne": 101,
+	"./ne.js": 101,
+	"./nl": 102,
+	"./nl-be": 103,
+	"./nl-be.js": 103,
+	"./nl.js": 102,
+	"./nn": 104,
+	"./nn.js": 104,
+	"./pa-in": 105,
+	"./pa-in.js": 105,
+	"./pl": 106,
+	"./pl.js": 106,
+	"./pt": 107,
+	"./pt-br": 108,
+	"./pt-br.js": 108,
+	"./pt.js": 107,
+	"./ro": 109,
+	"./ro.js": 109,
+	"./ru": 110,
+	"./ru.js": 110,
+	"./sd": 111,
+	"./sd.js": 111,
+	"./se": 112,
+	"./se.js": 112,
+	"./si": 113,
+	"./si.js": 113,
+	"./sk": 114,
+	"./sk.js": 114,
+	"./sl": 115,
+	"./sl.js": 115,
+	"./sq": 116,
+	"./sq.js": 116,
+	"./sr": 117,
+	"./sr-cyrl": 118,
+	"./sr-cyrl.js": 118,
+	"./sr.js": 117,
+	"./ss": 119,
+	"./ss.js": 119,
+	"./sv": 120,
+	"./sv.js": 120,
+	"./sw": 121,
+	"./sw.js": 121,
+	"./ta": 122,
+	"./ta.js": 122,
+	"./te": 123,
+	"./te.js": 123,
+	"./tet": 124,
+	"./tet.js": 124,
+	"./tg": 125,
+	"./tg.js": 125,
+	"./th": 126,
+	"./th.js": 126,
+	"./tl-ph": 127,
+	"./tl-ph.js": 127,
+	"./tlh": 128,
+	"./tlh.js": 128,
+	"./tr": 129,
+	"./tr.js": 129,
+	"./tzl": 130,
+	"./tzl.js": 130,
+	"./tzm": 131,
+	"./tzm-latn": 132,
+	"./tzm-latn.js": 132,
+	"./tzm.js": 131,
+	"./ug-cn": 133,
+	"./ug-cn.js": 133,
+	"./uk": 134,
+	"./uk.js": 134,
+	"./ur": 135,
+	"./ur.js": 135,
+	"./uz": 136,
+	"./uz-latn": 137,
+	"./uz-latn.js": 137,
+	"./uz.js": 136,
+	"./vi": 138,
+	"./vi.js": 138,
+	"./x-pseudo": 139,
+	"./x-pseudo.js": 139,
+	"./yo": 140,
+	"./yo.js": 140,
+	"./zh-cn": 141,
+	"./zh-cn.js": 141,
+	"./zh-hk": 142,
+	"./zh-hk.js": 142,
+	"./zh-tw": 143,
+	"./zh-tw.js": 143
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -67961,7 +67962,7 @@ if (inBrowser && window.Vue) {
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(18));
+		module.exports = factory(__webpack_require__(20));
 	else if(typeof define === 'function' && define.amd)
 		define(["vue"], factory);
 	else if(typeof exports === 'object')
@@ -98269,7 +98270,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(174)
 }
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(177)
 /* template */
@@ -98322,7 +98323,7 @@ var content = __webpack_require__(175);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("2dba2923", content, false, {});
+var update = __webpack_require__(6)("f87cbf54", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -98763,7 +98764,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(180)
 }
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(182)
 /* template */
@@ -98816,7 +98817,7 @@ var content = __webpack_require__(181);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("4a21e004", content, false, {});
+var update = __webpack_require__(6)("41c1d61e", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -98840,7 +98841,7 @@ exports = module.exports = __webpack_require__(5)(false);
 
 
 // module
-exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material palette\n * ---\n * @access public\n * @type map\n * @group themes\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * $foo-palette: (\n *   primary: md-get-palette-color(indigo, 500),\n *   accent: md-get-palette-color(pink, 500),\n *   theme: \"light\"\n * );\n *\n * ---\n * @access public\n * ---\n * @param {color} $type —  The desired color based on material palette\n * @param {string} $type —  A valid hue\n */\n/**\n * Get the current theme mode from the current theme\n * ---\n * Usage example:\n *\n * $theme-mode: md-get-theme-mode()\n *\n * ---\n * @access private\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * .md-foo {\n *   min-width: 88px;\n *   height: 40px;\n *   background: md-theme(primary);\n * }\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The themable value\n */\n/**\n * Get a color based on type by theme\n * ---\n * Usage example:\n *\n * $color: md-get-color-by-theme(dark, primary)\n *\n * ---\n * @access public\n * ---\n * @param {string} $color-theme —  The theme color | Accepts dark or light\n * @param {string} $type —  The color type\n */\n/**\n * Get a color based on type only\n * ---\n * Usage example:\n *\n * $color1: md-get-color-by-type(background, dark)\n * $color1: md-get-color-by-type(accent)\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The color type\n * @param {string} $theme —  The fallback theme\n */\n/**\n * The default theme palette\n * primary: indigo 500 #3f51b5\n * accent: pink 500 #e91e63\n * theme: light\n *\n * It can be used just before importing the Vue Material stylesheet\n *\n * ---\n * @access public\n * @type colormap\n * @group themes\n */\n/**\n * Temporary variable to store all themable values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Map variable to store all themes to be processed by each component\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Store the current theme name\n * ---\n * @access private\n * @type string\n * @group themes\n */\n/**\n * The color contrast values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Hightly based on: \"Using Sass to automatically pick text colors\"\n * https://medium.com/dev-channel/using-sass-to-automatically-pick-text-colors-4ba7645d2796\n */\n/**\n * Precomputed linear color channel values, for use in contrast calculations.\n * See https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-tests\n * ---\n *\n *  Algorithm, for c in 0 to 255:\n *  f(c) {\n *    c = c / 255;\n *    return c < 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);\n *  }\n *\n *  This lookup table is needed since there is no `pow` in SASS.\n *\n * ---\n * @access private\n * @type Map\n * @group themes\n */\n/**\n * Calculate the luminance for a color.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The color to be analysed\n */\n/**\n * Calculate the contrast ratio between two colors.\n * ---\n * @access private\n * ---\n * @param {string} $bg —  The bg color\n * @param {string} $fg —  The fg color to be compared\n */\n/**\n * Determine whether to use dark or light text on top of given color.\n * Returns dark or light depending on the contrast ratio.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The desired color to be compared\n */\n/**\n * Override extending the default palette giving new values. It will extend\n * the default values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-override-palette ((\n *   accent: blue,\n *   theme: \"dark\"\n * ))\n *\n * ---\n * @access public\n * @param {map} $palette —  The new palette\n */\n/**\n * Create a new theme based on a given palette. It will extend the default\n * values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-register-theme(\"alternative\", (\n *   primary: #212121,\n *   accent: #CDDC39,\n *   theme: dark\n * ));\n *\n * ---\n * @access public\n * @param {string} $name —  The theme name to be used with the Vue Material\n * @param {map} $palette [$md-default-palette] —  The theme palette\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes.\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     background: md-theme(primary);\n *     color: md-theme(text-primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       background: md-theme(accent);\n *       color: md-theme(text-accent);\n *     };\n *   }\n * }\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes based on parent.\n * ---\n * Usage example:\n *\n * .md-foo {\n *   @include md-theme-component-relative() {\n *     @include md-theme-property(background, primary);\n *   }\n * }\n */\n/**\n * Theme a single css property\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property(background, primary);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       @include md-theme-property(background, accent);\n *       @include md-theme-property(color, text-primary, accent);\n *     }\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {number} $opacity —  The opacity amount\n */\n/**\n * Theme a single css property darkening the color by a certain amount\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-darken(background, primary, background, 10%);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {string} $darken —  The darken amount to apply to the color\n */\n/**\n * Theme a single css property by\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-by-hue(background, grey, 100, toolbar, background);\n *     @include md-theme-property(color, text-primary, background);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $color —  A valid material palette color name\n * @param {string} $hue —  The hue amount to get the hex color\n * @param {string} $type —  The type of variable\n * @param {string} $variant —  The type of constrasted variable\n */\n[data-v-6c6e0b12]:root {\n  --md-theme-green-card-primary: #4caf50\n    ;\n  --md-theme-green-card-accent: #ff5252\n    ;\n  --md-theme-green-card-theme: light\n    ;\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #4caf50;\n  color: var(--md-theme-green-card-primary-on-background, #4caf50);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(76, 175, 80, 0.8);\n    color: var(--md-theme-green-card-primary-on-background, rgba(76, 175, 80, 0.8));\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-green-card-accent-on-background, #ff5252);\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-green-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\nhtml.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-green-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-green-card .md-caption[data-v-6c6e0b12], .md-theme-green-card\n.md-display-1[data-v-6c6e0b12], .md-theme-green-card\n.md-display-2[data-v-6c6e0b12], .md-theme-green-card\n.md-display-3[data-v-6c6e0b12], .md-theme-green-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-green-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-green-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-green-card-scrollbar-on-background-variant, #757575);\n}\n[data-v-6c6e0b12]:root {\n  --md-theme-black-card-primary: #000\n    ;\n  --md-theme-black-card-accent: #ff5252\n    ;\n  --md-theme-black-card-theme: light\n    ;\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #4caf50;\n  color: var(--md-theme-green-card-primary-on-background, #4caf50);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(76, 175, 80, 0.8);\n    color: var(--md-theme-green-card-primary-on-background, rgba(76, 175, 80, 0.8));\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-green-card-accent-on-background, #ff5252);\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-green-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #000;\n  color: var(--md-theme-black-card-primary-on-background, #000);\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(0, 0, 0, 0.8);\n    color: var(--md-theme-black-card-primary-on-background, rgba(0, 0, 0, 0.8));\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-black-card-accent-on-background, #ff5252);\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-black-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\nhtml.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-green-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-black-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-black-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-black-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-green-card .md-caption[data-v-6c6e0b12], .md-theme-green-card\n.md-display-1[data-v-6c6e0b12], .md-theme-green-card\n.md-display-2[data-v-6c6e0b12], .md-theme-green-card\n.md-display-3[data-v-6c6e0b12], .md-theme-green-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-green-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-black-card .md-caption[data-v-6c6e0b12], .md-theme-black-card\n.md-display-1[data-v-6c6e0b12], .md-theme-black-card\n.md-display-2[data-v-6c6e0b12], .md-theme-black-card\n.md-display-3[data-v-6c6e0b12], .md-theme-black-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-black-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-green-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-green-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-black-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-black-card-scrollbar-on-background-variant, #757575);\n}\n[data-v-6c6e0b12]:root {\n  --md-theme-purple-card-primary: #9c27b0\n    ;\n  --md-theme-purple-card-accent: #ff5252\n    ;\n  --md-theme-purple-card-theme: light\n    ;\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-purple-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-theme-purple-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #4caf50;\n  color: var(--md-theme-green-card-primary-on-background, #4caf50);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(76, 175, 80, 0.8);\n    color: var(--md-theme-green-card-primary-on-background, rgba(76, 175, 80, 0.8));\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-green-card-accent-on-background, #ff5252);\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-green-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #000;\n  color: var(--md-theme-black-card-primary-on-background, #000);\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(0, 0, 0, 0.8);\n    color: var(--md-theme-black-card-primary-on-background, rgba(0, 0, 0, 0.8));\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-black-card-accent-on-background, #ff5252);\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-black-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-purple-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #9c27b0;\n  color: var(--md-theme-purple-card-primary-on-background, #9c27b0);\n}\n.md-theme-purple-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(156, 39, 176, 0.8);\n    color: var(--md-theme-purple-card-primary-on-background, rgba(156, 39, 176, 0.8));\n}\n.md-theme-purple-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n}\n.md-theme-purple-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-purple-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\nhtml.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-green-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-black-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-black-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-black-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-purple-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-purple-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-purple-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-green-card .md-caption[data-v-6c6e0b12], .md-theme-green-card\n.md-display-1[data-v-6c6e0b12], .md-theme-green-card\n.md-display-2[data-v-6c6e0b12], .md-theme-green-card\n.md-display-3[data-v-6c6e0b12], .md-theme-green-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-green-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-black-card .md-caption[data-v-6c6e0b12], .md-theme-black-card\n.md-display-1[data-v-6c6e0b12], .md-theme-black-card\n.md-display-2[data-v-6c6e0b12], .md-theme-black-card\n.md-display-3[data-v-6c6e0b12], .md-theme-black-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-black-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-purple-card .md-caption[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-1[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-2[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-3[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-purple-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-green-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-green-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-black-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-black-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-purple-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-purple-card-scrollbar-on-background-variant, #757575);\n}\n[data-v-6c6e0b12]:root {\n  --md-theme-orange-card-primary: #ff9800\n    ;\n  --md-theme-orange-card-accent: #ff5252\n    ;\n  --md-theme-orange-card-theme: light\n    ;\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-purple-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-theme-purple-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-theme-orange-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-orange-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-orange-card-text-primary-on-accent, #fff);\n}\n.md-theme-orange-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-orange-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-orange-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #4caf50;\n  color: var(--md-theme-green-card-primary-on-background, #4caf50);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(76, 175, 80, 0.8);\n    color: var(--md-theme-green-card-primary-on-background, rgba(76, 175, 80, 0.8));\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-green-card-accent-on-background, #ff5252);\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-green-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #000;\n  color: var(--md-theme-black-card-primary-on-background, #000);\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(0, 0, 0, 0.8);\n    color: var(--md-theme-black-card-primary-on-background, rgba(0, 0, 0, 0.8));\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-black-card-accent-on-background, #ff5252);\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-black-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-purple-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #9c27b0;\n  color: var(--md-theme-purple-card-primary-on-background, #9c27b0);\n}\n.md-theme-purple-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(156, 39, 176, 0.8);\n    color: var(--md-theme-purple-card-primary-on-background, rgba(156, 39, 176, 0.8));\n}\n.md-theme-purple-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n}\n.md-theme-purple-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-purple-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-orange-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #ff9800;\n  color: var(--md-theme-orange-card-primary-on-background, #ff9800);\n}\n.md-theme-orange-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(255, 152, 0, 0.8);\n    color: var(--md-theme-orange-card-primary-on-background, rgba(255, 152, 0, 0.8));\n}\n.md-theme-orange-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-orange-card-accent-on-background, #ff5252);\n}\n.md-theme-orange-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-orange-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\nhtml.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-green-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-black-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-black-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-black-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-purple-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-purple-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-purple-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-orange-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-orange-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-orange-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-green-card .md-caption[data-v-6c6e0b12], .md-theme-green-card\n.md-display-1[data-v-6c6e0b12], .md-theme-green-card\n.md-display-2[data-v-6c6e0b12], .md-theme-green-card\n.md-display-3[data-v-6c6e0b12], .md-theme-green-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-green-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-black-card .md-caption[data-v-6c6e0b12], .md-theme-black-card\n.md-display-1[data-v-6c6e0b12], .md-theme-black-card\n.md-display-2[data-v-6c6e0b12], .md-theme-black-card\n.md-display-3[data-v-6c6e0b12], .md-theme-black-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-black-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-purple-card .md-caption[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-1[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-2[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-3[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-purple-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-orange-card .md-caption[data-v-6c6e0b12], .md-theme-orange-card\n.md-display-1[data-v-6c6e0b12], .md-theme-orange-card\n.md-display-2[data-v-6c6e0b12], .md-theme-orange-card\n.md-display-3[data-v-6c6e0b12], .md-theme-orange-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-orange-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-green-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-green-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-black-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-black-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-purple-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-purple-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-orange-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-orange-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-orange-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-orange-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-orange-card-scrollbar-on-background-variant, #757575);\n}\n.md-card.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fff;\n  background-color: var(--md-theme-green-card-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-green-card .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n    background-color: #fff;\n    background-color: var(--md-theme-green-card-background, #fff);\n}\n.md-card.md-theme-green-card .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-green-card .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-green-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-green-card .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n    .md-card.md-theme-green-card .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-green-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-green-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-green-card > .md-card-area[data-v-6c6e0b12]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-green-card-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-green-card.md-primary[data-v-6c6e0b12] {\n    background-color: #4caf50;\n    background-color: var(--md-theme-green-card-primary, #4caf50);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-green-card-text-primary-on-primary, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-green-card.md-primary .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #4caf50;\n      background-color: var(--md-theme-green-card-primary, #4caf50);\n}\n.md-card.md-theme-green-card.md-primary .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-green-card.md-primary .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-green-card-text-primary-on-primary, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-green-card.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-green-card.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(0, 0, 0, 0.54);\n        color: var(--md-theme-green-card-text-primary-on-primary, rgba(0, 0, 0, 0.54));\n        fill: rgba(0, 0, 0, 0.54);\n        fill: var(--md-theme-green-card-text-primary-on-primary, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-green-card.md-primary > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-green-card-divider-on-primary, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-green-card.md-accent[data-v-6c6e0b12] {\n    background-color: #ff5252;\n    background-color: var(--md-theme-green-card-accent, #ff5252);\n    color: #fff;\n    color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-green-card.md-accent .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff5252;\n      background-color: var(--md-theme-green-card-accent, #ff5252);\n}\n.md-card.md-theme-green-card.md-accent .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-green-card.md-accent .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-green-card.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-green-card.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-green-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-green-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-green-card.md-accent > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-green-card-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-black-card[data-v-6c6e0b12] {\n  background-color: #fff;\n  background-color: var(--md-theme-black-card-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-black-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-black-card .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n    background-color: #fff;\n    background-color: var(--md-theme-black-card-background, #fff);\n}\n.md-card.md-theme-black-card .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-black-card .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-black-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-black-card .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n    .md-card.md-theme-black-card .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-black-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-black-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-black-card > .md-card-area[data-v-6c6e0b12]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-black-card-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-black-card.md-primary[data-v-6c6e0b12] {\n    background-color: #000;\n    background-color: var(--md-theme-black-card-primary, #000);\n    color: #fff;\n    color: var(--md-theme-black-card-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-black-card.md-primary .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #000;\n      background-color: var(--md-theme-black-card-primary, #000);\n}\n.md-card.md-theme-black-card.md-primary .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-black-card.md-primary .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-black-card-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-black-card.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-black-card.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-black-card-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-black-card-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-black-card.md-primary > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-black-card-divider-on-primary, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-black-card.md-accent[data-v-6c6e0b12] {\n    background-color: #ff5252;\n    background-color: var(--md-theme-black-card-accent, #ff5252);\n    color: #fff;\n    color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-black-card.md-accent .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff5252;\n      background-color: var(--md-theme-black-card-accent, #ff5252);\n}\n.md-card.md-theme-black-card.md-accent .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-black-card.md-accent .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-black-card.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-black-card.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-black-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-black-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-black-card.md-accent > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-black-card-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-purple-card[data-v-6c6e0b12] {\n  background-color: #fff;\n  background-color: var(--md-theme-purple-card-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-purple-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-purple-card .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n    background-color: #fff;\n    background-color: var(--md-theme-purple-card-background, #fff);\n}\n.md-card.md-theme-purple-card .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-purple-card .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-purple-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-purple-card .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n    .md-card.md-theme-purple-card .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-purple-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-purple-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-purple-card > .md-card-area[data-v-6c6e0b12]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-purple-card-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-purple-card.md-primary[data-v-6c6e0b12] {\n    background-color: #9c27b0;\n    background-color: var(--md-theme-purple-card-primary, #9c27b0);\n    color: #fff;\n    color: var(--md-theme-purple-card-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-purple-card.md-primary .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #9c27b0;\n      background-color: var(--md-theme-purple-card-primary, #9c27b0);\n}\n.md-card.md-theme-purple-card.md-primary .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-purple-card.md-primary .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-purple-card-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-purple-card.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-purple-card.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-purple-card-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-purple-card-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-purple-card.md-primary > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-purple-card-divider-on-primary, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-purple-card.md-accent[data-v-6c6e0b12] {\n    background-color: #ff5252;\n    background-color: var(--md-theme-purple-card-accent, #ff5252);\n    color: #fff;\n    color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-purple-card.md-accent .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff5252;\n      background-color: var(--md-theme-purple-card-accent, #ff5252);\n}\n.md-card.md-theme-purple-card.md-accent .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-purple-card.md-accent .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-purple-card.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-purple-card.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-purple-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-purple-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-purple-card.md-accent > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-purple-card-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-orange-card[data-v-6c6e0b12] {\n  background-color: #fff;\n  background-color: var(--md-theme-orange-card-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-orange-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-orange-card .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n    background-color: #fff;\n    background-color: var(--md-theme-orange-card-background, #fff);\n}\n.md-card.md-theme-orange-card .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-orange-card .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-orange-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-orange-card .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n    .md-card.md-theme-orange-card .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-orange-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-orange-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-orange-card > .md-card-area[data-v-6c6e0b12]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-orange-card-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-orange-card.md-primary[data-v-6c6e0b12] {\n    background-color: #ff9800;\n    background-color: var(--md-theme-orange-card-primary, #ff9800);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-orange-card-text-primary-on-primary, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-orange-card.md-primary .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff9800;\n      background-color: var(--md-theme-orange-card-primary, #ff9800);\n}\n.md-card.md-theme-orange-card.md-primary .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-orange-card.md-primary .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-orange-card-text-primary-on-primary, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-orange-card.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-orange-card.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(0, 0, 0, 0.54);\n        color: var(--md-theme-orange-card-text-primary-on-primary, rgba(0, 0, 0, 0.54));\n        fill: rgba(0, 0, 0, 0.54);\n        fill: var(--md-theme-orange-card-text-primary-on-primary, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-orange-card.md-primary > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-orange-card-divider-on-primary, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-orange-card.md-accent[data-v-6c6e0b12] {\n    background-color: #ff5252;\n    background-color: var(--md-theme-orange-card-accent, #ff5252);\n    color: #fff;\n    color: var(--md-theme-orange-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-orange-card.md-accent .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff5252;\n      background-color: var(--md-theme-orange-card-accent, #ff5252);\n}\n.md-card.md-theme-orange-card.md-accent .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-orange-card.md-accent .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-orange-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-orange-card.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-orange-card.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-orange-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-orange-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-orange-card.md-accent > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-orange-card-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-card[data-v-6c6e0b12] {\n  width: 320px;\n  margin: 4px;\n  display: inline-block;\n  vertical-align: top;\n}\n", ""]);
+exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material palette\n * ---\n * @access public\n * @type map\n * @group themes\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * $foo-palette: (\n *   primary: md-get-palette-color(indigo, 500),\n *   accent: md-get-palette-color(pink, 500),\n *   theme: \"light\"\n * );\n *\n * ---\n * @access public\n * ---\n * @param {color} $type —  The desired color based on material palette\n * @param {string} $type —  A valid hue\n */\n/**\n * Get the current theme mode from the current theme\n * ---\n * Usage example:\n *\n * $theme-mode: md-get-theme-mode()\n *\n * ---\n * @access private\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * .md-foo {\n *   min-width: 88px;\n *   height: 40px;\n *   background: md-theme(primary);\n * }\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The themable value\n */\n/**\n * Get a color based on type by theme\n * ---\n * Usage example:\n *\n * $color: md-get-color-by-theme(dark, primary)\n *\n * ---\n * @access public\n * ---\n * @param {string} $color-theme —  The theme color | Accepts dark or light\n * @param {string} $type —  The color type\n */\n/**\n * Get a color based on type only\n * ---\n * Usage example:\n *\n * $color1: md-get-color-by-type(background, dark)\n * $color1: md-get-color-by-type(accent)\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The color type\n * @param {string} $theme —  The fallback theme\n */\n/**\n * The default theme palette\n * primary: indigo 500 #3f51b5\n * accent: pink 500 #e91e63\n * theme: light\n *\n * It can be used just before importing the Vue Material stylesheet\n *\n * ---\n * @access public\n * @type colormap\n * @group themes\n */\n/**\n * Temporary variable to store all themable values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Map variable to store all themes to be processed by each component\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Store the current theme name\n * ---\n * @access private\n * @type string\n * @group themes\n */\n/**\n * The color contrast values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Hightly based on: \"Using Sass to automatically pick text colors\"\n * https://medium.com/dev-channel/using-sass-to-automatically-pick-text-colors-4ba7645d2796\n */\n/**\n * Precomputed linear color channel values, for use in contrast calculations.\n * See https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-tests\n * ---\n *\n *  Algorithm, for c in 0 to 255:\n *  f(c) {\n *    c = c / 255;\n *    return c < 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);\n *  }\n *\n *  This lookup table is needed since there is no `pow` in SASS.\n *\n * ---\n * @access private\n * @type Map\n * @group themes\n */\n/**\n * Calculate the luminance for a color.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The color to be analysed\n */\n/**\n * Calculate the contrast ratio between two colors.\n * ---\n * @access private\n * ---\n * @param {string} $bg —  The bg color\n * @param {string} $fg —  The fg color to be compared\n */\n/**\n * Determine whether to use dark or light text on top of given color.\n * Returns dark or light depending on the contrast ratio.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The desired color to be compared\n */\n/**\n * Override extending the default palette giving new values. It will extend\n * the default values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-override-palette ((\n *   accent: blue,\n *   theme: \"dark\"\n * ))\n *\n * ---\n * @access public\n * @param {map} $palette —  The new palette\n */\n/**\n * Create a new theme based on a given palette. It will extend the default\n * values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-register-theme(\"alternative\", (\n *   primary: #212121,\n *   accent: #CDDC39,\n *   theme: dark\n * ));\n *\n * ---\n * @access public\n * @param {string} $name —  The theme name to be used with the Vue Material\n * @param {map} $palette [$md-default-palette] —  The theme palette\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes.\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     background: md-theme(primary);\n *     color: md-theme(text-primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       background: md-theme(accent);\n *       color: md-theme(text-accent);\n *     };\n *   }\n * }\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes based on parent.\n * ---\n * Usage example:\n *\n * .md-foo {\n *   @include md-theme-component-relative() {\n *     @include md-theme-property(background, primary);\n *   }\n * }\n */\n/**\n * Theme a single css property\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property(background, primary);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       @include md-theme-property(background, accent);\n *       @include md-theme-property(color, text-primary, accent);\n *     }\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {number} $opacity —  The opacity amount\n */\n/**\n * Theme a single css property darkening the color by a certain amount\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-darken(background, primary, background, 10%);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {string} $darken —  The darken amount to apply to the color\n */\n/**\n * Theme a single css property by\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-by-hue(background, grey, 100, toolbar, background);\n *     @include md-theme-property(color, text-primary, background);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $color —  A valid material palette color name\n * @param {string} $hue —  The hue amount to get the hex color\n * @param {string} $type —  The type of variable\n * @param {string} $variant —  The type of constrasted variable\n */\n[data-v-6c6e0b12]:root {\n  --md-theme-green-card-primary: #4caf50\n    ;\n  --md-theme-green-card-accent: #ff5252\n    ;\n  --md-theme-green-card-theme: light\n    ;\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #4caf50;\n  color: var(--md-theme-green-card-primary-on-background, #4caf50);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(76, 175, 80, 0.8);\n    color: var(--md-theme-green-card-primary-on-background, rgba(76, 175, 80, 0.8));\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-green-card-accent-on-background, #ff5252);\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-green-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\nhtml.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-green-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-green-card .md-caption[data-v-6c6e0b12], .md-theme-green-card\n.md-display-1[data-v-6c6e0b12], .md-theme-green-card\n.md-display-2[data-v-6c6e0b12], .md-theme-green-card\n.md-display-3[data-v-6c6e0b12], .md-theme-green-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-green-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-green-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-green-card-scrollbar-on-background-variant, #757575);\n}\n[data-v-6c6e0b12]:root {\n  --md-theme-black-card-primary: #000\n    ;\n  --md-theme-black-card-accent: #ff5252\n    ;\n  --md-theme-black-card-theme: light\n    ;\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #4caf50;\n  color: var(--md-theme-green-card-primary-on-background, #4caf50);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(76, 175, 80, 0.8);\n    color: var(--md-theme-green-card-primary-on-background, rgba(76, 175, 80, 0.8));\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-green-card-accent-on-background, #ff5252);\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-green-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #000;\n  color: var(--md-theme-black-card-primary-on-background, #000);\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(0, 0, 0, 0.8);\n    color: var(--md-theme-black-card-primary-on-background, rgba(0, 0, 0, 0.8));\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-black-card-accent-on-background, #ff5252);\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-black-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\nhtml.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-green-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-black-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-black-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-black-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-green-card .md-caption[data-v-6c6e0b12], .md-theme-green-card\n.md-display-1[data-v-6c6e0b12], .md-theme-green-card\n.md-display-2[data-v-6c6e0b12], .md-theme-green-card\n.md-display-3[data-v-6c6e0b12], .md-theme-green-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-green-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-black-card .md-caption[data-v-6c6e0b12], .md-theme-black-card\n.md-display-1[data-v-6c6e0b12], .md-theme-black-card\n.md-display-2[data-v-6c6e0b12], .md-theme-black-card\n.md-display-3[data-v-6c6e0b12], .md-theme-black-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-black-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-green-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-green-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-black-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-black-card-scrollbar-on-background-variant, #757575);\n}\n[data-v-6c6e0b12]:root {\n  --md-theme-purple-card-primary: #9c27b0\n    ;\n  --md-theme-purple-card-accent: #ff5252\n    ;\n  --md-theme-purple-card-theme: light\n    ;\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-purple-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-theme-purple-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #4caf50;\n  color: var(--md-theme-green-card-primary-on-background, #4caf50);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(76, 175, 80, 0.8);\n    color: var(--md-theme-green-card-primary-on-background, rgba(76, 175, 80, 0.8));\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-green-card-accent-on-background, #ff5252);\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-green-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #000;\n  color: var(--md-theme-black-card-primary-on-background, #000);\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(0, 0, 0, 0.8);\n    color: var(--md-theme-black-card-primary-on-background, rgba(0, 0, 0, 0.8));\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-black-card-accent-on-background, #ff5252);\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-black-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-purple-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #9c27b0;\n  color: var(--md-theme-purple-card-primary-on-background, #9c27b0);\n}\n.md-theme-purple-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(156, 39, 176, 0.8);\n    color: var(--md-theme-purple-card-primary-on-background, rgba(156, 39, 176, 0.8));\n}\n.md-theme-purple-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n}\n.md-theme-purple-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-purple-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\nhtml.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-green-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-black-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-black-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-black-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-purple-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-purple-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-purple-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-green-card .md-caption[data-v-6c6e0b12], .md-theme-green-card\n.md-display-1[data-v-6c6e0b12], .md-theme-green-card\n.md-display-2[data-v-6c6e0b12], .md-theme-green-card\n.md-display-3[data-v-6c6e0b12], .md-theme-green-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-green-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-black-card .md-caption[data-v-6c6e0b12], .md-theme-black-card\n.md-display-1[data-v-6c6e0b12], .md-theme-black-card\n.md-display-2[data-v-6c6e0b12], .md-theme-black-card\n.md-display-3[data-v-6c6e0b12], .md-theme-black-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-black-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-purple-card .md-caption[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-1[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-2[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-3[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-purple-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-green-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-green-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-black-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-black-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-purple-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-purple-card-scrollbar-on-background-variant, #757575);\n}\n[data-v-6c6e0b12]:root {\n  --md-theme-orange-card-primary: #ff9800\n    ;\n  --md-theme-orange-card-accent: #ff5252\n    ;\n  --md-theme-orange-card-theme: light\n    ;\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-green-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-black-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-black-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-theme-purple-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-theme-purple-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-theme-orange-card[data-v-6c6e0b12] :not(input):not(textarea)::-moz-selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-orange-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-orange-card-text-primary-on-accent, #fff);\n}\n.md-theme-orange-card[data-v-6c6e0b12] :not(input):not(textarea)::selection {\n  background-color: #ff5252;\n  background-color: var(--md-theme-orange-card-accent-on-background, #ff5252);\n  color: #fff;\n  color: var(--md-theme-orange-card-text-primary-on-accent, #fff);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #4caf50;\n  color: var(--md-theme-green-card-primary-on-background, #4caf50);\n}\n.md-theme-green-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(76, 175, 80, 0.8);\n    color: var(--md-theme-green-card-primary-on-background, rgba(76, 175, 80, 0.8));\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-green-card-accent-on-background, #ff5252);\n}\n.md-theme-green-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-green-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #000;\n  color: var(--md-theme-black-card-primary-on-background, #000);\n}\n.md-theme-black-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(0, 0, 0, 0.8);\n    color: var(--md-theme-black-card-primary-on-background, rgba(0, 0, 0, 0.8));\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-black-card-accent-on-background, #ff5252);\n}\n.md-theme-black-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-black-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-purple-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #9c27b0;\n  color: var(--md-theme-purple-card-primary-on-background, #9c27b0);\n}\n.md-theme-purple-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(156, 39, 176, 0.8);\n    color: var(--md-theme-purple-card-primary-on-background, rgba(156, 39, 176, 0.8));\n}\n.md-theme-purple-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-purple-card-accent-on-background, #ff5252);\n}\n.md-theme-purple-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-purple-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\n.md-theme-orange-card a[data-v-6c6e0b12]:not(.md-button) {\n  color: #ff9800;\n  color: var(--md-theme-orange-card-primary-on-background, #ff9800);\n}\n.md-theme-orange-card a[data-v-6c6e0b12]:not(.md-button):hover {\n    color: rgba(255, 152, 0, 0.8);\n    color: var(--md-theme-orange-card-primary-on-background, rgba(255, 152, 0, 0.8));\n}\n.md-theme-orange-card a:not(.md-button).md-accent[data-v-6c6e0b12] {\n    color: #ff5252;\n    color: var(--md-theme-orange-card-accent-on-background, #ff5252);\n}\n.md-theme-orange-card a:not(.md-button).md-accent[data-v-6c6e0b12]:hover {\n      color: rgba(255, 82, 82, 0.8);\n      color: var(--md-theme-orange-card-accent-on-background, rgba(255, 82, 82, 0.8));\n}\nhtml.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-green-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-black-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-black-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-black-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-purple-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-purple-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-purple-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-orange-card[data-v-6c6e0b12] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-orange-card-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-orange-card-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-green-card .md-caption[data-v-6c6e0b12], .md-theme-green-card\n.md-display-1[data-v-6c6e0b12], .md-theme-green-card\n.md-display-2[data-v-6c6e0b12], .md-theme-green-card\n.md-display-3[data-v-6c6e0b12], .md-theme-green-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-green-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-black-card .md-caption[data-v-6c6e0b12], .md-theme-black-card\n.md-display-1[data-v-6c6e0b12], .md-theme-black-card\n.md-display-2[data-v-6c6e0b12], .md-theme-black-card\n.md-display-3[data-v-6c6e0b12], .md-theme-black-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-black-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-purple-card .md-caption[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-1[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-2[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-3[data-v-6c6e0b12], .md-theme-purple-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-purple-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-orange-card .md-caption[data-v-6c6e0b12], .md-theme-orange-card\n.md-display-1[data-v-6c6e0b12], .md-theme-orange-card\n.md-display-2[data-v-6c6e0b12], .md-theme-orange-card\n.md-display-3[data-v-6c6e0b12], .md-theme-orange-card\n.md-display-4[data-v-6c6e0b12] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-orange-card-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-green-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-green-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-green-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-black-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-black-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-black-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-purple-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-purple-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-purple-card-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-orange-card[data-v-6c6e0b12]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-orange-card[data-v-6c6e0b12]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-orange-card-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-orange-card[data-v-6c6e0b12]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-orange-card-scrollbar-on-background-variant, #757575);\n}\n.md-card.md-theme-green-card[data-v-6c6e0b12] {\n  background-color: #fff;\n  background-color: var(--md-theme-green-card-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-green-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-green-card .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n    background-color: #fff;\n    background-color: var(--md-theme-green-card-background, #fff);\n}\n.md-card.md-theme-green-card .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-green-card .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-green-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-green-card .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n    .md-card.md-theme-green-card .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-green-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-green-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-green-card > .md-card-area[data-v-6c6e0b12]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-green-card-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-green-card.md-primary[data-v-6c6e0b12] {\n    background-color: #4caf50;\n    background-color: var(--md-theme-green-card-primary, #4caf50);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-green-card-text-primary-on-primary, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-green-card.md-primary .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #4caf50;\n      background-color: var(--md-theme-green-card-primary, #4caf50);\n}\n.md-card.md-theme-green-card.md-primary .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-green-card.md-primary .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-green-card-text-primary-on-primary, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-green-card.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-green-card.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(0, 0, 0, 0.54);\n        color: var(--md-theme-green-card-text-primary-on-primary, rgba(0, 0, 0, 0.54));\n        fill: rgba(0, 0, 0, 0.54);\n        fill: var(--md-theme-green-card-text-primary-on-primary, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-green-card.md-primary > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-green-card-divider-on-primary, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-green-card.md-accent[data-v-6c6e0b12] {\n    background-color: #ff5252;\n    background-color: var(--md-theme-green-card-accent, #ff5252);\n    color: #fff;\n    color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-green-card.md-accent .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff5252;\n      background-color: var(--md-theme-green-card-accent, #ff5252);\n}\n.md-card.md-theme-green-card.md-accent .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-green-card.md-accent .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-green-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-green-card.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-green-card.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-green-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-green-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-green-card.md-accent > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-green-card-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-black-card[data-v-6c6e0b12] {\n  background-color: #fff;\n  background-color: var(--md-theme-black-card-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-black-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-black-card .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n    background-color: #fff;\n    background-color: var(--md-theme-black-card-background, #fff);\n}\n.md-card.md-theme-black-card .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-black-card .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-black-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-black-card .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n    .md-card.md-theme-black-card .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-black-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-black-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-black-card > .md-card-area[data-v-6c6e0b12]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-black-card-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-black-card.md-primary[data-v-6c6e0b12] {\n    background-color: #000;\n    background-color: var(--md-theme-black-card-primary, #000);\n    color: #fff;\n    color: var(--md-theme-black-card-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-black-card.md-primary .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #000;\n      background-color: var(--md-theme-black-card-primary, #000);\n}\n.md-card.md-theme-black-card.md-primary .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-black-card.md-primary .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-black-card-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-black-card.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-black-card.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-black-card-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-black-card-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-black-card.md-primary > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-black-card-divider-on-primary, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-black-card.md-accent[data-v-6c6e0b12] {\n    background-color: #ff5252;\n    background-color: var(--md-theme-black-card-accent, #ff5252);\n    color: #fff;\n    color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-black-card.md-accent .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff5252;\n      background-color: var(--md-theme-black-card-accent, #ff5252);\n}\n.md-card.md-theme-black-card.md-accent .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-black-card.md-accent .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-black-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-black-card.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-black-card.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-black-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-black-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-black-card.md-accent > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-black-card-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-purple-card[data-v-6c6e0b12] {\n  background-color: #fff;\n  background-color: var(--md-theme-purple-card-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-purple-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-purple-card .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n    background-color: #fff;\n    background-color: var(--md-theme-purple-card-background, #fff);\n}\n.md-card.md-theme-purple-card .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-purple-card .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-purple-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-purple-card .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n    .md-card.md-theme-purple-card .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-purple-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-purple-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-purple-card > .md-card-area[data-v-6c6e0b12]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-purple-card-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-purple-card.md-primary[data-v-6c6e0b12] {\n    background-color: #9c27b0;\n    background-color: var(--md-theme-purple-card-primary, #9c27b0);\n    color: #fff;\n    color: var(--md-theme-purple-card-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-purple-card.md-primary .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #9c27b0;\n      background-color: var(--md-theme-purple-card-primary, #9c27b0);\n}\n.md-card.md-theme-purple-card.md-primary .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-purple-card.md-primary .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-purple-card-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-purple-card.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-purple-card.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-purple-card-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-purple-card-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-purple-card.md-primary > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-purple-card-divider-on-primary, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-purple-card.md-accent[data-v-6c6e0b12] {\n    background-color: #ff5252;\n    background-color: var(--md-theme-purple-card-accent, #ff5252);\n    color: #fff;\n    color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-purple-card.md-accent .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff5252;\n      background-color: var(--md-theme-purple-card-accent, #ff5252);\n}\n.md-card.md-theme-purple-card.md-accent .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-purple-card.md-accent .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-purple-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-purple-card.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-purple-card.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-purple-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-purple-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-purple-card.md-accent > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-purple-card-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-orange-card[data-v-6c6e0b12] {\n  background-color: #fff;\n  background-color: var(--md-theme-orange-card-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-orange-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-orange-card .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n    background-color: #fff;\n    background-color: var(--md-theme-orange-card-background, #fff);\n}\n.md-card.md-theme-orange-card .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-orange-card .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-orange-card-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-orange-card .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n    .md-card.md-theme-orange-card .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-orange-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-orange-card-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-orange-card > .md-card-area[data-v-6c6e0b12]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-orange-card-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-orange-card.md-primary[data-v-6c6e0b12] {\n    background-color: #ff9800;\n    background-color: var(--md-theme-orange-card-primary, #ff9800);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-orange-card-text-primary-on-primary, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-orange-card.md-primary .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff9800;\n      background-color: var(--md-theme-orange-card-primary, #ff9800);\n}\n.md-card.md-theme-orange-card.md-primary .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-orange-card.md-primary .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-orange-card-text-primary-on-primary, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-orange-card.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-orange-card.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(0, 0, 0, 0.54);\n        color: var(--md-theme-orange-card-text-primary-on-primary, rgba(0, 0, 0, 0.54));\n        fill: rgba(0, 0, 0, 0.54);\n        fill: var(--md-theme-orange-card-text-primary-on-primary, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-orange-card.md-primary > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-orange-card-divider-on-primary, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-orange-card.md-accent[data-v-6c6e0b12] {\n    background-color: #ff5252;\n    background-color: var(--md-theme-orange-card-accent, #ff5252);\n    color: #fff;\n    color: var(--md-theme-orange-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-orange-card.md-accent .md-card-expand .md-card-actions[data-v-6c6e0b12] {\n      background-color: #ff5252;\n      background-color: var(--md-theme-orange-card-accent, #ff5252);\n}\n.md-card.md-theme-orange-card.md-accent .md-card-header .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-orange-card.md-accent .md-card-actions .md-button[data-v-6c6e0b12]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-orange-card-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-orange-card.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12],\n      .md-card.md-theme-orange-card.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-6c6e0b12] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-orange-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-orange-card-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-orange-card.md-accent > .md-card-area[data-v-6c6e0b12]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-orange-card-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-card[data-v-6c6e0b12] {\n  width: 320px;\n  margin: 4px;\n  display: inline-block;\n  vertical-align: top;\n}\n.card[data-v-6c6e0b12] {\n  -webkit-box-shadow: 0 0 15px -6px black;\n          box-shadow: 0 0 15px -6px black;\n}\n", ""]);
 
 // exports
 
@@ -98851,69 +98852,8 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
 //
@@ -98961,8 +98901,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-    name: 'ThemeColors'
+    data: function data() {
+        return {
+            metrics_list: []
+        };
+    },
+    methods: {
+        fetchData: function fetchData() {
+            var _this = this;
+
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api').then(function (responce) {
+                _this.metrics_list = JSON.parse(responce.data.data);
+                console.log(responce.data.data);
+            });
+        }
+    },
+    created: function created() {
+        this.fetchData();
+    }
 });
 
 /***/ }),
@@ -98973,251 +98931,80 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c(
-        "md-card",
-        { staticClass: "md-accent", attrs: { "md-with-hover": "" } },
-        [
-          _c(
-            "md-ripple",
-            [
-              _c("md-card-header", [
-                _c("div", { staticClass: "md-title" }, [
-                  _vm._v("Accent color")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "md-subhead" }, [
-                  _vm._v("With hover and ripple effects")
-                ])
-              ]),
-              _vm._v(" "),
-              _c("md-card-content", [
-                _vm._v(
-                  "\n                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.\n            "
-                )
-              ]),
-              _vm._v(" "),
-              _c(
-                "md-card-actions",
-                [
-                  _c("md-button", [_vm._v("Action")]),
+  return _c("div", [
+    _c("div", { staticClass: "container" }, [
+      _c("div", { staticClass: "card text-center" }, [
+        _c("div", { staticClass: "card-header" }, [
+          _vm._v("\n                Долгосрочные интересы\n            ")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body p-0" }, [
+          _c("table", { staticClass: "table table-striped" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c(
+              "tbody",
+              _vm._l(this.metrics_list.data, function(item) {
+                return _c("tr", [
+                  _c("td", [_vm._v(_vm._s(item.dimensions[0]["name"]))]),
                   _vm._v(" "),
-                  _c("md-button", [_vm._v("Action")])
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "md-card",
-        {
-          staticClass: "md-primary",
-          attrs: { "md-theme": "purple-card", "md-with-hover": "" }
-        },
-        [
-          _c(
-            "md-ripple",
-            [
-              _c("md-card-header", [
-                _c("div", { staticClass: "md-title" }, [
-                  _vm._v("Purple primary color")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "md-subhead" }, [
-                  _vm._v("With hover and ripple effects")
-                ])
-              ]),
-              _vm._v(" "),
-              _c("md-card-content", [
-                _vm._v(
-                  "\n                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.\n            "
-                )
-              ])
-            ],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "md-card",
-        {
-          staticClass: "md-primary",
-          attrs: { "md-theme": "orange-card", "md-with-hover": "" }
-        },
-        [
-          _c(
-            "md-ripple",
-            [
-              _c("md-card-header", [
-                _c("div", { staticClass: "md-title" }, [
-                  _vm._v("Orange primary color")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "md-subhead" }, [
-                  _vm._v("With hover and ripple effects")
-                ])
-              ]),
-              _vm._v(" "),
-              _c("md-card-content", [
-                _vm._v(
-                  "\n                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.\n            "
-                )
-              ])
-            ],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "md-card",
-        [
-          _c(
-            "md-card-media-cover",
-            { attrs: { "md-text-scrim": "" } },
-            [
-              _c("md-card-media", { attrs: { "md-ratio": "16:9" } }, [
-                _c("img", {
-                  attrs: { src: "/img/card-sky.jpg", alt: "Skyscraper" }
-                })
-              ]),
-              _vm._v(" "),
-              _c(
-                "md-card-area",
-                [
-                  _c("md-card-header", [
-                    _c("span", { staticClass: "md-title" }, [
-                      _vm._v("Gradient background")
-                    ]),
-                    _vm._v(" "),
-                    _c("span", { staticClass: "md-subhead" }, [
-                      _vm._v("16/9 image")
-                    ])
-                  ]),
+                  _c("td", [_vm._v(_vm._s(item.metrics[0]))]),
                   _vm._v(" "),
-                  _c(
-                    "md-card-actions",
-                    [
-                      _c("md-button", [_vm._v("Action")]),
-                      _vm._v(" "),
-                      _c("md-button", [_vm._v("Action")])
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "md-card",
-        [
-          _c(
-            "md-card-media-cover",
-            { attrs: { "md-solid": "" } },
-            [
-              _c("md-card-media", { attrs: { "md-ratio": "4:3" } }, [
-                _c("img", {
-                  attrs: { src: "/img/card-sky.jpg", alt: "Skyscraper" }
-                })
-              ]),
-              _vm._v(" "),
-              _c(
-                "md-card-area",
-                [
-                  _c("md-card-header", [
-                    _c("span", { staticClass: "md-title" }, [
-                      _vm._v("Solid background")
-                    ]),
-                    _vm._v(" "),
-                    _c("span", { staticClass: "md-subhead" }, [
-                      _vm._v("4/3 image")
-                    ])
-                  ])
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "md-card",
-        [
-          _c(
-            "md-card-media-cover",
-            { attrs: { "md-solid": "" } },
-            [
-              _c("md-card-media", { attrs: { "md-ratio": "1:1" } }, [
-                _c("img", {
-                  attrs: { src: "/img/card-sky.jpg", alt: "Skyscraper" }
-                })
-              ]),
-              _vm._v(" "),
-              _c(
-                "md-card-area",
-                [
-                  _c("md-card-header", [
-                    _c("span", { staticClass: "md-title" }, [
-                      _vm._v("Solid background")
-                    ]),
-                    _vm._v(" "),
-                    _c("span", { staticClass: "md-subhead" }, [
-                      _vm._v("1/1 image")
-                    ])
-                  ]),
+                  _c("td", [_vm._v(_vm._s(item.metrics[1]))]),
                   _vm._v(" "),
-                  _c(
-                    "md-card-actions",
-                    [
-                      _c(
-                        "md-button",
-                        { staticClass: "md-icon-button" },
-                        [_c("md-icon", [_vm._v("favorite")])],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "md-button",
-                        { staticClass: "md-icon-button" },
-                        [_c("md-icon", [_vm._v("share")])],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
-            ],
-            1
+                  _c("td", [_vm._v(_vm._s(Math.round(item.metrics[2]) + "%"))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(Math.round(item.metrics[3]) + "%"))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(item.metrics[4].toFixed(2)))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(Math.round(item.metrics[5]) / 100))])
+                ])
+              })
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-footer text-muted" }, [
+          _vm._v(
+            "\n                " +
+              _vm._s(
+                "С " +
+                  this.metrics_list.query.date1 +
+                  " по " +
+                  this.metrics_list.query.date2
+              ) +
+              "\n            "
           )
-        ],
-        1
-      )
-    ],
-    1
-  )
+        ])
+      ])
+    ])
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Категория интересов")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Визиты")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Посетители")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Аффинити‑индекс  ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Отказы")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Глубина просмотра")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Время на сайте")])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -99236,7 +99023,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(185)
 }
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(187)
 /* template */
@@ -99289,7 +99076,7 @@ var content = __webpack_require__(186);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("00b55f7f", content, false, {});
+var update = __webpack_require__(6)("04e56472", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -99324,14 +99111,12 @@ exports.push([module.i, "\n.mt-15[data-v-28170e4c] {\n  margin-top: 15px;\n}\n.m
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_compaing_AddCompany__ = __webpack_require__(188);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_compaing_AddCompany___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_compaing_AddCompany__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_compaing_EditCompany__ = __webpack_require__(217);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_compaing_EditCompany___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_compaing_EditCompany__);
-//
-//
 //
 //
 //
@@ -99440,7 +99225,7 @@ var searchByName = function searchByName(items, term) {
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/companies').then(function (response) {
                 _this.users = response.data.data;
                 _this.searched = _this.users;
-                console.log(_this.users);
+                // console.log(this.users)
             });
         },
         deleteItem: function deleteItem(item) {
@@ -99457,13 +99242,17 @@ var searchByName = function searchByName(items, term) {
             this.showDialog = false;
         },
         showEditForm: function showEditForm(compaing) {
-
             this.editCompain = compaing;
             this.showDialog = true;
         },
         LogSave: function LogSave(data) {
+            var _this3 = this;
+
             this.lastUser = data.data;
             this.userSaved = true;
+            window.setTimeout(function () {
+                _this3.userSaved = false;
+            }, 1500);
         }
     },
     created: function created() {
@@ -99480,7 +99269,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(189)
 }
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(191)
 /* template */
@@ -99533,7 +99322,7 @@ var content = __webpack_require__(190);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("35552a42", content, false, {});
+var update = __webpack_require__(6)("f6423e3c", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -99568,56 +99357,12 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(142);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(144);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -99694,7 +99439,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 signature: null,
                 sig: null,
                 url: null,
-                tm_id: null
+                trigger: null
             },
             userSaved: false,
             sending: false,
@@ -99703,28 +99448,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     validations: {
         form: {
-            // id_client: {
-            //     required,
-            // },
-            // id_campaign: {
-            //     required,
-            // },
-            // password: {
-            //     required,
-            //     minLength: minLength(6)
-            // },
-            // signature: {
-            //     required
-            // },
-            // sig: {
-            //     required
-            // },
+
             url: {
                 required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
             }
-            // tm_id: {
-            //     required
-            // },
         }
     },
     methods: {
@@ -99746,13 +99473,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.form.sig = null;
             this.form.url = null;
             this.form.sig = null;
-            this.form.tm_id = null;
+            this.form.trigger = null;
         },
         savePixel: function savePixel() {
             var _this = this;
 
             this.sending = true;
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/companies', this.form).then(function (response) {
+
                 _this.form = response.data.data;
 
                 _this.$emit('AddCompaing', { data: _this.form });
@@ -99963,7 +99691,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var withParams = Object({"MIX_PUSHER_APP_KEY":"","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).BUILD === 'web' ? __webpack_require__(195).withParams : __webpack_require__(143).withParams;
+var withParams = Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).BUILD === 'web' ? __webpack_require__(195).withParams : __webpack_require__(144).withParams;
 var _default = withParams;
 exports.default = _default;
 
@@ -99993,7 +99721,7 @@ var fakeWithParams = function fakeWithParams(paramsOrClosure, maybeValidator) {
 
 var withParams = root.vuelidate ? root.vuelidate.withParams : fakeWithParams;
 exports.withParams = withParams;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
 /* 196 */
@@ -100552,24 +100280,51 @@ var render = function() {
                     }
                   },
                   [
-                    _c("div", { staticClass: "md-title" }, [
-                      _vm._v("Добавить Pixel")
-                    ]),
-                    _vm._v(" "),
                     _c(
-                      "md-card-expand-trigger",
+                      "div",
+                      {
+                        staticClass:
+                          "md-layout md-gutter md-alignment-center-space-between"
+                      },
                       [
                         _c(
-                          "md-button",
-                          { staticClass: "md-icon-button" },
-                          [_c("md-icon", [_vm._v("keyboard_arrow_down")])],
+                          "div",
+                          { staticClass: "md-layout-item md-size-90" },
+                          [
+                            _c("div", { staticClass: "md-title" }, [
+                              _vm._v("Добавить Pixel")
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            staticClass: "md-layout-item md-size-10 text-right"
+                          },
+                          [
+                            _c(
+                              "md-card-expand-trigger",
+                              [
+                                _c(
+                                  "md-button",
+                                  { staticClass: "md-icon-button" },
+                                  [
+                                    _c("md-icon", [
+                                      _vm._v("keyboard_arrow_down")
+                                    ])
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ],
                           1
                         )
-                      ],
-                      1
+                      ]
                     )
-                  ],
-                  1
+                  ]
                 ),
                 _vm._v(" "),
                 _c("md-card-expand-content", [
@@ -100706,7 +100461,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(218)
 }
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(220)
 /* template */
@@ -100759,7 +100514,7 @@ var content = __webpack_require__(219);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("48de28e9", content, false, {});
+var update = __webpack_require__(6)("2ae9736e", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -100794,11 +100549,11 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(142);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(144);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
 //
 //
@@ -100926,10 +100681,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
             url: {
                 required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
-            },
-            tm_id: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
             }
+            // trigger: {
+            //     required
+            // },
         }
     },
     methods: {
@@ -100949,6 +100704,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/companies/' + this.form.id, this.form).then(function (response) {
                 console.log(response.data);
                 _this.$emit('editCompanyE');
+                _this.lastUser = '' + _this.form.url;
+                _this.$emit('ShowLogSave', { data: _this.lastUser });
             });
 
             window.setTimeout(function () {
@@ -100965,12 +100722,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         close: function close() {
             this.$emit('CloseDialog');
-        },
-        showSave: function showSave() {
-            this.lastUser = '' + this.form.url;
-            console.log(this.lastUser);
-            console.log('lastUser');
-            this.$emit('ShowLogSave', { data: this.lastUser });
         }
     }
 });
@@ -101300,54 +101051,6 @@ var render = function() {
                     )
                   ],
                   1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("tm_id"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "tm_id" } }, [
-                          _vm._v("tm_id")
-                        ]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            type: "number",
-                            id: "tm_id",
-                            name: "age",
-                            autocomplete: "age",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.tm_id,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "tm_id", $$v)
-                            },
-                            expression: "form.tm_id"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.tm_id.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The tm_id is required")
-                            ])
-                          : !_vm.$v.form.tm_id.maxlength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid tm_id")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
                 )
               ])
             ]),
@@ -101377,8 +101080,7 @@ var render = function() {
                       type: "submit",
                       "md-theme": "myTheme",
                       disabled: _vm.sending
-                    },
-                    on: { click: _vm.showSave }
+                    }
                   },
                   [_vm._v("Сохранить")]
                 )
@@ -101493,11 +101195,29 @@ var render = function() {
                               "md-table-cell",
                               {
                                 attrs: {
-                                  "md-label": "sig",
-                                  "md-sort-by": "sig"
+                                  "md-label": "url",
+                                  "md-sort-by": "url"
                                 }
                               },
-                              [_vm._v(_vm._s(item.sig))]
+                              [
+                                _c(
+                                  "router-link",
+                                  {
+                                    staticClass: "nav-link active",
+                                    attrs: {
+                                      to: {
+                                        name: "containers",
+                                        params: {
+                                          id: item.id_campaign,
+                                          url: item.url
+                                        }
+                                      }
+                                    }
+                                  },
+                                  [_vm._v(_vm._s(item.url))]
+                                )
+                              ],
+                              1
                             ),
                             _vm._v(" "),
                             _c(
@@ -101515,37 +101235,22 @@ var render = function() {
                               "md-table-cell",
                               {
                                 attrs: {
-                                  "md-label": "url",
-                                  "md-sort-by": "url"
+                                  "md-label": "sig",
+                                  "md-sort-by": "sig"
                                 }
                               },
-                              [_vm._v(_vm._s(item.url))]
+                              [_vm._v(_vm._s(item.sig))]
                             ),
                             _vm._v(" "),
                             _c(
                               "md-table-cell",
                               {
                                 attrs: {
-                                  "md-label": "tm_id",
-                                  "md-sort-by": "tm_id"
+                                  "md-label": "trigger",
+                                  "md-sort-by": "trigger"
                                 }
                               },
-                              [
-                                _c(
-                                  "router-link",
-                                  {
-                                    staticClass: "nav-link active",
-                                    attrs: {
-                                      to: {
-                                        name: "containers",
-                                        params: { id: item.tm_id }
-                                      }
-                                    }
-                                  },
-                                  [_vm._v(_vm._s(item.tm_id))]
-                                )
-                              ],
-                              1
+                              [_vm._v(_vm._s(item.trigger))]
                             ),
                             _vm._v(" "),
                             _c(
@@ -101706,7 +101411,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(224)
 /* template */
@@ -101754,7 +101459,7 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
@@ -101997,11 +101702,11 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(227)
 }
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(4)
 /* script */
 var __vue_script__ = __webpack_require__(229)
 /* template */
-var __vue_template__ = __webpack_require__(230)
+var __vue_template__ = __webpack_require__(235)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -102050,13 +101755,13 @@ var content = __webpack_require__(228);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("b42b6996", content, false, {});
+var update = __webpack_require__(6)("1a9e0828", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5a15a971\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Containers.vue", function() {
-     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5a15a971\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Containers.vue");
+   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5a15a971\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/sass-loader/lib/loader.js!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Containers.vue", function() {
+     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5a15a971\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/sass-loader/lib/loader.js!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Containers.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -102074,7 +101779,7 @@ exports = module.exports = __webpack_require__(5)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/*.card-expansion {*/\n    /*height: 480px;*/\n/*}*/\n.md-card[data-v-5a15a971] {\n    width: 500px;\n    margin: 4px;\n    display: inline-block;\n    vertical-align: top;\n}\n.md-content[data-v-5a15a971] {\n    max-width: 500px;\n    max-height: 200px;\n    overflow: auto;\n    background: #282c33;\n}\n", ""]);
+exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material palette\n * ---\n * @access public\n * @type map\n * @group themes\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * $foo-palette: (\n *   primary: md-get-palette-color(indigo, 500),\n *   accent: md-get-palette-color(pink, 500),\n *   theme: \"light\"\n * );\n *\n * ---\n * @access public\n * ---\n * @param {color} $type —  The desired color based on material palette\n * @param {string} $type —  A valid hue\n */\n/**\n * Get the current theme mode from the current theme\n * ---\n * Usage example:\n *\n * $theme-mode: md-get-theme-mode()\n *\n * ---\n * @access private\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * .md-foo {\n *   min-width: 88px;\n *   height: 40px;\n *   background: md-theme(primary);\n * }\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The themable value\n */\n/**\n * Get a color based on type by theme\n * ---\n * Usage example:\n *\n * $color: md-get-color-by-theme(dark, primary)\n *\n * ---\n * @access public\n * ---\n * @param {string} $color-theme —  The theme color | Accepts dark or light\n * @param {string} $type —  The color type\n */\n/**\n * Get a color based on type only\n * ---\n * Usage example:\n *\n * $color1: md-get-color-by-type(background, dark)\n * $color1: md-get-color-by-type(accent)\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The color type\n * @param {string} $theme —  The fallback theme\n */\n/**\n * The default theme palette\n * primary: indigo 500 #3f51b5\n * accent: pink 500 #e91e63\n * theme: light\n *\n * It can be used just before importing the Vue Material stylesheet\n *\n * ---\n * @access public\n * @type colormap\n * @group themes\n */\n/**\n * Temporary variable to store all themable values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Map variable to store all themes to be processed by each component\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Store the current theme name\n * ---\n * @access private\n * @type string\n * @group themes\n */\n/**\n * The color contrast values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Hightly based on: \"Using Sass to automatically pick text colors\"\n * https://medium.com/dev-channel/using-sass-to-automatically-pick-text-colors-4ba7645d2796\n */\n/**\n * Precomputed linear color channel values, for use in contrast calculations.\n * See https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-tests\n * ---\n *\n *  Algorithm, for c in 0 to 255:\n *  f(c) {\n *    c = c / 255;\n *    return c < 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);\n *  }\n *\n *  This lookup table is needed since there is no `pow` in SASS.\n *\n * ---\n * @access private\n * @type Map\n * @group themes\n */\n/**\n * Calculate the luminance for a color.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The color to be analysed\n */\n/**\n * Calculate the contrast ratio between two colors.\n * ---\n * @access private\n * ---\n * @param {string} $bg —  The bg color\n * @param {string} $fg —  The fg color to be compared\n */\n/**\n * Determine whether to use dark or light text on top of given color.\n * Returns dark or light depending on the contrast ratio.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The desired color to be compared\n */\n/**\n * Override extending the default palette giving new values. It will extend\n * the default values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-override-palette ((\n *   accent: blue,\n *   theme: \"dark\"\n * ))\n *\n * ---\n * @access public\n * @param {map} $palette —  The new palette\n */\n/**\n * Create a new theme based on a given palette. It will extend the default\n * values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-register-theme(\"alternative\", (\n *   primary: #212121,\n *   accent: #CDDC39,\n *   theme: dark\n * ));\n *\n * ---\n * @access public\n * @param {string} $name —  The theme name to be used with the Vue Material\n * @param {map} $palette [$md-default-palette] —  The theme palette\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes.\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     background: md-theme(primary);\n *     color: md-theme(text-primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       background: md-theme(accent);\n *       color: md-theme(text-accent);\n *     };\n *   }\n * }\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes based on parent.\n * ---\n * Usage example:\n *\n * .md-foo {\n *   @include md-theme-component-relative() {\n *     @include md-theme-property(background, primary);\n *   }\n * }\n */\n/**\n * Theme a single css property\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property(background, primary);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       @include md-theme-property(background, accent);\n *       @include md-theme-property(color, text-primary, accent);\n *     }\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {number} $opacity —  The opacity amount\n */\n/**\n * Theme a single css property darkening the color by a certain amount\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-darken(background, primary, background, 10%);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {string} $darken —  The darken amount to apply to the color\n */\n/**\n * Theme a single css property by\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-by-hue(background, grey, 100, toolbar, background);\n *     @include md-theme-property(color, text-primary, background);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $color —  A valid material palette color name\n * @param {string} $hue —  The hue amount to get the hex color\n * @param {string} $type —  The type of variable\n * @param {string} $variant —  The type of constrasted variable\n */\n[data-v-5a15a971]:root {\n  --md-theme-myTheme-primary: #616161\n    ;\n  --md-theme-myTheme-accent: #616161\n    ;\n  --md-theme-myTheme-theme: light\n    ;\n}\n.md-theme-myTheme[data-v-5a15a971] :not(input):not(textarea)::-moz-selection {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent-on-background, #616161);\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myTheme[data-v-5a15a971] :not(input):not(textarea)::selection {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent-on-background, #616161);\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myTheme a[data-v-5a15a971]:not(.md-button) {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-theme-myTheme a[data-v-5a15a971]:not(.md-button):hover {\n    color: rgba(97, 97, 97, 0.8);\n    color: var(--md-theme-myTheme-primary-on-background, rgba(97, 97, 97, 0.8));\n}\n.md-theme-myTheme a:not(.md-button).md-accent[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-theme-myTheme a:not(.md-button).md-accent[data-v-5a15a971]:hover {\n      color: rgba(97, 97, 97, 0.8);\n      color: var(--md-theme-myTheme-accent-on-background, rgba(97, 97, 97, 0.8));\n}\nhtml.md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-myTheme-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-myTheme .md-caption[data-v-5a15a971], .md-theme-myTheme\n.md-display-1[data-v-5a15a971], .md-theme-myTheme\n.md-display-2[data-v-5a15a971], .md-theme-myTheme\n.md-display-3[data-v-5a15a971], .md-theme-myTheme\n.md-display-4[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-myTheme[data-v-5a15a971]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-myTheme[data-v-5a15a971]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-myTheme-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-myTheme[data-v-5a15a971]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-myTheme-scrollbar-on-background-variant, #757575);\n}\n[data-v-5a15a971]:root {\n  --md-theme-myBtnTheme-primary: #E53935\n    ;\n  --md-theme-myBtnTheme-accent: #616161\n    ;\n  --md-theme-myBtnTheme-theme: light\n    ;\n}\n.md-theme-myTheme[data-v-5a15a971] :not(input):not(textarea)::-moz-selection {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent-on-background, #616161);\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myTheme[data-v-5a15a971] :not(input):not(textarea)::selection {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent-on-background, #616161);\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myBtnTheme[data-v-5a15a971] :not(input):not(textarea)::-moz-selection {\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n  color: #fff;\n  color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myBtnTheme[data-v-5a15a971] :not(input):not(textarea)::selection {\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n  color: #fff;\n  color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myTheme a[data-v-5a15a971]:not(.md-button) {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-theme-myTheme a[data-v-5a15a971]:not(.md-button):hover {\n    color: rgba(97, 97, 97, 0.8);\n    color: var(--md-theme-myTheme-primary-on-background, rgba(97, 97, 97, 0.8));\n}\n.md-theme-myTheme a:not(.md-button).md-accent[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-theme-myTheme a:not(.md-button).md-accent[data-v-5a15a971]:hover {\n      color: rgba(97, 97, 97, 0.8);\n      color: var(--md-theme-myTheme-accent-on-background, rgba(97, 97, 97, 0.8));\n}\n.md-theme-myBtnTheme a[data-v-5a15a971]:not(.md-button) {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-theme-myBtnTheme a[data-v-5a15a971]:not(.md-button):hover {\n    color: rgba(229, 57, 53, 0.8);\n    color: var(--md-theme-myBtnTheme-primary-on-background, rgba(229, 57, 53, 0.8));\n}\n.md-theme-myBtnTheme a:not(.md-button).md-accent[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-theme-myBtnTheme a:not(.md-button).md-accent[data-v-5a15a971]:hover {\n      color: rgba(97, 97, 97, 0.8);\n      color: var(--md-theme-myBtnTheme-accent-on-background, rgba(97, 97, 97, 0.8));\n}\nhtml.md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-myTheme-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\nhtml.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-myBtnTheme-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-myTheme .md-caption[data-v-5a15a971], .md-theme-myTheme\n.md-display-1[data-v-5a15a971], .md-theme-myTheme\n.md-display-2[data-v-5a15a971], .md-theme-myTheme\n.md-display-3[data-v-5a15a971], .md-theme-myTheme\n.md-display-4[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-theme-myBtnTheme .md-caption[data-v-5a15a971], .md-theme-myBtnTheme\n.md-display-1[data-v-5a15a971], .md-theme-myBtnTheme\n.md-display-2[data-v-5a15a971], .md-theme-myBtnTheme\n.md-display-3[data-v-5a15a971], .md-theme-myBtnTheme\n.md-display-4[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myBtnTheme-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-myTheme[data-v-5a15a971]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-myTheme[data-v-5a15a971]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-myTheme-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-myTheme[data-v-5a15a971]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-myTheme-scrollbar-on-background-variant, #757575);\n}\n.md-scrollbar.md-theme-myBtnTheme[data-v-5a15a971]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-myBtnTheme[data-v-5a15a971]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-myBtnTheme-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-myBtnTheme[data-v-5a15a971]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-myBtnTheme-scrollbar-on-background-variant, #757575);\n}\n.md-app:not(.md-overlap).md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-app:not(.md-overlap).md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n}\n.md-list.md-theme-myTheme .md-autocomplete-items .md-highlight-text-match[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-list.md-theme-myTheme .md-autocomplete-loading[data-v-5a15a971] {\n  background-color: rgba(255, 255, 255, 0.54);\n  background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.54));\n}\n.md-list.md-theme-myBtnTheme .md-autocomplete-items .md-highlight-text-match[data-v-5a15a971] {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-list.md-theme-myBtnTheme .md-autocomplete-loading[data-v-5a15a971] {\n  background-color: rgba(255, 255, 255, 0.54);\n  background-color: var(--md-theme-myBtnTheme-background, rgba(255, 255, 255, 0.54));\n}\n.md-autocomplete.md-theme-myTheme.md-autocomplete-box[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused label[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.38);\n    color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box[data-v-5a15a971] {\n    background-color: rgba(255, 255, 255, 0.12);\n    background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.12));\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box label[data-v-5a15a971],\n    .md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box input[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      -webkit-text-fill-color: #fff;\n      -webkit-text-fill-color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box svg[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused[data-v-5a15a971] {\n      background-color: #fff;\n      background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused label[data-v-5a15a971],\n      .md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused input[data-v-5a15a971] {\n        color: rgba(0, 0, 0, 0.38);\n        color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n        -webkit-text-fill-color: rgba(0, 0, 0, 0.38);\n        -webkit-text-fill-color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.38);\n        fill: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n}\n.md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box.md-focused label[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.38);\n    color: var(--md-theme-myBtnTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-toolbar .md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box[data-v-5a15a971] {\n    background-color: rgba(255, 255, 255, 0.12);\n    background-color: var(--md-theme-myBtnTheme-background, rgba(255, 255, 255, 0.12));\n}\n.md-toolbar .md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box label[data-v-5a15a971],\n    .md-toolbar .md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box input[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n      -webkit-text-fill-color: #fff;\n      -webkit-text-fill-color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box svg[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box.md-focused[data-v-5a15a971] {\n      background-color: #fff;\n      background-color: var(--md-theme-myBtnTheme-background, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box.md-focused label[data-v-5a15a971],\n      .md-toolbar .md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box.md-focused input[data-v-5a15a971] {\n        color: rgba(0, 0, 0, 0.38);\n        color: var(--md-theme-myBtnTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n        -webkit-text-fill-color: rgba(0, 0, 0, 0.38);\n        -webkit-text-fill-color: var(--md-theme-myBtnTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-toolbar .md-autocomplete.md-theme-myBtnTheme.md-autocomplete-box.md-focused svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.38);\n        fill: var(--md-theme-myBtnTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-autocomplete-box-content.md-theme-myTheme[data-v-5a15a971]:after {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  border-bottom-color: rgba(0, 0, 0, 0.12);\n  border-bottom-color: var(--md-theme-myTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-autocomplete-box-content.md-theme-myBtnTheme[data-v-5a15a971]:after {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n  border-bottom-color: rgba(0, 0, 0, 0.12);\n  border-bottom-color: var(--md-theme-myBtnTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-avatar.md-theme-myTheme.md-avatar-icon[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.38);\n  background-color: var(--md-theme-myTheme-icon-disabled, rgba(0, 0, 0, 0.38));\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-icon-disabled, #fff);\n}\n.md-avatar.md-theme-myTheme.md-avatar-icon .md-icon[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-icon-disabled, #fff);\n    fill: #fff;\n    fill: var(--md-theme-myTheme-text-primary-on-icon-disabled, #fff);\n}\n.md-avatar.md-theme-myTheme.md-primary[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-avatar.md-theme-myTheme.md-primary.md-avatar-icon[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-avatar.md-theme-myTheme.md-primary.md-avatar-icon .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-avatar.md-theme-myTheme.md-accent[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-avatar.md-theme-myTheme.md-accent.md-avatar-icon[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-avatar.md-theme-myTheme.md-accent.md-avatar-icon .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-avatar.md-theme-myBtnTheme.md-avatar-icon[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.38);\n  background-color: var(--md-theme-myBtnTheme-icon-disabled, rgba(0, 0, 0, 0.38));\n  color: #fff;\n  color: var(--md-theme-myBtnTheme-text-primary-on-icon-disabled, #fff);\n}\n.md-avatar.md-theme-myBtnTheme.md-avatar-icon .md-icon[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-icon-disabled, #fff);\n    fill: #fff;\n    fill: var(--md-theme-myBtnTheme-text-primary-on-icon-disabled, #fff);\n}\n.md-avatar.md-theme-myBtnTheme.md-primary[data-v-5a15a971] {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-avatar.md-theme-myBtnTheme.md-primary.md-avatar-icon[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-avatar.md-theme-myBtnTheme.md-primary.md-avatar-icon .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-avatar.md-theme-myBtnTheme.md-accent[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-avatar.md-theme-myBtnTheme.md-accent.md-avatar-icon[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myBtnTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-avatar.md-theme-myBtnTheme.md-accent.md-avatar-icon .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed .md-bottom-bar-item.md-active[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed .md-bottom-bar-item.md-active .md-icon[data-v-5a15a971] {\n      color: #616161;\n      color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed .md-bottom-bar-item.md-active .md-icon svg[data-v-5a15a971] {\n        fill: #616161;\n        fill: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary, #616161);\n  color: rgba(255, 255, 255, 0.7);\n  color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift > .md-ripple .md-ripple-wave[data-v-5a15a971] {\n    background-color: #484848;\n    background-color: var(--md-theme-myTheme-primary-on-primary, #484848);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-icon[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myTheme-icon-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-icon svg[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-icon-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-bottom-bar-item[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-bottom-bar-item .md-active .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-bottom-bar-item .md-active .md-icon svg[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active .md-icon[data-v-5a15a971] {\n      color: #616161;\n      color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active .md-icon svg[data-v-5a15a971] {\n        fill: #616161;\n        fill: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent, #616161);\n  color: rgba(255, 255, 255, 0.7);\n  color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift > .md-ripple .md-ripple-wave[data-v-5a15a971] {\n    background-color: #484848;\n    background-color: var(--md-theme-myTheme-accent-on-accent, #484848);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-icon[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myTheme-icon-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-icon svg[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-icon-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-bottom-bar-item[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-bottom-bar-item .md-active .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-bottom-bar-item .md-active .md-icon svg[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-fixed[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-fixed .md-bottom-bar-item.md-active[data-v-5a15a971] {\n    color: #E53935;\n    color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-fixed .md-bottom-bar-item.md-active .md-icon[data-v-5a15a971] {\n      color: #E53935;\n      color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-fixed .md-bottom-bar-item.md-active .md-icon svg[data-v-5a15a971] {\n        fill: #E53935;\n        fill: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-shift[data-v-5a15a971] {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n  color: rgba(255, 255, 255, 0.7);\n  color: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-shift > .md-ripple .md-ripple-wave[data-v-5a15a971] {\n    background-color: #cd1e1a;\n    background-color: var(--md-theme-myBtnTheme-primary-on-primary, #cd1e1a);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-shift .md-icon[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-icon-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-shift .md-icon svg[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myBtnTheme-icon-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-shift .md-bottom-bar-item[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-shift .md-bottom-bar-item .md-active .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-type-shift .md-bottom-bar-item .md-active .md-icon svg[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-fixed[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active .md-icon[data-v-5a15a971] {\n      color: #616161;\n      color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active .md-icon svg[data-v-5a15a971] {\n        fill: #616161;\n        fill: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-shift[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent, #616161);\n  color: rgba(255, 255, 255, 0.7);\n  color: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-shift > .md-ripple .md-ripple-wave[data-v-5a15a971] {\n    background-color: #484848;\n    background-color: var(--md-theme-myBtnTheme-accent-on-accent, #484848);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-shift .md-icon[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-icon-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-shift .md-icon svg[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myBtnTheme-icon-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-shift .md-bottom-bar-item[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-shift .md-bottom-bar-item .md-active .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myBtnTheme.md-accent.md-type-shift .md-bottom-bar-item .md-active .md-icon svg[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-button.md-theme-myTheme.md-primary[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-button.md-theme-myTheme.md-primary .md-icon-font[data-v-5a15a971] {\n      color: #616161;\n      color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-button.md-theme-myTheme.md-primary .md-icon-image[data-v-5a15a971] {\n      fill: #616161;\n      fill: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-button.md-theme-myTheme.md-accent[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-button.md-theme-myTheme.md-accent .md-icon-font[data-v-5a15a971] {\n      color: #616161;\n      color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-button.md-theme-myTheme.md-accent .md-icon-image[data-v-5a15a971] {\n      fill: #616161;\n      fill: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-button.md-theme-myTheme.md-raised[disabled][data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-disabled-background-on-background, rgba(0, 0, 0, 0.12));\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-button.md-theme-myTheme.md-raised[data-v-5a15a971]:not([disabled]) {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-primary[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      background-color: #616161;\n      background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-primary .md-icon-font[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-primary .md-icon-image[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-accent[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n      background-color: #616161;\n      background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-accent .md-icon-font[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-accent .md-icon-image[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-fab[disabled][data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-disabled-background-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-button.md-theme-myTheme.md-fab[data-v-5a15a971]:not([disabled]) {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]) .md-icon-font[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]) .md-icon-image[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]).md-primary[data-v-5a15a971] {\n      background-color: #616161;\n      background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]).md-primary .md-icon-font[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]).md-primary .md-icon-image[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme[disabled][data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-button.md-theme-myTheme[disabled] .md-icon-font[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myTheme-icon-disabled-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-button.md-theme-myTheme[disabled] .md-icon-image[data-v-5a15a971] {\n      fill: rgba(0, 0, 0, 0.38);\n      fill: var(--md-theme-myTheme-icon-disabled-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-button.md-theme-myBtnTheme[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-button.md-theme-myBtnTheme.md-primary[data-v-5a15a971] {\n    color: #E53935;\n    color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-button.md-theme-myBtnTheme.md-primary .md-icon-font[data-v-5a15a971] {\n      color: #E53935;\n      color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-button.md-theme-myBtnTheme.md-primary .md-icon-image[data-v-5a15a971] {\n      fill: #E53935;\n      fill: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-button.md-theme-myBtnTheme.md-accent[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-button.md-theme-myBtnTheme.md-accent .md-icon-font[data-v-5a15a971] {\n      color: #616161;\n      color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-button.md-theme-myBtnTheme.md-accent .md-icon-image[data-v-5a15a971] {\n      fill: #616161;\n      fill: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-button.md-theme-myBtnTheme.md-raised[disabled][data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myBtnTheme-disabled-background-on-background, rgba(0, 0, 0, 0.12));\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myBtnTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-button.md-theme-myBtnTheme.md-raised[data-v-5a15a971]:not([disabled]) {\n    background-color: #fff;\n    background-color: var(--md-theme-myBtnTheme-background, #fff);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-button.md-theme-myBtnTheme.md-raised:not([disabled]).md-primary[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n      background-color: #E53935;\n      background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-button.md-theme-myBtnTheme.md-raised:not([disabled]).md-primary .md-icon-font[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myBtnTheme.md-raised:not([disabled]).md-primary .md-icon-image[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myBtnTheme.md-raised:not([disabled]).md-accent[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n      background-color: #616161;\n      background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-button.md-theme-myBtnTheme.md-raised:not([disabled]).md-accent .md-icon-font[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myBtnTheme.md-raised:not([disabled]).md-accent .md-icon-image[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myBtnTheme.md-fab[disabled][data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myBtnTheme-disabled-background-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-button.md-theme-myBtnTheme.md-fab[data-v-5a15a971]:not([disabled]) {\n    background-color: #616161;\n    background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-button.md-theme-myBtnTheme.md-fab:not([disabled]) .md-icon-font[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myBtnTheme.md-fab:not([disabled]) .md-icon-image[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myBtnTheme.md-fab:not([disabled]).md-primary[data-v-5a15a971] {\n      background-color: #E53935;\n      background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-button.md-theme-myBtnTheme.md-fab:not([disabled]).md-primary .md-icon-font[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myBtnTheme.md-fab:not([disabled]).md-primary .md-icon-image[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myBtnTheme[disabled][data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myBtnTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-button.md-theme-myBtnTheme[disabled] .md-icon-font[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myBtnTheme-icon-disabled-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-button.md-theme-myBtnTheme[disabled] .md-icon-image[data-v-5a15a971] {\n      fill: rgba(0, 0, 0, 0.38);\n      fill: var(--md-theme-myBtnTheme-icon-disabled-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-card.md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-myTheme .md-card-expand .md-card-actions[data-v-5a15a971] {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-card.md-theme-myTheme .md-card-header .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-myTheme .md-card-actions .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-myTheme .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971],\n    .md-card.md-theme-myTheme .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-myTheme > .md-card-area[data-v-5a15a971]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-myTheme.md-primary[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-myTheme.md-primary .md-card-expand .md-card-actions[data-v-5a15a971] {\n      background-color: #616161;\n      background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-card.md-theme-myTheme.md-primary .md-card-header .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-myTheme.md-primary .md-card-actions .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-myTheme.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971],\n      .md-card.md-theme-myTheme.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-myTheme.md-primary > .md-card-area[data-v-5a15a971]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-primary, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-myTheme.md-accent[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-myTheme.md-accent .md-card-expand .md-card-actions[data-v-5a15a971] {\n      background-color: #616161;\n      background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-card.md-theme-myTheme.md-accent .md-card-header .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-myTheme.md-accent .md-card-actions .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-myTheme.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971],\n      .md-card.md-theme-myTheme.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-myTheme.md-accent > .md-card-area[data-v-5a15a971]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-myBtnTheme .md-card-expand .md-card-actions[data-v-5a15a971] {\n    background-color: #fff;\n    background-color: var(--md-theme-myBtnTheme-background, #fff);\n}\n.md-card.md-theme-myBtnTheme .md-card-header .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-myBtnTheme .md-card-actions .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-myBtnTheme .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971],\n    .md-card.md-theme-myBtnTheme .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-myBtnTheme > .md-card-area[data-v-5a15a971]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-myBtnTheme.md-primary[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-myBtnTheme.md-primary .md-card-expand .md-card-actions[data-v-5a15a971] {\n      background-color: #E53935;\n      background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-card.md-theme-myBtnTheme.md-primary .md-card-header .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-myBtnTheme.md-primary .md-card-actions .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-myBtnTheme.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971],\n      .md-card.md-theme-myBtnTheme.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-myBtnTheme.md-primary > .md-card-area[data-v-5a15a971]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-myBtnTheme-divider-on-primary, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-myBtnTheme.md-accent[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myBtnTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-myBtnTheme.md-accent .md-card-expand .md-card-actions[data-v-5a15a971] {\n      background-color: #616161;\n      background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-card.md-theme-myBtnTheme.md-accent .md-card-header .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-myBtnTheme.md-accent .md-card-actions .md-button[data-v-5a15a971]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-myBtnTheme.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971],\n      .md-card.md-theme-myBtnTheme.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5a15a971] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-myBtnTheme.md-accent > .md-card-area[data-v-5a15a971]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-myBtnTheme-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-checkbox.md-theme-myTheme.md-checked .md-checkbox-container[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent, #616161);\n  border-color: #616161;\n  border-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-checkbox.md-theme-myTheme.md-checked .md-checkbox-container[data-v-5a15a971]:after {\n    border-color: #fff;\n    border-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-checkbox.md-theme-myTheme.md-checked .md-ripple[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.54);\n  background-color: rgba(255, 255, 255, 0.3);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-5a15a971]:after {\n    border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-ripple[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-checked.md-primary .md-checkbox-container[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary, #616161);\n  border-color: #616161;\n  border-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-checkbox.md-theme-myTheme.md-checked.md-primary .md-ripple[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.54);\n  background-color: transparent;\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-5a15a971]:after {\n    border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-ripple[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-disabled .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-checkbox.md-theme-myTheme.md-disabled.md-checked .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.26);\n  background-color: rgba(0, 0, 0, 0.26);\n}\n.md-checkbox.md-theme-myBtnTheme.md-checked .md-checkbox-container[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent, #616161);\n  border-color: #616161;\n  border-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-checkbox.md-theme-myBtnTheme.md-checked .md-checkbox-container[data-v-5a15a971]:after {\n    border-color: #fff;\n    border-color: var(--md-theme-myBtnTheme-background, #fff);\n}\n.md-checkbox.md-theme-myBtnTheme.md-checked .md-ripple[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-checkbox.md-theme-myBtnTheme.md-indeterminate .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.54);\n  background-color: rgba(255, 255, 255, 0.3);\n}\n.md-checkbox.md-theme-myBtnTheme.md-indeterminate .md-checkbox-container[data-v-5a15a971]:after {\n    border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myBtnTheme.md-indeterminate .md-ripple[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myBtnTheme.md-checked.md-primary .md-checkbox-container[data-v-5a15a971] {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n  border-color: #E53935;\n  border-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-checkbox.md-theme-myBtnTheme.md-checked.md-primary .md-ripple[data-v-5a15a971] {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-checkbox.md-theme-myBtnTheme.md-indeterminate .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.54);\n  background-color: transparent;\n}\n.md-checkbox.md-theme-myBtnTheme.md-indeterminate .md-checkbox-container[data-v-5a15a971]:after {\n    border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myBtnTheme.md-indeterminate .md-ripple[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myBtnTheme .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myBtnTheme.md-disabled .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-checkbox.md-theme-myBtnTheme.md-disabled.md-checked .md-checkbox-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.26);\n  background-color: rgba(0, 0, 0, 0.26);\n}\n.md-chip.md-theme-myTheme[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.12);\n  background-color: var(--md-theme-myTheme-highlight, rgba(0, 0, 0, 0.12));\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary, rgba(0, 0, 0, 0.87));\n}\n.md-chip.md-theme-myTheme .md-icon.md-icon-image svg[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-text-primary, #fff);\n    fill: #fff;\n    fill: var(--md-theme-myTheme-text-primary-on-text-primary, #fff);\n}\n.md-chip.md-theme-myTheme.md-deletable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-clickable[data-v-5a15a971]:not(.md-disabled):hover {\n    background-color: rgba(0, 0, 0, 0.54);\n    background-color: var(--md-theme-myTheme-icon, rgba(0, 0, 0, 0.54));\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myTheme.md-deletable:not(.md-disabled):hover .md-icon[data-v-5a15a971], .md-chip.md-theme-myTheme.md-clickable:not(.md-disabled):hover .md-icon[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myTheme.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myTheme.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5a15a971] {\n      background-color: rgba(255, 255, 255, 0.87);\n      background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.87));\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myTheme.md-deletable:not(.md-disabled):hover .md-input-action .md-icon svg[data-v-5a15a971], .md-chip.md-theme-myTheme.md-clickable:not(.md-disabled):hover .md-input-action .md-icon svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.54);\n        fill: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n        color: rgba(0, 0, 0, 0.54);\n        color: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myTheme.md-primary[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-chip.md-theme-myTheme.md-primary .md-input-action[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-icon-on-disabled, #fff);\n      background-color: rgba(0, 0, 0, 0.26);\n      background-color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-chip.md-theme-myTheme.md-primary.md-deletable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-primary.md-clickable[data-v-5a15a971]:not(.md-disabled):hover {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n      background-color: rgba(0, 0, 0, 0.54);\n      background-color: var(--md-theme-myTheme-icon, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myTheme.md-primary.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myTheme.md-primary.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5a15a971] {\n        background-color: rgba(255, 255, 255, 0.87);\n        background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.87));\n}\n.md-chip.md-theme-myTheme.md-accent[data-v-5a15a971], .md-chip.md-theme-myTheme.md-duplicated[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-chip.md-theme-myTheme.md-accent .md-input-action[data-v-5a15a971], .md-chip.md-theme-myTheme.md-duplicated .md-input-action[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-icon-on-disabled, #fff);\n      background-color: rgba(0, 0, 0, 0.26);\n      background-color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-chip.md-theme-myTheme.md-accent.md-deletable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-accent.md-clickable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-duplicated.md-deletable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-duplicated.md-clickable[data-v-5a15a971]:not(.md-disabled):hover {\n      background-color: rgba(0, 0, 0, 0.54);\n      background-color: var(--md-theme-myTheme-icon, rgba(0, 0, 0, 0.54));\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myTheme.md-accent.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myTheme.md-accent.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myTheme.md-duplicated.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myTheme.md-duplicated.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5a15a971] {\n        background-color: rgba(255, 255, 255, 0.87);\n        background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.87));\n}\n.md-chip.md-theme-myTheme.md-disabled[data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.1);\n    background-color: var(--md-theme-myTheme-highlight, rgba(0, 0, 0, 0.1));\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.12);\n  background-color: var(--md-theme-myBtnTheme-highlight, rgba(0, 0, 0, 0.12));\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary, rgba(0, 0, 0, 0.87));\n}\n.md-chip.md-theme-myBtnTheme .md-icon.md-icon-image svg[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-text-primary, #fff);\n    fill: #fff;\n    fill: var(--md-theme-myBtnTheme-text-primary-on-text-primary, #fff);\n}\n.md-chip.md-theme-myBtnTheme.md-deletable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myBtnTheme.md-clickable[data-v-5a15a971]:not(.md-disabled):hover {\n    background-color: rgba(0, 0, 0, 0.54);\n    background-color: var(--md-theme-myBtnTheme-icon, rgba(0, 0, 0, 0.54));\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myBtnTheme.md-deletable:not(.md-disabled):hover .md-icon[data-v-5a15a971], .md-chip.md-theme-myBtnTheme.md-clickable:not(.md-disabled):hover .md-icon[data-v-5a15a971] {\n      fill: #fff;\n      fill: var(--md-theme-myBtnTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myBtnTheme.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myBtnTheme.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5a15a971] {\n      background-color: rgba(255, 255, 255, 0.87);\n      background-color: var(--md-theme-myBtnTheme-background, rgba(255, 255, 255, 0.87));\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-myBtnTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myBtnTheme.md-deletable:not(.md-disabled):hover .md-input-action .md-icon svg[data-v-5a15a971], .md-chip.md-theme-myBtnTheme.md-clickable:not(.md-disabled):hover .md-input-action .md-icon svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.54);\n        fill: var(--md-theme-myBtnTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n        color: rgba(0, 0, 0, 0.54);\n        color: var(--md-theme-myBtnTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myBtnTheme.md-primary[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-chip.md-theme-myBtnTheme.md-primary .md-input-action[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-icon-on-disabled, #fff);\n      background-color: rgba(0, 0, 0, 0.26);\n      background-color: var(--md-theme-myBtnTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-chip.md-theme-myBtnTheme.md-primary.md-deletable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myBtnTheme.md-primary.md-clickable[data-v-5a15a971]:not(.md-disabled):hover {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-icon, #fff);\n      background-color: rgba(0, 0, 0, 0.54);\n      background-color: var(--md-theme-myBtnTheme-icon, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myBtnTheme.md-primary.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myBtnTheme.md-primary.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5a15a971] {\n        background-color: rgba(255, 255, 255, 0.87);\n        background-color: var(--md-theme-myBtnTheme-background, rgba(255, 255, 255, 0.87));\n}\n.md-chip.md-theme-myBtnTheme.md-accent[data-v-5a15a971], .md-chip.md-theme-myBtnTheme.md-duplicated[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myBtnTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-chip.md-theme-myBtnTheme.md-accent .md-input-action[data-v-5a15a971], .md-chip.md-theme-myBtnTheme.md-duplicated .md-input-action[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-icon-on-disabled, #fff);\n      background-color: rgba(0, 0, 0, 0.26);\n      background-color: var(--md-theme-myBtnTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-chip.md-theme-myBtnTheme.md-accent.md-deletable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myBtnTheme.md-accent.md-clickable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myBtnTheme.md-duplicated.md-deletable[data-v-5a15a971]:not(.md-disabled):hover, .md-chip.md-theme-myBtnTheme.md-duplicated.md-clickable[data-v-5a15a971]:not(.md-disabled):hover {\n      background-color: rgba(0, 0, 0, 0.54);\n      background-color: var(--md-theme-myBtnTheme-icon, rgba(0, 0, 0, 0.54));\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myBtnTheme.md-accent.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myBtnTheme.md-accent.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myBtnTheme.md-duplicated.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5a15a971], .md-chip.md-theme-myBtnTheme.md-duplicated.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5a15a971] {\n        background-color: rgba(255, 255, 255, 0.87);\n        background-color: var(--md-theme-myBtnTheme-background, rgba(255, 255, 255, 0.87));\n}\n.md-chip.md-theme-myBtnTheme.md-disabled[data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.1);\n    background-color: var(--md-theme-myBtnTheme-highlight, rgba(0, 0, 0, 0.1));\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myBtnTheme-text-accent, rgba(0, 0, 0, 0.54));\n}\n.md-chips.md-theme-myTheme .md-clear[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.2);\n}\n.md-chips.md-theme-myBtnTheme .md-clear[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.2);\n}\n.md-content.md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-content.md-theme-myTheme.md-primary[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-content.md-theme-myTheme.md-accent[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-app .md-content.md-theme-myTheme[data-v-5a15a971] {\n    border-left-color: rgba(0, 0, 0, 0.12);\n    border-left-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n    border-right-color: rgba(0, 0, 0, 0.12);\n    border-right-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-content.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-content.md-theme-myBtnTheme.md-primary[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-content.md-theme-myBtnTheme.md-accent[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myBtnTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-app .md-content.md-theme-myBtnTheme[data-v-5a15a971] {\n    border-left-color: rgba(0, 0, 0, 0.12);\n    border-left-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n    border-right-color: rgba(0, 0, 0, 0.12);\n    border-right-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-datepicker-dialog.md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-header[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-body-header[data-v-5a15a971]:after, .md-datepicker-dialog.md-theme-myTheme .md-datepicker-body-header[data-v-5a15a971]:before {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-body-footer[data-v-5a15a971] {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-week[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-disabled[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-today[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-day-button[data-v-5a15a971]:hover,\n  .md-datepicker-dialog.md-theme-myTheme .md-datepicker-month-button[data-v-5a15a971]:hover,\n  .md-datepicker-dialog.md-theme-myTheme .md-datepicker-year-button[data-v-5a15a971]:hover {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-day-button.md-datepicker-selected[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-month-button.md-datepicker-selected[data-v-5a15a971],\n  .md-datepicker-dialog.md-theme-myTheme .md-datepicker-year-button.md-datepicker-selected[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-year-selector[data-v-5a15a971] {\n    border-bottom-color: rgba(0, 0, 0, 0.12);\n    border-bottom-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-datepicker-dialog.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-header[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-body-header[data-v-5a15a971]:after, .md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-body-header[data-v-5a15a971]:before {\n    background-color: #fff;\n    background-color: var(--md-theme-myBtnTheme-background, #fff);\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-body-footer[data-v-5a15a971] {\n    background-color: #fff;\n    background-color: var(--md-theme-myBtnTheme-background, #fff);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-week[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myBtnTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-disabled[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myBtnTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-today[data-v-5a15a971] {\n    color: #E53935;\n    color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-day-button[data-v-5a15a971]:hover,\n  .md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-month-button[data-v-5a15a971]:hover,\n  .md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-year-button[data-v-5a15a971]:hover {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myBtnTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-day-button.md-datepicker-selected[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-month-button.md-datepicker-selected[data-v-5a15a971],\n  .md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-year-button.md-datepicker-selected[data-v-5a15a971] {\n    color: #E53935;\n    color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-datepicker-dialog.md-theme-myBtnTheme .md-datepicker-year-selector[data-v-5a15a971] {\n    border-bottom-color: rgba(0, 0, 0, 0.12);\n    border-bottom-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-dialog.md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-dialog.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-divider.md-theme-myTheme[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.12);\n  background-color: var(--md-theme-myTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-divider.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.12);\n  background-color: var(--md-theme-myBtnTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-drawer.md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-drawer.md-theme-myTheme.md-persistent-mini.md-left[data-v-5a15a971] {\n    border-right-color: rgba(0, 0, 0, 0.12);\n    border-right-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-drawer.md-theme-myTheme.md-persistent-mini.md-right[data-v-5a15a971] {\n    border-left-color: rgba(0, 0, 0, 0.12);\n    border-left-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-drawer.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-drawer.md-theme-myBtnTheme.md-persistent-mini.md-left[data-v-5a15a971] {\n    border-right-color: rgba(0, 0, 0, 0.12);\n    border-right-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-drawer.md-theme-myBtnTheme.md-persistent-mini.md-right[data-v-5a15a971] {\n    border-left-color: rgba(0, 0, 0, 0.12);\n    border-left-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-empty-state.md-theme-myTheme .md-empty-state-icon.md-icon-image svg[data-v-5a15a971] {\n  fill: rgba(0, 0, 0, 0.26);\n  fill: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-empty-state.md-theme-myTheme .md-empty-state-icon.md-icon-font[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.26);\n  color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-empty-state.md-theme-myTheme.md-rounded[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.06);\n  background-color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.06));\n}\n.md-empty-state.md-theme-myTheme.md-primary .md-empty-state-icon.md-icon-image svg[data-v-5a15a971] {\n  fill: #616161;\n  fill: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-empty-state.md-theme-myTheme.md-primary .md-empty-state-icon.md-icon-font[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-empty-state.md-theme-myTheme.md-accent .md-empty-state-icon.md-icon-image svg[data-v-5a15a971] {\n  fill: #616161;\n  fill: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-empty-state.md-theme-myTheme.md-accent .md-empty-state-icon.md-icon-font[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-empty-state.md-theme-myBtnTheme .md-empty-state-icon.md-icon-image svg[data-v-5a15a971] {\n  fill: rgba(0, 0, 0, 0.26);\n  fill: var(--md-theme-myBtnTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-empty-state.md-theme-myBtnTheme .md-empty-state-icon.md-icon-font[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.26);\n  color: var(--md-theme-myBtnTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-empty-state.md-theme-myBtnTheme.md-rounded[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.06);\n  background-color: var(--md-theme-myBtnTheme-disabled, rgba(0, 0, 0, 0.06));\n}\n.md-empty-state.md-theme-myBtnTheme.md-primary .md-empty-state-icon.md-icon-image svg[data-v-5a15a971] {\n  fill: #E53935;\n  fill: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-empty-state.md-theme-myBtnTheme.md-primary .md-empty-state-icon.md-icon-font[data-v-5a15a971] {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-empty-state.md-theme-myBtnTheme.md-accent .md-empty-state-icon.md-icon-image svg[data-v-5a15a971] {\n  fill: #616161;\n  fill: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-empty-state.md-theme-myBtnTheme.md-accent .md-empty-state-icon.md-icon-font[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-field.md-theme-myTheme[data-v-5a15a971]:after {\n  background-color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myTheme[data-v-5a15a971]:before {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-field.md-theme-myTheme .md-helper-text[data-v-5a15a971],\n.md-field.md-theme-myTheme .md-count[data-v-5a15a971],\n.md-field.md-theme-myTheme label[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myTheme .md-suffix[data-v-5a15a971], .md-field.md-theme-myTheme .md-prefix[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myTheme .md-input[data-v-5a15a971]::-webkit-input-placeholder,\n.md-field.md-theme-myTheme .md-textarea[data-v-5a15a971]::-webkit-input-placeholder {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myTheme.md-focused .md-input[data-v-5a15a971],\n.md-field.md-theme-myTheme.md-focused .md-textarea[data-v-5a15a971], .md-field.md-theme-myTheme.md-has-value .md-input[data-v-5a15a971],\n.md-field.md-theme-myTheme.md-has-value .md-textarea[data-v-5a15a971] {\n  -webkit-text-fill-color: rgba(0, 0, 0, 0.87);\n}\n.md-field.md-theme-myTheme.md-has-textarea[data-v-5a15a971]:not(.md-autogrow):after {\n  border-color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myTheme.md-has-textarea[data-v-5a15a971]:not(.md-autogrow):before {\n  border-color: #616161;\n  border-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-field.md-theme-myTheme.md-disabled[data-v-5a15a971]:after {\n  background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.38)), color-stop(33%, rgba(0, 0, 0, 0.38)), color-stop(0%, transparent));\n  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.38) 33%, transparent 0%);\n}\n.md-field.md-theme-myTheme.md-disabled label[data-v-5a15a971],\n.md-field.md-theme-myTheme.md-disabled .md-input[data-v-5a15a971],\n.md-field.md-theme-myTheme.md-disabled .md-textarea[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myTheme > .md-icon[data-v-5a15a971]:after {\n  background-color: #fafafa;\n  background-color: var(--md-theme-myTheme-background-variant, #fafafa);\n}\n.md-field.md-theme-myTheme.md-invalid[data-v-5a15a971]:after {\n  background-color: #ff1744;\n  background-color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid.md-has-textarea[data-v-5a15a971]:not(.md-autogrow):before {\n  border-color: #ff1744;\n  border-color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid label[data-v-5a15a971] {\n  color: #ff1744;\n  color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid .md-error[data-v-5a15a971] {\n  color: #ff1744;\n  color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid .md-date-icon[data-v-5a15a971],\n.md-field.md-theme-myTheme.md-invalid .md-date-icon svg[data-v-5a15a971] {\n  color: #ff1744;\n  color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n  fill: #ff1744;\n  fill: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-focused .md-input[data-v-5a15a971],\n.md-field.md-theme-myTheme.md-focused .md-textarea[data-v-5a15a971], .md-field.md-theme-myTheme.md-highlight .md-input[data-v-5a15a971],\n.md-field.md-theme-myTheme.md-highlight .md-textarea[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-field.md-theme-myTheme.md-focused > .md-icon[data-v-5a15a971], .md-field.md-theme-myTheme.md-highlight > .md-icon[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary-on-background, #616161);\n  fill: #616161;\n  fill: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-field.md-theme-myTheme.md-focused label[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-field.md-theme-myTheme.md-disabled .md-icon svg[data-v-5a15a971] {\n  fill: rgba(0, 0, 0, 0.26);\n  fill: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-field.md-theme-myBtnTheme[data-v-5a15a971]:after {\n  background-color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myBtnTheme[data-v-5a15a971]:before {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-field.md-theme-myBtnTheme .md-helper-text[data-v-5a15a971],\n.md-field.md-theme-myBtnTheme .md-count[data-v-5a15a971],\n.md-field.md-theme-myBtnTheme label[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myBtnTheme .md-suffix[data-v-5a15a971], .md-field.md-theme-myBtnTheme .md-prefix[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myBtnTheme .md-input[data-v-5a15a971]::-webkit-input-placeholder,\n.md-field.md-theme-myBtnTheme .md-textarea[data-v-5a15a971]::-webkit-input-placeholder {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myBtnTheme.md-focused .md-input[data-v-5a15a971],\n.md-field.md-theme-myBtnTheme.md-focused .md-textarea[data-v-5a15a971], .md-field.md-theme-myBtnTheme.md-has-value .md-input[data-v-5a15a971],\n.md-field.md-theme-myBtnTheme.md-has-value .md-textarea[data-v-5a15a971] {\n  -webkit-text-fill-color: rgba(0, 0, 0, 0.87);\n}\n.md-field.md-theme-myBtnTheme.md-has-textarea[data-v-5a15a971]:not(.md-autogrow):after {\n  border-color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myBtnTheme.md-has-textarea[data-v-5a15a971]:not(.md-autogrow):before {\n  border-color: #E53935;\n  border-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-field.md-theme-myBtnTheme.md-disabled[data-v-5a15a971]:after {\n  background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.38)), color-stop(33%, rgba(0, 0, 0, 0.38)), color-stop(0%, transparent));\n  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.38) 33%, transparent 0%);\n}\n.md-field.md-theme-myBtnTheme.md-disabled label[data-v-5a15a971],\n.md-field.md-theme-myBtnTheme.md-disabled .md-input[data-v-5a15a971],\n.md-field.md-theme-myBtnTheme.md-disabled .md-textarea[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myBtnTheme > .md-icon[data-v-5a15a971]:after {\n  background-color: #fafafa;\n  background-color: var(--md-theme-myBtnTheme-background-variant, #fafafa);\n}\n.md-field.md-theme-myBtnTheme.md-invalid[data-v-5a15a971]:after {\n  background-color: #ff1744;\n  background-color: var(--md-theme-myBtnTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myBtnTheme.md-invalid.md-has-textarea[data-v-5a15a971]:not(.md-autogrow):before {\n  border-color: #ff1744;\n  border-color: var(--md-theme-myBtnTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myBtnTheme.md-invalid label[data-v-5a15a971] {\n  color: #ff1744;\n  color: var(--md-theme-myBtnTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myBtnTheme.md-invalid .md-error[data-v-5a15a971] {\n  color: #ff1744;\n  color: var(--md-theme-myBtnTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myBtnTheme.md-invalid .md-date-icon[data-v-5a15a971],\n.md-field.md-theme-myBtnTheme.md-invalid .md-date-icon svg[data-v-5a15a971] {\n  color: #ff1744;\n  color: var(--md-theme-myBtnTheme-fieldvariant, #ff1744);\n  fill: #ff1744;\n  fill: var(--md-theme-myBtnTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myBtnTheme.md-focused .md-input[data-v-5a15a971],\n.md-field.md-theme-myBtnTheme.md-focused .md-textarea[data-v-5a15a971], .md-field.md-theme-myBtnTheme.md-highlight .md-input[data-v-5a15a971],\n.md-field.md-theme-myBtnTheme.md-highlight .md-textarea[data-v-5a15a971] {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-field.md-theme-myBtnTheme.md-focused > .md-icon[data-v-5a15a971], .md-field.md-theme-myBtnTheme.md-highlight > .md-icon[data-v-5a15a971] {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n  fill: #E53935;\n  fill: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-field.md-theme-myBtnTheme.md-focused label[data-v-5a15a971] {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-field.md-theme-myBtnTheme.md-disabled .md-icon svg[data-v-5a15a971] {\n  fill: rgba(0, 0, 0, 0.26);\n  fill: var(--md-theme-myBtnTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-icon.md-theme-myTheme.md-icon-image svg[data-v-5a15a971] {\n  fill: rgba(0, 0, 0, 0.54);\n  fill: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-icon.md-theme-myTheme.md-icon-image svg.md-primary[data-v-5a15a971] {\n    fill: #616161;\n    fill: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-icon.md-theme-myTheme.md-icon-image svg.md-accent[data-v-5a15a971] {\n    fill: #616161;\n    fill: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-icon.md-theme-myTheme.md-icon-font[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-icon.md-theme-myTheme.md-icon-font.md-primary[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-icon.md-theme-myTheme.md-icon-font.md-accent[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-icon.md-theme-myBtnTheme.md-icon-image svg[data-v-5a15a971] {\n  fill: rgba(0, 0, 0, 0.54);\n  fill: var(--md-theme-myBtnTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-icon.md-theme-myBtnTheme.md-icon-image svg.md-primary[data-v-5a15a971] {\n    fill: #E53935;\n    fill: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-icon.md-theme-myBtnTheme.md-icon-image svg.md-accent[data-v-5a15a971] {\n    fill: #616161;\n    fill: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-icon.md-theme-myBtnTheme.md-icon-font[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myBtnTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-icon.md-theme-myBtnTheme.md-icon-font.md-primary[data-v-5a15a971] {\n    color: #E53935;\n    color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-icon.md-theme-myBtnTheme.md-icon-font.md-accent[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-list.md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myTheme.md-double-line .md-list-item-text[data-v-5a15a971] :nth-child(2) {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-list.md-theme-myTheme.md-triple-line .md-list-item-text[data-v-5a15a971] :nth-child(3) {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-list.md-theme-myTheme .md-highlight .md-list-item-container[data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-list.md-theme-myTheme .md-list-item-container[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myTheme .md-list-item-container[data-v-5a15a971]:not(.md-list-item-default):not([disabled]):hover {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myTheme [disabled][data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-list.md-theme-myTheme .md-selected .md-list-item-content[data-v-5a15a971],\n  .md-list.md-theme-myTheme .router-link-exact-active .md-list-item-content[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-list.md-theme-myTheme .md-list-item-expand.md-active[data-v-5a15a971] {\n    border-color: rgba(0, 0, 0, 0.12);\n    border-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-list.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myBtnTheme.md-double-line .md-list-item-text[data-v-5a15a971] :nth-child(2) {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myBtnTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-list.md-theme-myBtnTheme.md-triple-line .md-list-item-text[data-v-5a15a971] :nth-child(3) {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myBtnTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-list.md-theme-myBtnTheme .md-highlight .md-list-item-container[data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-list.md-theme-myBtnTheme .md-list-item-container[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myBtnTheme .md-list-item-container[data-v-5a15a971]:not(.md-list-item-default):not([disabled]):hover {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myBtnTheme [disabled][data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myBtnTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-list.md-theme-myBtnTheme .md-selected .md-list-item-content[data-v-5a15a971],\n  .md-list.md-theme-myBtnTheme .router-link-exact-active .md-list-item-content[data-v-5a15a971] {\n    color: #E53935;\n    color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-list.md-theme-myBtnTheme .md-list-item-expand.md-active[data-v-5a15a971] {\n    border-color: rgba(0, 0, 0, 0.12);\n    border-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-menu-item.md-theme-myTheme.md-primary .md-list-item-link[data-v-5a15a971],\n.md-menu-item.md-theme-myTheme.md-primary .md-list-item-router[data-v-5a15a971],\n.md-menu-item.md-theme-myTheme.md-primary .md-list-item-button[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-menu-item.md-theme-myTheme.md-accent .md-list-item-link[data-v-5a15a971],\n.md-menu-item.md-theme-myTheme.md-accent .md-list-item-router[data-v-5a15a971],\n.md-menu-item.md-theme-myTheme.md-accent .md-list-item-button[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-menu-item.md-theme-myBtnTheme.md-primary .md-list-item-link[data-v-5a15a971],\n.md-menu-item.md-theme-myBtnTheme.md-primary .md-list-item-router[data-v-5a15a971],\n.md-menu-item.md-theme-myBtnTheme.md-primary .md-list-item-button[data-v-5a15a971] {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-menu-item.md-theme-myBtnTheme.md-accent .md-list-item-link[data-v-5a15a971],\n.md-menu-item.md-theme-myBtnTheme.md-accent .md-list-item-router[data-v-5a15a971],\n.md-menu-item.md-theme-myBtnTheme.md-accent .md-list-item-button[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate[data-v-5a15a971], .md-progress-bar.md-theme-myTheme.md-query[data-v-5a15a971] {\n  background-color: rgba(97, 97, 97, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate .md-progress-bar-track[data-v-5a15a971]:after,\n  .md-progress-bar.md-theme-myTheme.md-indeterminate .md-progress-bar-fill[data-v-5a15a971]:after, .md-progress-bar.md-theme-myTheme.md-query .md-progress-bar-track[data-v-5a15a971]:after,\n  .md-progress-bar.md-theme-myTheme.md-query .md-progress-bar-fill[data-v-5a15a971]:after {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate.md-accent[data-v-5a15a971], .md-progress-bar.md-theme-myTheme.md-query.md-accent[data-v-5a15a971] {\n    background-color: rgba(97, 97, 97, 0.38);\n    background-color: var(--md-theme-myTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate.md-accent .md-progress-bar-track[data-v-5a15a971]:after,\n    .md-progress-bar.md-theme-myTheme.md-indeterminate.md-accent .md-progress-bar-fill[data-v-5a15a971]:after, .md-progress-bar.md-theme-myTheme.md-query.md-accent .md-progress-bar-track[data-v-5a15a971]:after,\n    .md-progress-bar.md-theme-myTheme.md-query.md-accent .md-progress-bar-fill[data-v-5a15a971]:after {\n      background-color: #616161;\n      background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-progress-bar.md-theme-myTheme.md-determinate[data-v-5a15a971] {\n  background-color: rgba(97, 97, 97, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-determinate .md-progress-bar-fill[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-progress-bar.md-theme-myTheme.md-determinate.md-accent[data-v-5a15a971] {\n    background-color: rgba(97, 97, 97, 0.38);\n    background-color: var(--md-theme-myTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-determinate.md-accent .md-progress-bar-fill[data-v-5a15a971] {\n      background-color: #616161;\n      background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-progress-bar.md-theme-myTheme.md-buffer .md-progress-bar-fill[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-progress-bar.md-theme-myTheme.md-buffer .md-progress-bar-track[data-v-5a15a971] {\n  background-color: rgba(97, 97, 97, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-buffer .md-progress-bar-buffer[data-v-5a15a971] {\n  border-color: rgba(97, 97, 97, 0.38);\n  border-color: var(--md-theme-myTheme-primary-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-buffer.md-accent .md-progress-bar-fill[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-progress-bar.md-theme-myTheme.md-buffer.md-accent .md-progress-bar-track[data-v-5a15a971] {\n  background-color: rgba(97, 97, 97, 0.38);\n  background-color: var(--md-theme-myTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-buffer.md-accent .md-progress-bar-buffer[data-v-5a15a971] {\n  border-color: rgba(97, 97, 97, 0.38);\n  border-color: var(--md-theme-myTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myBtnTheme.md-indeterminate[data-v-5a15a971], .md-progress-bar.md-theme-myBtnTheme.md-query[data-v-5a15a971] {\n  background-color: rgba(229, 57, 53, 0.38);\n  background-color: var(--md-theme-myBtnTheme-primary-on-, rgba(229, 57, 53, 0.38));\n}\n.md-progress-bar.md-theme-myBtnTheme.md-indeterminate .md-progress-bar-track[data-v-5a15a971]:after,\n  .md-progress-bar.md-theme-myBtnTheme.md-indeterminate .md-progress-bar-fill[data-v-5a15a971]:after, .md-progress-bar.md-theme-myBtnTheme.md-query .md-progress-bar-track[data-v-5a15a971]:after,\n  .md-progress-bar.md-theme-myBtnTheme.md-query .md-progress-bar-fill[data-v-5a15a971]:after {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-progress-bar.md-theme-myBtnTheme.md-indeterminate.md-accent[data-v-5a15a971], .md-progress-bar.md-theme-myBtnTheme.md-query.md-accent[data-v-5a15a971] {\n    background-color: rgba(97, 97, 97, 0.38);\n    background-color: var(--md-theme-myBtnTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myBtnTheme.md-indeterminate.md-accent .md-progress-bar-track[data-v-5a15a971]:after,\n    .md-progress-bar.md-theme-myBtnTheme.md-indeterminate.md-accent .md-progress-bar-fill[data-v-5a15a971]:after, .md-progress-bar.md-theme-myBtnTheme.md-query.md-accent .md-progress-bar-track[data-v-5a15a971]:after,\n    .md-progress-bar.md-theme-myBtnTheme.md-query.md-accent .md-progress-bar-fill[data-v-5a15a971]:after {\n      background-color: #616161;\n      background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-progress-bar.md-theme-myBtnTheme.md-determinate[data-v-5a15a971] {\n  background-color: rgba(229, 57, 53, 0.38);\n  background-color: var(--md-theme-myBtnTheme-primary-on-, rgba(229, 57, 53, 0.38));\n}\n.md-progress-bar.md-theme-myBtnTheme.md-determinate .md-progress-bar-fill[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-progress-bar.md-theme-myBtnTheme.md-determinate.md-accent[data-v-5a15a971] {\n    background-color: rgba(97, 97, 97, 0.38);\n    background-color: var(--md-theme-myBtnTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myBtnTheme.md-determinate.md-accent .md-progress-bar-fill[data-v-5a15a971] {\n      background-color: #616161;\n      background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-progress-bar.md-theme-myBtnTheme.md-buffer .md-progress-bar-fill[data-v-5a15a971] {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-progress-bar.md-theme-myBtnTheme.md-buffer .md-progress-bar-track[data-v-5a15a971] {\n  background-color: rgba(229, 57, 53, 0.38);\n  background-color: var(--md-theme-myBtnTheme-primary-on-, rgba(229, 57, 53, 0.38));\n}\n.md-progress-bar.md-theme-myBtnTheme.md-buffer .md-progress-bar-buffer[data-v-5a15a971] {\n  border-color: rgba(229, 57, 53, 0.38);\n  border-color: var(--md-theme-myBtnTheme-primary-on-, rgba(229, 57, 53, 0.38));\n}\n.md-progress-bar.md-theme-myBtnTheme.md-buffer.md-accent .md-progress-bar-fill[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-progress-bar.md-theme-myBtnTheme.md-buffer.md-accent .md-progress-bar-track[data-v-5a15a971] {\n  background-color: rgba(97, 97, 97, 0.38);\n  background-color: var(--md-theme-myBtnTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-bar.md-theme-myBtnTheme.md-buffer.md-accent .md-progress-bar-buffer[data-v-5a15a971] {\n  border-color: rgba(97, 97, 97, 0.38);\n  border-color: var(--md-theme-myBtnTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-progress-spinner.md-theme-myTheme .md-progress-spinner-circle[data-v-5a15a971] {\n  stroke: #616161;\n  stroke: var(--md-theme-myTheme-primary, #616161);\n}\n.md-progress-spinner.md-theme-myTheme.md-accent .md-progress-spinner-circle[data-v-5a15a971] {\n  stroke: #616161;\n  stroke: var(--md-theme-myTheme-accent, #616161);\n}\n.md-progress-spinner.md-theme-myBtnTheme .md-progress-spinner-circle[data-v-5a15a971] {\n  stroke: #E53935;\n  stroke: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-progress-spinner.md-theme-myBtnTheme.md-accent .md-progress-spinner-circle[data-v-5a15a971] {\n  stroke: #616161;\n  stroke: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-radio.md-theme-myTheme.md-checked .md-radio-container[data-v-5a15a971] {\n  border-color: #616161;\n  border-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-radio.md-theme-myTheme.md-checked .md-radio-container[data-v-5a15a971]:after {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-radio.md-theme-myTheme.md-checked .md-ripple[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-radio.md-theme-myTheme.md-checked.md-primary .md-radio-container[data-v-5a15a971] {\n  border-color: #616161;\n  border-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-radio.md-theme-myTheme.md-checked.md-primary .md-radio-container[data-v-5a15a971]:after {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-radio.md-theme-myTheme.md-checked.md-primary .md-ripple[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-radio.md-theme-myTheme .md-radio-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.54);\n}\n.md-radio.md-theme-myTheme.md-disabled .md-radio-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-radio.md-theme-myTheme.md-disabled.md-checked .md-radio-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-radio.md-theme-myTheme.md-disabled.md-checked .md-radio-container[data-v-5a15a971]:after {\n    background-color: rgba(0, 0, 0, 0.26);\n}\n.md-radio.md-theme-myBtnTheme.md-checked .md-radio-container[data-v-5a15a971] {\n  border-color: #616161;\n  border-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-radio.md-theme-myBtnTheme.md-checked .md-radio-container[data-v-5a15a971]:after {\n    background-color: #616161;\n    background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-radio.md-theme-myBtnTheme.md-checked .md-ripple[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-radio.md-theme-myBtnTheme.md-checked.md-primary .md-radio-container[data-v-5a15a971] {\n  border-color: #E53935;\n  border-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-radio.md-theme-myBtnTheme.md-checked.md-primary .md-radio-container[data-v-5a15a971]:after {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-radio.md-theme-myBtnTheme.md-checked.md-primary .md-ripple[data-v-5a15a971] {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-radio.md-theme-myBtnTheme .md-radio-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.54);\n}\n.md-radio.md-theme-myBtnTheme.md-disabled .md-radio-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-radio.md-theme-myBtnTheme.md-disabled.md-checked .md-radio-container[data-v-5a15a971] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-radio.md-theme-myBtnTheme.md-disabled.md-checked .md-radio-container[data-v-5a15a971]:after {\n    background-color: rgba(0, 0, 0, 0.26);\n}\n.md-snackbar.md-theme-myTheme[data-v-5a15a971] {\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-text-primary, #fff);\n  background-color: #323232;\n}\n.md-snackbar.md-theme-myBtnTheme[data-v-5a15a971] {\n  color: #fff;\n  color: var(--md-theme-myBtnTheme-text-primary-on-text-primary, #fff);\n  background-color: #323232;\n}\n.md-steppers.md-theme-myTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-steppers.md-theme-myTheme .md-stepper-icon[data-v-5a15a971]:after, .md-steppers.md-theme-myTheme .md-stepper-icon[data-v-5a15a971]:before,\n  .md-steppers.md-theme-myTheme .md-stepper-number[data-v-5a15a971]:after,\n  .md-steppers.md-theme-myTheme .md-stepper-number[data-v-5a15a971]:before,\n  .md-steppers.md-theme-myTheme .md-stepper[data-v-5a15a971]:after,\n  .md-steppers.md-theme-myTheme .md-stepper[data-v-5a15a971]:before {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-steppers.md-theme-myTheme .md-stepper-number[data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.38);\n    background-color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-text-hint, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-number svg[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-text-hint, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-text-hint, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header .md-button-content[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.38);\n    color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-steppers.md-theme-myTheme .md-stepper-header .md-button-content[data-v-5a15a971]:after, .md-steppers.md-theme-myTheme .md-stepper-header .md-button-content[data-v-5a15a971]:before {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-active .md-button-content[data-v-5a15a971], .md-steppers.md-theme-myTheme .md-stepper-header.md-done .md-button-content[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-active .md-stepper-number[data-v-5a15a971], .md-steppers.md-theme-myTheme .md-stepper-header.md-done .md-stepper-number[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary-on-background, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-active .md-stepper-number svg[data-v-5a15a971], .md-steppers.md-theme-myTheme .md-stepper-header.md-done .md-stepper-number svg[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-error .md-button-content[data-v-5a15a971] {\n    color: #ff1744;\n    color: var(--md-theme-myTheme-steppervariant, #ff1744);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-error .md-icon svg[data-v-5a15a971] {\n    color: #ff1744;\n    color: var(--md-theme-myTheme-steppervariant, #ff1744);\n    fill: #ff1744;\n    fill: var(--md-theme-myTheme-steppervariant, #ff1744);\n}\n.md-steppers.md-theme-myBtnTheme[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-icon[data-v-5a15a971]:after, .md-steppers.md-theme-myBtnTheme .md-stepper-icon[data-v-5a15a971]:before,\n  .md-steppers.md-theme-myBtnTheme .md-stepper-number[data-v-5a15a971]:after,\n  .md-steppers.md-theme-myBtnTheme .md-stepper-number[data-v-5a15a971]:before,\n  .md-steppers.md-theme-myBtnTheme .md-stepper[data-v-5a15a971]:after,\n  .md-steppers.md-theme-myBtnTheme .md-stepper[data-v-5a15a971]:before {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-number[data-v-5a15a971] {\n    background-color: rgba(0, 0, 0, 0.38);\n    background-color: var(--md-theme-myBtnTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-text-hint, #fff);\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-number svg[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-text-hint, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myBtnTheme-text-primary-on-text-hint, #fff);\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-header .md-button-content[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.38);\n    color: var(--md-theme-myBtnTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-header .md-button-content[data-v-5a15a971]:after, .md-steppers.md-theme-myBtnTheme .md-stepper-header .md-button-content[data-v-5a15a971]:before {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-header.md-active .md-button-content[data-v-5a15a971], .md-steppers.md-theme-myBtnTheme .md-stepper-header.md-done .md-button-content[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-header.md-active .md-stepper-number[data-v-5a15a971], .md-steppers.md-theme-myBtnTheme .md-stepper-header.md-done .md-stepper-number[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-header.md-active .md-stepper-number svg[data-v-5a15a971], .md-steppers.md-theme-myBtnTheme .md-stepper-header.md-done .md-stepper-number svg[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-header.md-error .md-button-content[data-v-5a15a971] {\n    color: #ff1744;\n    color: var(--md-theme-myBtnTheme-steppervariant, #ff1744);\n}\n.md-steppers.md-theme-myBtnTheme .md-stepper-header.md-error .md-icon svg[data-v-5a15a971] {\n    color: #ff1744;\n    color: var(--md-theme-myBtnTheme-steppervariant, #ff1744);\n    fill: #ff1744;\n    fill: var(--md-theme-myBtnTheme-steppervariant, #ff1744);\n}\n.md-subheader.md-theme-myTheme[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-subheader.md-theme-myTheme.md-primary[data-v-5a15a971] {\n    color: #616161;\n    color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-subheader.md-theme-myBtnTheme[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myBtnTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-subheader.md-theme-myBtnTheme.md-primary[data-v-5a15a971] {\n    color: #E53935;\n    color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-switch.md-theme-myTheme.md-checked .md-switch-container[data-v-5a15a971] {\n  background-color: rgba(97, 97, 97, 0.38);\n  background-color: var(--md-theme-myTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-switch.md-theme-myTheme.md-checked .md-switch-thumb[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-switch.md-theme-myTheme.md-checked .md-ripple[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-switch.md-theme-myTheme.md-checked.md-primary .md-switch-container[data-v-5a15a971] {\n  background-color: rgba(97, 97, 97, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(97, 97, 97, 0.38));\n}\n.md-switch.md-theme-myTheme.md-checked.md-primary .md-switch-thumb[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-switch.md-theme-myTheme.md-checked.md-primary .md-ripple[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-switch.md-theme-myTheme .md-switch-container[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.38);\n}\n.md-switch.md-theme-myTheme .md-switch-thumb[data-v-5a15a971] {\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myTheme-switchvariant, #f5f5f5);\n}\n.md-switch.md-theme-myTheme.md-disabled .md-switch-container[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.12);\n}\n.md-switch.md-theme-myTheme.md-disabled .md-switch-thumb[data-v-5a15a971] {\n  background-color: #bdbdbd;\n  background-color: var(--md-theme-myTheme-switchvariant, #bdbdbd);\n}\n.md-switch.md-theme-myBtnTheme.md-checked .md-switch-container[data-v-5a15a971] {\n  background-color: rgba(97, 97, 97, 0.38);\n  background-color: var(--md-theme-myBtnTheme-accent-on-, rgba(97, 97, 97, 0.38));\n}\n.md-switch.md-theme-myBtnTheme.md-checked .md-switch-thumb[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-switch.md-theme-myBtnTheme.md-checked .md-ripple[data-v-5a15a971] {\n  color: #616161;\n  color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-switch.md-theme-myBtnTheme.md-checked.md-primary .md-switch-container[data-v-5a15a971] {\n  background-color: rgba(229, 57, 53, 0.38);\n  background-color: var(--md-theme-myBtnTheme-primary-on-, rgba(229, 57, 53, 0.38));\n}\n.md-switch.md-theme-myBtnTheme.md-checked.md-primary .md-switch-thumb[data-v-5a15a971] {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-switch.md-theme-myBtnTheme.md-checked.md-primary .md-ripple[data-v-5a15a971] {\n  color: #E53935;\n  color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-switch.md-theme-myBtnTheme .md-switch-container[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.38);\n}\n.md-switch.md-theme-myBtnTheme .md-switch-thumb[data-v-5a15a971] {\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myBtnTheme-switchvariant, #f5f5f5);\n}\n.md-switch.md-theme-myBtnTheme.md-disabled .md-switch-container[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.12);\n}\n.md-switch.md-theme-myBtnTheme.md-disabled .md-switch-thumb[data-v-5a15a971] {\n  background-color: #bdbdbd;\n  background-color: var(--md-theme-myBtnTheme-switchvariant, #bdbdbd);\n}\n.md-table.md-theme-myTheme .md-table-content[data-v-5a15a971],\n.md-table.md-theme-myTheme .md-table-alternate-header[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-table.md-theme-myTheme .md-table-alternate-header .md-table-toolbar[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n  background-color: rgba(97, 97, 97, 0.2);\n  background-color: var(--md-theme-myTheme-accent-on-, rgba(97, 97, 97, 0.2));\n}\n.md-table.md-theme-myTheme .md-table-row:hover:not(.md-header-row) .md-table-cell[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.08);\n  background-color: var(--md-theme-myTheme-highlight-on-background, rgba(0, 0, 0, 0.08));\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected[data-v-5a15a971], .md-table.md-theme-myTheme .md-table-row.md-selected-single[data-v-5a15a971] {\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myTheme-rowvariant, #f5f5f5);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary[data-v-5a15a971], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary-on-background, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary .md-ripple[data-v-5a15a971], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary .md-ripple[data-v-5a15a971] {\n      color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary .md-checkbox-container[data-v-5a15a971], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary .md-checkbox-container[data-v-5a15a971] {\n      background-color: #fff;\n      border-color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary .md-checkbox-container[data-v-5a15a971]:after, .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary .md-checkbox-container[data-v-5a15a971]:after {\n        border-color: #616161;\n        border-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent[data-v-5a15a971], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-accent-on-background, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent .md-ripple[data-v-5a15a971], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent .md-ripple[data-v-5a15a971] {\n      color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent .md-checkbox-container[data-v-5a15a971], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent .md-checkbox-container[data-v-5a15a971] {\n      background-color: #fff;\n      border-color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent .md-checkbox-container[data-v-5a15a971]:after, .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent .md-checkbox-container[data-v-5a15a971]:after {\n        border-color: #616161;\n        border-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-table.md-theme-myTheme .md-table-row td[data-v-5a15a971] {\n  border-top-color: rgba(0, 0, 0, 0.12);\n  border-top-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-table.md-theme-myTheme .md-table-head[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-table.md-theme-myTheme .md-table-fixed-header-active[data-v-5a15a971] {\n  border-bottom-color: rgba(0, 0, 0, 0.12);\n  border-bottom-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-table.md-theme-myTheme .md-sortable[data-v-5a15a971]:hover, .md-table.md-theme-myTheme .md-sortable.md-sorted[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-table.md-theme-myTheme .md-sortable:hover svg[data-v-5a15a971], .md-table.md-theme-myTheme .md-sortable.md-sorted svg[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n    fill: rgba(0, 0, 0, 0.87);\n    fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-table.md-theme-myTheme .md-table-pagination[data-v-5a15a971] {\n  border-top-color: rgba(0, 0, 0, 0.12);\n  border-top-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-table.md-theme-myBtnTheme .md-table-content[data-v-5a15a971],\n.md-table.md-theme-myBtnTheme .md-table-alternate-header[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background, #fff);\n}\n.md-table.md-theme-myBtnTheme .md-table-alternate-header .md-table-toolbar[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n  background-color: rgba(97, 97, 97, 0.2);\n  background-color: var(--md-theme-myBtnTheme-accent-on-, rgba(97, 97, 97, 0.2));\n}\n.md-table.md-theme-myBtnTheme .md-table-row:hover:not(.md-header-row) .md-table-cell[data-v-5a15a971] {\n  background-color: rgba(0, 0, 0, 0.08);\n  background-color: var(--md-theme-myBtnTheme-highlight-on-background, rgba(0, 0, 0, 0.08));\n}\n.md-table.md-theme-myBtnTheme .md-table-row.md-selected[data-v-5a15a971], .md-table.md-theme-myBtnTheme .md-table-row.md-selected-single[data-v-5a15a971] {\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myBtnTheme-rowvariant, #f5f5f5);\n}\n.md-table.md-theme-myBtnTheme .md-table-row.md-selected.md-primary[data-v-5a15a971], .md-table.md-theme-myBtnTheme .md-table-row.md-selected-single.md-primary[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-table.md-theme-myBtnTheme .md-table-row.md-selected.md-primary .md-ripple[data-v-5a15a971], .md-table.md-theme-myBtnTheme .md-table-row.md-selected-single.md-primary .md-ripple[data-v-5a15a971] {\n      color: #fff;\n}\n.md-table.md-theme-myBtnTheme .md-table-row.md-selected.md-primary .md-checkbox-container[data-v-5a15a971], .md-table.md-theme-myBtnTheme .md-table-row.md-selected-single.md-primary .md-checkbox-container[data-v-5a15a971] {\n      background-color: #fff;\n      border-color: #fff;\n}\n.md-table.md-theme-myBtnTheme .md-table-row.md-selected.md-primary .md-checkbox-container[data-v-5a15a971]:after, .md-table.md-theme-myBtnTheme .md-table-row.md-selected-single.md-primary .md-checkbox-container[data-v-5a15a971]:after {\n        border-color: #E53935;\n        border-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-table.md-theme-myBtnTheme .md-table-row.md-selected.md-accent[data-v-5a15a971], .md-table.md-theme-myBtnTheme .md-table-row.md-selected-single.md-accent[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-table.md-theme-myBtnTheme .md-table-row.md-selected.md-accent .md-ripple[data-v-5a15a971], .md-table.md-theme-myBtnTheme .md-table-row.md-selected-single.md-accent .md-ripple[data-v-5a15a971] {\n      color: #fff;\n}\n.md-table.md-theme-myBtnTheme .md-table-row.md-selected.md-accent .md-checkbox-container[data-v-5a15a971], .md-table.md-theme-myBtnTheme .md-table-row.md-selected-single.md-accent .md-checkbox-container[data-v-5a15a971] {\n      background-color: #fff;\n      border-color: #fff;\n}\n.md-table.md-theme-myBtnTheme .md-table-row.md-selected.md-accent .md-checkbox-container[data-v-5a15a971]:after, .md-table.md-theme-myBtnTheme .md-table-row.md-selected-single.md-accent .md-checkbox-container[data-v-5a15a971]:after {\n        border-color: #616161;\n        border-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-table.md-theme-myBtnTheme .md-table-row td[data-v-5a15a971] {\n  border-top-color: rgba(0, 0, 0, 0.12);\n  border-top-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-table.md-theme-myBtnTheme .md-table-head[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myBtnTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-table.md-theme-myBtnTheme .md-table-fixed-header-active[data-v-5a15a971] {\n  border-bottom-color: rgba(0, 0, 0, 0.12);\n  border-bottom-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-table.md-theme-myBtnTheme .md-sortable[data-v-5a15a971]:hover, .md-table.md-theme-myBtnTheme .md-sortable.md-sorted[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-table.md-theme-myBtnTheme .md-sortable:hover svg[data-v-5a15a971], .md-table.md-theme-myBtnTheme .md-sortable.md-sorted svg[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n    fill: rgba(0, 0, 0, 0.87);\n    fill: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-table.md-theme-myBtnTheme .md-table-pagination[data-v-5a15a971] {\n  border-top-color: rgba(0, 0, 0, 0.12);\n  border-top-color: var(--md-theme-myBtnTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background-on-background, #fff);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #616161;\n      color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #616161;\n        color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #616161;\n          fill: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background-on-background, #fff);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.7);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.7);\n      color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.7);\n        fill: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #E53935;\n      color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #E53935;\n        color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #E53935;\n          fill: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #fff;\n          fill: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #fff;\n          fill: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background-on-background, #fff);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #616161;\n      color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #616161;\n        color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #616161;\n          fill: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-primary-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent-on-background, #616161);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-background-on-background, #fff);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.7);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.7);\n      color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.7);\n        fill: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #E53935;\n      color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #E53935;\n        color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #E53935;\n          fill: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #E53935;\n  background-color: var(--md-theme-myBtnTheme-primary-on-background, #E53935);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myBtnTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #fff;\n          fill: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-primary .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation[data-v-5a15a971] {\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent-on-background, #616161);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button[data-v-5a15a971] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button[disabled][data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button .md-icon[data-v-5a15a971] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button .md-icon svg[data-v-5a15a971] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myBtnTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button.md-active[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon[data-v-5a15a971] {\n        color: #fff;\n        color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5a15a971] {\n          fill: #fff;\n          fill: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myBtnTheme.md-accent .md-tabs-indicator[data-v-5a15a971] {\n  background-color: #fff;\n  background-color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myTheme-toolbarvariant, #f5f5f5);\n}\n.md-toolbar.md-theme-myTheme .md-icon[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme .md-icon svg[data-v-5a15a971] {\n      fill: rgba(0, 0, 0, 0.87);\n      fill: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme .md-title[data-v-5a15a971],\n  .md-toolbar.md-theme-myTheme .md-display-1[data-v-5a15a971],\n  .md-toolbar.md-theme-myTheme .md-display-2[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-primary[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-icon svg[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-button[data-v-5a15a971]:not([disabled]):not(.md-raised) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-title[data-v-5a15a971],\n    .md-toolbar.md-theme-myTheme.md-primary .md-display-1[data-v-5a15a971],\n    .md-toolbar.md-theme-myTheme.md-primary .md-display-2[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-icon svg[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-button[data-v-5a15a971]:not([disabled]):not(.md-raised) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-title[data-v-5a15a971],\n    .md-toolbar.md-theme-myTheme.md-accent .md-display-1[data-v-5a15a971],\n    .md-toolbar.md-theme-myTheme.md-accent .md-display-2[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-transparent[data-v-5a15a971] {\n    background-color: transparent;\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-transparent .md-icon[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-transparent .md-icon svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.87);\n        fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-transparent .md-title[data-v-5a15a971],\n    .md-toolbar.md-theme-myTheme.md-transparent .md-display-1[data-v-5a15a971],\n    .md-toolbar.md-theme-myTheme.md-transparent .md-display-2[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myBtnTheme[data-v-5a15a971] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myBtnTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myBtnTheme-toolbarvariant, #f5f5f5);\n}\n.md-toolbar.md-theme-myBtnTheme .md-icon[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myBtnTheme .md-icon svg[data-v-5a15a971] {\n      fill: rgba(0, 0, 0, 0.87);\n      fill: var(--md-theme-myBtnTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myBtnTheme .md-title[data-v-5a15a971],\n  .md-toolbar.md-theme-myBtnTheme .md-display-1[data-v-5a15a971],\n  .md-toolbar.md-theme-myBtnTheme .md-display-2[data-v-5a15a971] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myBtnTheme.md-primary[data-v-5a15a971] {\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-primary .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-primary .md-icon svg[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-primary .md-button[data-v-5a15a971]:not([disabled]):not(.md-raised) {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-primary .md-title[data-v-5a15a971],\n    .md-toolbar.md-theme-myBtnTheme.md-primary .md-display-1[data-v-5a15a971],\n    .md-toolbar.md-theme-myBtnTheme.md-primary .md-display-2[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-accent[data-v-5a15a971] {\n    background-color: #616161;\n    background-color: var(--md-theme-myBtnTheme-accent, #616161);\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-accent .md-icon[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-accent .md-icon svg[data-v-5a15a971] {\n        fill: #fff;\n        fill: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-accent .md-button[data-v-5a15a971]:not([disabled]):not(.md-raised) {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-accent .md-title[data-v-5a15a971],\n    .md-toolbar.md-theme-myBtnTheme.md-accent .md-display-1[data-v-5a15a971],\n    .md-toolbar.md-theme-myBtnTheme.md-accent .md-display-2[data-v-5a15a971] {\n      color: #fff;\n      color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myBtnTheme.md-transparent[data-v-5a15a971] {\n    background-color: transparent;\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myBtnTheme.md-transparent .md-icon[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myBtnTheme.md-transparent .md-icon svg[data-v-5a15a971] {\n        fill: rgba(0, 0, 0, 0.87);\n        fill: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myBtnTheme.md-transparent .md-title[data-v-5a15a971],\n    .md-toolbar.md-theme-myBtnTheme.md-transparent .md-display-1[data-v-5a15a971],\n    .md-toolbar.md-theme-myBtnTheme.md-transparent .md-display-2[data-v-5a15a971] {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myBtnTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-tooltip.md-theme-myTheme[data-v-5a15a971] {\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-tooltip, #fff);\n  background-color: rgba(97, 97, 97, 0.9);\n  background-color: var(--md-theme-myTheme-tooltip-on-background, rgba(97, 97, 97, 0.9));\n}\n.md-tooltip.md-theme-myBtnTheme[data-v-5a15a971] {\n  color: #fff;\n  color: var(--md-theme-myBtnTheme-text-primary-on-tooltip, #fff);\n  background-color: rgba(97, 97, 97, 0.9);\n  background-color: var(--md-theme-myBtnTheme-tooltip-on-background, rgba(97, 97, 97, 0.9));\n}\n.md-badge.md-theme-myTheme[data-v-5a15a971] {\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n  background-color: #616161;\n  background-color: var(--md-theme-myTheme-accent, #616161);\n}\n.md-badge.md-theme-myTheme.md-primary[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n    background-color: #616161;\n    background-color: var(--md-theme-myTheme-primary, #616161);\n}\n.md-badge.md-theme-myBtnTheme[data-v-5a15a971] {\n  color: #fff;\n  color: var(--md-theme-myBtnTheme-text-primary-on-accent, #fff);\n  background-color: #616161;\n  background-color: var(--md-theme-myBtnTheme-accent, #616161);\n}\n.md-badge.md-theme-myBtnTheme.md-primary[data-v-5a15a971] {\n    color: #fff;\n    color: var(--md-theme-myBtnTheme-text-primary-on-primary, #fff);\n    background-color: #E53935;\n    background-color: var(--md-theme-myBtnTheme-primary, #E53935);\n}\n.md-card[data-v-5a15a971] {\n  max-width: 600px;\n  margin: 4px;\n  display: inline-block;\n  vertical-align: top;\n}\n.md-content[data-v-5a15a971] {\n  max-width: 600px;\n  height: 350px;\n  overflow: auto;\n  background: #282c33 !important;\n}\n.md-card-header[data-v-5a15a971] {\n  background: #9E9E9E;\n  margin-bottom: 0;\n}\n.md-chips[data-v-5a15a971] {\n  margin-bottom: 24px;\n}\nsmall[data-v-5a15a971] {\n  font-weight: 500;\n}\n.has-tag[data-v-5a15a971] {\n  color: #89ddff;\n}\n.has-name[data-v-5a15a971] {\n  color: #f07178;\n}\n.has-string[data-v-5a15a971] {\n  color: #bbdf88;\n}\n.has-attr[data-v-5a15a971] {\n  color: #bb8adb;\n}\n.txt-script[data-v-5a15a971] {\n  margin-left: 15px;\n}\n.text-p[data-v-5a15a971] {\n  padding-left: 20px;\n  margin-top: -20px;\n}\n.has-id[data-v-5a15a971] {\n  color: red;\n}\n.has_n[data-v-5a15a971] {\n  color: orange;\n}\n", ""]);
 
 // exports
 
@@ -102085,6 +101790,130 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_containers_AddTrigger__ = __webpack_require__(230);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_containers_AddTrigger___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_containers_AddTrigger__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_containers_EditTrigger__ = __webpack_require__(253);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_containers_EditTrigger___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_containers_EditTrigger__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -102121,13 +101950,307 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['id'],
-    name: "Containers"
+    props: ['url', 'id'],
+    name: "Containers",
+    data: function data() {
+        return {
+            containers: [],
+            showAddDialog: false,
+            showEditDialog: false,
+            editTrigger: null,
+            userSaved: false,
+            userEdit: false,
+            lastUser: null,
+            defUrl: null
+        };
+    },
+
+    components: {
+        'add': __WEBPACK_IMPORTED_MODULE_1__components_containers_AddTrigger___default.a,
+        'edit': __WEBPACK_IMPORTED_MODULE_2__components_containers_EditTrigger___default.a
+    },
+
+    methods: {
+        fetchData: function fetchData() {
+            var _this = this;
+
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/containers/' + this.id, this.id).then(function (response) {
+                _this.containers = response.data.data;
+            });
+        },
+        showEditFilterDialog: function showEditFilterDialog(item) {
+            this.editTrigger = item;
+            this.showEditDialog = true;
+        },
+        deleteFilter: function deleteFilter(item) {
+            var _this2 = this;
+
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete('/api/containers/' + item.id).then(function (response) {
+                var index = _this2.containers.indexOf(item);
+                _this2.containers.splice(index, 1);
+            });
+        },
+        closeDialog: function closeDialog() {
+            this.showAddDialog = false;
+            this.showEditDialog = false;
+            this.fetchData();
+        },
+        showLog: function showLog(data) {
+            var _this3 = this;
+
+            this.lastUser = data.data.trigger;
+            this.userSaved = true;
+
+            window.setTimeout(function () {
+                _this3.userSaved = false;
+            }, 1500);
+        },
+        showLogEdit: function showLogEdit(data) {
+            var _this4 = this;
+
+            this.lastUser = data.data;
+            this.userEdit = true;
+
+            window.setTimeout(function () {
+                _this4.userSaved = false;
+            }, 1500);
+        }
+    },
+    created: function created() {
+        this.fetchData();
+    }
 });
 
 /***/ }),
 /* 230 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(231)
+}
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(233)
+/* template */
+var __vue_template__ = __webpack_require__(234)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-db87264e"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/containers/AddTrigger.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-db87264e", Component.options)
+  } else {
+    hotAPI.reload("data-v-db87264e", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 231 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(232);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(6)("e2729d28", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-db87264e\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./AddTrigger.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-db87264e\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./AddTrigger.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 232 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material palette\n * ---\n * @access public\n * @type map\n * @group themes\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * $foo-palette: (\n *   primary: md-get-palette-color(indigo, 500),\n *   accent: md-get-palette-color(pink, 500),\n *   theme: \"light\"\n * );\n *\n * ---\n * @access public\n * ---\n * @param {color} $type —  The desired color based on material palette\n * @param {string} $type —  A valid hue\n */\n/**\n * Get the current theme mode from the current theme\n * ---\n * Usage example:\n *\n * $theme-mode: md-get-theme-mode()\n *\n * ---\n * @access private\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * .md-foo {\n *   min-width: 88px;\n *   height: 40px;\n *   background: md-theme(primary);\n * }\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The themable value\n */\n/**\n * Get a color based on type by theme\n * ---\n * Usage example:\n *\n * $color: md-get-color-by-theme(dark, primary)\n *\n * ---\n * @access public\n * ---\n * @param {string} $color-theme —  The theme color | Accepts dark or light\n * @param {string} $type —  The color type\n */\n/**\n * Get a color based on type only\n * ---\n * Usage example:\n *\n * $color1: md-get-color-by-type(background, dark)\n * $color1: md-get-color-by-type(accent)\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The color type\n * @param {string} $theme —  The fallback theme\n */\n/**\n * The default theme palette\n * primary: indigo 500 #3f51b5\n * accent: pink 500 #e91e63\n * theme: light\n *\n * It can be used just before importing the Vue Material stylesheet\n *\n * ---\n * @access public\n * @type colormap\n * @group themes\n */\n/**\n * Temporary variable to store all themable values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Map variable to store all themes to be processed by each component\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Store the current theme name\n * ---\n * @access private\n * @type string\n * @group themes\n */\n/**\n * The color contrast values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Hightly based on: \"Using Sass to automatically pick text colors\"\n * https://medium.com/dev-channel/using-sass-to-automatically-pick-text-colors-4ba7645d2796\n */\n/**\n * Precomputed linear color channel values, for use in contrast calculations.\n * See https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-tests\n * ---\n *\n *  Algorithm, for c in 0 to 255:\n *  f(c) {\n *    c = c / 255;\n *    return c < 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);\n *  }\n *\n *  This lookup table is needed since there is no `pow` in SASS.\n *\n * ---\n * @access private\n * @type Map\n * @group themes\n */\n/**\n * Calculate the luminance for a color.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The color to be analysed\n */\n/**\n * Calculate the contrast ratio between two colors.\n * ---\n * @access private\n * ---\n * @param {string} $bg —  The bg color\n * @param {string} $fg —  The fg color to be compared\n */\n/**\n * Determine whether to use dark or light text on top of given color.\n * Returns dark or light depending on the contrast ratio.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The desired color to be compared\n */\n/**\n * Override extending the default palette giving new values. It will extend\n * the default values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-override-palette ((\n *   accent: blue,\n *   theme: \"dark\"\n * ))\n *\n * ---\n * @access public\n * @param {map} $palette —  The new palette\n */\n/**\n * Create a new theme based on a given palette. It will extend the default\n * values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-register-theme(\"alternative\", (\n *   primary: #212121,\n *   accent: #CDDC39,\n *   theme: dark\n * ));\n *\n * ---\n * @access public\n * @param {string} $name —  The theme name to be used with the Vue Material\n * @param {map} $palette [$md-default-palette] —  The theme palette\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes.\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     background: md-theme(primary);\n *     color: md-theme(text-primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       background: md-theme(accent);\n *       color: md-theme(text-accent);\n *     };\n *   }\n * }\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes based on parent.\n * ---\n * Usage example:\n *\n * .md-foo {\n *   @include md-theme-component-relative() {\n *     @include md-theme-property(background, primary);\n *   }\n * }\n */\n/**\n * Theme a single css property\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property(background, primary);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       @include md-theme-property(background, accent);\n *       @include md-theme-property(color, text-primary, accent);\n *     }\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {number} $opacity —  The opacity amount\n */\n/**\n * Theme a single css property darkening the color by a certain amount\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-darken(background, primary, background, 10%);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {string} $darken —  The darken amount to apply to the color\n */\n/**\n * Theme a single css property by\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-by-hue(background, grey, 100, toolbar, background);\n *     @include md-theme-property(color, text-primary, background);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $color —  A valid material palette color name\n * @param {string} $hue —  The hue amount to get the hex color\n * @param {string} $type —  The type of variable\n * @param {string} $variant —  The type of constrasted variable\n */\n[data-v-db87264e]:root {\n  --md-theme-myTheme-primary: #9C27B0\n    ;\n  --md-theme-myTheme-accent: #E91E63\n    ;\n  --md-theme-myTheme-theme: light\n    ;\n}\n.md-theme-myTheme[data-v-db87264e] :not(input):not(textarea)::-moz-selection {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myTheme[data-v-db87264e] :not(input):not(textarea)::selection {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myTheme a[data-v-db87264e]:not(.md-button) {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-theme-myTheme a[data-v-db87264e]:not(.md-button):hover {\n    color: rgba(156, 39, 176, 0.8);\n    color: var(--md-theme-myTheme-primary-on-background, rgba(156, 39, 176, 0.8));\n}\n.md-theme-myTheme a:not(.md-button).md-accent[data-v-db87264e] {\n    color: #E91E63;\n    color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-theme-myTheme a:not(.md-button).md-accent[data-v-db87264e]:hover {\n      color: rgba(233, 30, 99, 0.8);\n      color: var(--md-theme-myTheme-accent-on-background, rgba(233, 30, 99, 0.8));\n}\nhtml.md-theme-myTheme[data-v-db87264e] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-myTheme-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-myTheme .md-caption[data-v-db87264e], .md-theme-myTheme\n.md-display-1[data-v-db87264e], .md-theme-myTheme\n.md-display-2[data-v-db87264e], .md-theme-myTheme\n.md-display-3[data-v-db87264e], .md-theme-myTheme\n.md-display-4[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-myTheme[data-v-db87264e]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-myTheme[data-v-db87264e]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-myTheme-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-myTheme[data-v-db87264e]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-myTheme-scrollbar-on-background-variant, #757575);\n}\n.md-app:not(.md-overlap).md-theme-myTheme[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-list.md-theme-myTheme .md-autocomplete-items .md-highlight-text-match[data-v-db87264e] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-list.md-theme-myTheme .md-autocomplete-loading[data-v-db87264e] {\n  background-color: rgba(255, 255, 255, 0.54);\n  background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.54));\n}\n.md-autocomplete.md-theme-myTheme.md-autocomplete-box[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused label[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.38);\n    color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box[data-v-db87264e] {\n    background-color: rgba(255, 255, 255, 0.12);\n    background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.12));\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box label[data-v-db87264e],\n    .md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box input[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      -webkit-text-fill-color: #fff;\n      -webkit-text-fill-color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box svg[data-v-db87264e] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused[data-v-db87264e] {\n      background-color: #fff;\n      background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused label[data-v-db87264e],\n      .md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused input[data-v-db87264e] {\n        color: rgba(0, 0, 0, 0.38);\n        color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n        -webkit-text-fill-color: rgba(0, 0, 0, 0.38);\n        -webkit-text-fill-color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused svg[data-v-db87264e] {\n        fill: rgba(0, 0, 0, 0.38);\n        fill: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-autocomplete-box-content.md-theme-myTheme[data-v-db87264e]:after {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  border-bottom-color: rgba(0, 0, 0, 0.12);\n  border-bottom-color: var(--md-theme-myTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-avatar.md-theme-myTheme.md-avatar-icon[data-v-db87264e] {\n  background-color: rgba(0, 0, 0, 0.38);\n  background-color: var(--md-theme-myTheme-icon-disabled, rgba(0, 0, 0, 0.38));\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-icon-disabled, #fff);\n}\n.md-avatar.md-theme-myTheme.md-avatar-icon .md-icon[data-v-db87264e] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-icon-disabled, #fff);\n    fill: #fff;\n    fill: var(--md-theme-myTheme-text-primary-on-icon-disabled, #fff);\n}\n.md-avatar.md-theme-myTheme.md-primary[data-v-db87264e] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-avatar.md-theme-myTheme.md-primary.md-avatar-icon[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-avatar.md-theme-myTheme.md-primary.md-avatar-icon .md-icon[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-avatar.md-theme-myTheme.md-accent[data-v-db87264e] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-avatar.md-theme-myTheme.md-accent.md-avatar-icon[data-v-db87264e] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-avatar.md-theme-myTheme.md-accent.md-avatar-icon .md-icon[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed .md-bottom-bar-item.md-active[data-v-db87264e] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed .md-bottom-bar-item.md-active .md-icon[data-v-db87264e] {\n      color: #9C27B0;\n      color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed .md-bottom-bar-item.md-active .md-icon svg[data-v-db87264e] {\n        fill: #9C27B0;\n        fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift[data-v-db87264e] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n  color: rgba(255, 255, 255, 0.7);\n  color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift > .md-ripple .md-ripple-wave[data-v-db87264e] {\n    background-color: #771e86;\n    background-color: var(--md-theme-myTheme-primary-on-primary, #771e86);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-icon[data-v-db87264e] {\n    color: #fff;\n    color: var(--md-theme-myTheme-icon-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-icon svg[data-v-db87264e] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-icon-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-bottom-bar-item[data-v-db87264e] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-bottom-bar-item .md-active .md-icon[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-bottom-bar-item .md-active .md-icon svg[data-v-db87264e] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active[data-v-db87264e] {\n    color: #E91E63;\n    color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active .md-icon[data-v-db87264e] {\n      color: #E91E63;\n      color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active .md-icon svg[data-v-db87264e] {\n        fill: #E91E63;\n        fill: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift[data-v-db87264e] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n  color: rgba(255, 255, 255, 0.7);\n  color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift > .md-ripple .md-ripple-wave[data-v-db87264e] {\n    background-color: #c1134e;\n    background-color: var(--md-theme-myTheme-accent-on-accent, #c1134e);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-icon[data-v-db87264e] {\n    color: #fff;\n    color: var(--md-theme-myTheme-icon-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-icon svg[data-v-db87264e] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-icon-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-bottom-bar-item[data-v-db87264e] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-bottom-bar-item .md-active .md-icon[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-bottom-bar-item .md-active .md-icon svg[data-v-db87264e] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-button.md-theme-myTheme.md-primary[data-v-db87264e] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-primary .md-icon-font[data-v-db87264e] {\n      color: #9C27B0;\n      color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-primary .md-icon-image[data-v-db87264e] {\n      fill: #9C27B0;\n      fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-accent[data-v-db87264e] {\n    color: #E91E63;\n    color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-button.md-theme-myTheme.md-accent .md-icon-font[data-v-db87264e] {\n      color: #E91E63;\n      color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-button.md-theme-myTheme.md-accent .md-icon-image[data-v-db87264e] {\n      fill: #E91E63;\n      fill: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-button.md-theme-myTheme.md-raised[disabled][data-v-db87264e] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-disabled-background-on-background, rgba(0, 0, 0, 0.12));\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-button.md-theme-myTheme.md-raised[data-v-db87264e]:not([disabled]) {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-primary[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      background-color: #9C27B0;\n      background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-primary .md-icon-font[data-v-db87264e] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-primary .md-icon-image[data-v-db87264e] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-accent[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n      background-color: #E91E63;\n      background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-accent .md-icon-font[data-v-db87264e] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-accent .md-icon-image[data-v-db87264e] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-fab[disabled][data-v-db87264e] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-disabled-background-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-button.md-theme-myTheme.md-fab[data-v-db87264e]:not([disabled]) {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]) .md-icon-font[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]) .md-icon-image[data-v-db87264e] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]).md-primary[data-v-db87264e] {\n      background-color: #9C27B0;\n      background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]).md-primary .md-icon-font[data-v-db87264e] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]).md-primary .md-icon-image[data-v-db87264e] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme[disabled][data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-button.md-theme-myTheme[disabled] .md-icon-font[data-v-db87264e] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myTheme-icon-disabled-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-button.md-theme-myTheme[disabled] .md-icon-image[data-v-db87264e] {\n      fill: rgba(0, 0, 0, 0.38);\n      fill: var(--md-theme-myTheme-icon-disabled-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-card.md-theme-myTheme[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-myTheme .md-card-expand .md-card-actions[data-v-db87264e] {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-card.md-theme-myTheme .md-card-header .md-button[data-v-db87264e]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-myTheme .md-card-actions .md-button[data-v-db87264e]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-myTheme .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-db87264e],\n    .md-card.md-theme-myTheme .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-db87264e] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-myTheme > .md-card-area[data-v-db87264e]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-myTheme.md-primary[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-myTheme.md-primary .md-card-expand .md-card-actions[data-v-db87264e] {\n      background-color: #9C27B0;\n      background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-card.md-theme-myTheme.md-primary .md-card-header .md-button[data-v-db87264e]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-myTheme.md-primary .md-card-actions .md-button[data-v-db87264e]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-myTheme.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-db87264e],\n      .md-card.md-theme-myTheme.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-db87264e] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-myTheme.md-primary > .md-card-area[data-v-db87264e]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-primary, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-myTheme.md-accent[data-v-db87264e] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-myTheme.md-accent .md-card-expand .md-card-actions[data-v-db87264e] {\n      background-color: #E91E63;\n      background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-card.md-theme-myTheme.md-accent .md-card-header .md-button[data-v-db87264e]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-myTheme.md-accent .md-card-actions .md-button[data-v-db87264e]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-myTheme.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-db87264e],\n      .md-card.md-theme-myTheme.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-db87264e] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-myTheme.md-accent > .md-card-area[data-v-db87264e]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-checkbox.md-theme-myTheme.md-checked .md-checkbox-container[data-v-db87264e] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n  border-color: #E91E63;\n  border-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-checkbox.md-theme-myTheme.md-checked .md-checkbox-container[data-v-db87264e]:after {\n    border-color: #fff;\n    border-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-checkbox.md-theme-myTheme.md-checked .md-ripple[data-v-db87264e] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-db87264e] {\n  border-color: rgba(0, 0, 0, 0.54);\n  background-color: rgba(255, 255, 255, 0.3);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-db87264e]:after {\n    border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-ripple[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-checked.md-primary .md-checkbox-container[data-v-db87264e] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n  border-color: #9C27B0;\n  border-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-checkbox.md-theme-myTheme.md-checked.md-primary .md-ripple[data-v-db87264e] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-db87264e] {\n  border-color: rgba(0, 0, 0, 0.54);\n  background-color: transparent;\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-db87264e]:after {\n    border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-ripple[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme .md-checkbox-container[data-v-db87264e] {\n  border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-disabled .md-checkbox-container[data-v-db87264e] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-checkbox.md-theme-myTheme.md-disabled.md-checked .md-checkbox-container[data-v-db87264e] {\n  border-color: rgba(0, 0, 0, 0.26);\n  background-color: rgba(0, 0, 0, 0.26);\n}\n.md-chip.md-theme-myTheme[data-v-db87264e] {\n  background-color: rgba(0, 0, 0, 0.12);\n  background-color: var(--md-theme-myTheme-highlight, rgba(0, 0, 0, 0.12));\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary, rgba(0, 0, 0, 0.87));\n}\n.md-chip.md-theme-myTheme .md-icon.md-icon-image svg[data-v-db87264e] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-text-primary, #fff);\n    fill: #fff;\n    fill: var(--md-theme-myTheme-text-primary-on-text-primary, #fff);\n}\n.md-chip.md-theme-myTheme.md-deletable[data-v-db87264e]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-clickable[data-v-db87264e]:not(.md-disabled):hover {\n    background-color: rgba(0, 0, 0, 0.54);\n    background-color: var(--md-theme-myTheme-icon, rgba(0, 0, 0, 0.54));\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myTheme.md-deletable:not(.md-disabled):hover .md-icon[data-v-db87264e], .md-chip.md-theme-myTheme.md-clickable:not(.md-disabled):hover .md-icon[data-v-db87264e] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myTheme.md-deletable:not(.md-disabled):hover .md-input-action[data-v-db87264e], .md-chip.md-theme-myTheme.md-clickable:not(.md-disabled):hover .md-input-action[data-v-db87264e] {\n      background-color: rgba(255, 255, 255, 0.87);\n      background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.87));\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myTheme.md-deletable:not(.md-disabled):hover .md-input-action .md-icon svg[data-v-db87264e], .md-chip.md-theme-myTheme.md-clickable:not(.md-disabled):hover .md-input-action .md-icon svg[data-v-db87264e] {\n        fill: rgba(0, 0, 0, 0.54);\n        fill: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n        color: rgba(0, 0, 0, 0.54);\n        color: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myTheme.md-primary[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-chip.md-theme-myTheme.md-primary .md-input-action[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-icon-on-disabled, #fff);\n      background-color: rgba(0, 0, 0, 0.26);\n      background-color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-chip.md-theme-myTheme.md-primary.md-deletable[data-v-db87264e]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-primary.md-clickable[data-v-db87264e]:not(.md-disabled):hover {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n      background-color: rgba(0, 0, 0, 0.54);\n      background-color: var(--md-theme-myTheme-icon, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myTheme.md-primary.md-deletable:not(.md-disabled):hover .md-input-action[data-v-db87264e], .md-chip.md-theme-myTheme.md-primary.md-clickable:not(.md-disabled):hover .md-input-action[data-v-db87264e] {\n        background-color: rgba(255, 255, 255, 0.87);\n        background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.87));\n}\n.md-chip.md-theme-myTheme.md-accent[data-v-db87264e], .md-chip.md-theme-myTheme.md-duplicated[data-v-db87264e] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-chip.md-theme-myTheme.md-accent .md-input-action[data-v-db87264e], .md-chip.md-theme-myTheme.md-duplicated .md-input-action[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-icon-on-disabled, #fff);\n      background-color: rgba(0, 0, 0, 0.26);\n      background-color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-chip.md-theme-myTheme.md-accent.md-deletable[data-v-db87264e]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-accent.md-clickable[data-v-db87264e]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-duplicated.md-deletable[data-v-db87264e]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-duplicated.md-clickable[data-v-db87264e]:not(.md-disabled):hover {\n      background-color: rgba(0, 0, 0, 0.54);\n      background-color: var(--md-theme-myTheme-icon, rgba(0, 0, 0, 0.54));\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myTheme.md-accent.md-deletable:not(.md-disabled):hover .md-input-action[data-v-db87264e], .md-chip.md-theme-myTheme.md-accent.md-clickable:not(.md-disabled):hover .md-input-action[data-v-db87264e], .md-chip.md-theme-myTheme.md-duplicated.md-deletable:not(.md-disabled):hover .md-input-action[data-v-db87264e], .md-chip.md-theme-myTheme.md-duplicated.md-clickable:not(.md-disabled):hover .md-input-action[data-v-db87264e] {\n        background-color: rgba(255, 255, 255, 0.87);\n        background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.87));\n}\n.md-chip.md-theme-myTheme.md-disabled[data-v-db87264e] {\n    background-color: rgba(0, 0, 0, 0.1);\n    background-color: var(--md-theme-myTheme-highlight, rgba(0, 0, 0, 0.1));\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent, rgba(0, 0, 0, 0.54));\n}\n.md-chips.md-theme-myTheme .md-clear[data-v-db87264e] {\n  background-color: rgba(0, 0, 0, 0.2);\n}\n.md-content.md-theme-myTheme[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-content.md-theme-myTheme.md-primary[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-content.md-theme-myTheme.md-accent[data-v-db87264e] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-app .md-content.md-theme-myTheme[data-v-db87264e] {\n    border-left-color: rgba(0, 0, 0, 0.12);\n    border-left-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n    border-right-color: rgba(0, 0, 0, 0.12);\n    border-right-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-datepicker-dialog.md-theme-myTheme[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-header[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-body-header[data-v-db87264e]:after, .md-datepicker-dialog.md-theme-myTheme .md-datepicker-body-header[data-v-db87264e]:before {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-body-footer[data-v-db87264e] {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-week[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-disabled[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-today[data-v-db87264e] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-day-button[data-v-db87264e]:hover,\n  .md-datepicker-dialog.md-theme-myTheme .md-datepicker-month-button[data-v-db87264e]:hover,\n  .md-datepicker-dialog.md-theme-myTheme .md-datepicker-year-button[data-v-db87264e]:hover {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-day-button.md-datepicker-selected[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-month-button.md-datepicker-selected[data-v-db87264e],\n  .md-datepicker-dialog.md-theme-myTheme .md-datepicker-year-button.md-datepicker-selected[data-v-db87264e] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-year-selector[data-v-db87264e] {\n    border-bottom-color: rgba(0, 0, 0, 0.12);\n    border-bottom-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-dialog.md-theme-myTheme[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-divider.md-theme-myTheme[data-v-db87264e] {\n  background-color: rgba(0, 0, 0, 0.12);\n  background-color: var(--md-theme-myTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-drawer.md-theme-myTheme[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-drawer.md-theme-myTheme.md-persistent-mini.md-left[data-v-db87264e] {\n    border-right-color: rgba(0, 0, 0, 0.12);\n    border-right-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-drawer.md-theme-myTheme.md-persistent-mini.md-right[data-v-db87264e] {\n    border-left-color: rgba(0, 0, 0, 0.12);\n    border-left-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-empty-state.md-theme-myTheme .md-empty-state-icon.md-icon-image svg[data-v-db87264e] {\n  fill: rgba(0, 0, 0, 0.26);\n  fill: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-empty-state.md-theme-myTheme .md-empty-state-icon.md-icon-font[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.26);\n  color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-empty-state.md-theme-myTheme.md-rounded[data-v-db87264e] {\n  background-color: rgba(0, 0, 0, 0.06);\n  background-color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.06));\n}\n.md-empty-state.md-theme-myTheme.md-primary .md-empty-state-icon.md-icon-image svg[data-v-db87264e] {\n  fill: #9C27B0;\n  fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-empty-state.md-theme-myTheme.md-primary .md-empty-state-icon.md-icon-font[data-v-db87264e] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-empty-state.md-theme-myTheme.md-accent .md-empty-state-icon.md-icon-image svg[data-v-db87264e] {\n  fill: #E91E63;\n  fill: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-empty-state.md-theme-myTheme.md-accent .md-empty-state-icon.md-icon-font[data-v-db87264e] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-field.md-theme-myTheme[data-v-db87264e]:after {\n  background-color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myTheme[data-v-db87264e]:before {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-field.md-theme-myTheme .md-helper-text[data-v-db87264e],\n.md-field.md-theme-myTheme .md-count[data-v-db87264e],\n.md-field.md-theme-myTheme label[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myTheme .md-suffix[data-v-db87264e], .md-field.md-theme-myTheme .md-prefix[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myTheme .md-input[data-v-db87264e]::-webkit-input-placeholder,\n.md-field.md-theme-myTheme .md-textarea[data-v-db87264e]::-webkit-input-placeholder {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myTheme.md-focused .md-input[data-v-db87264e],\n.md-field.md-theme-myTheme.md-focused .md-textarea[data-v-db87264e], .md-field.md-theme-myTheme.md-has-value .md-input[data-v-db87264e],\n.md-field.md-theme-myTheme.md-has-value .md-textarea[data-v-db87264e] {\n  -webkit-text-fill-color: rgba(0, 0, 0, 0.87);\n}\n.md-field.md-theme-myTheme.md-has-textarea[data-v-db87264e]:not(.md-autogrow):after {\n  border-color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myTheme.md-has-textarea[data-v-db87264e]:not(.md-autogrow):before {\n  border-color: #9C27B0;\n  border-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-field.md-theme-myTheme.md-disabled[data-v-db87264e]:after {\n  background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.38)), color-stop(33%, rgba(0, 0, 0, 0.38)), color-stop(0%, transparent));\n  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.38) 33%, transparent 0%);\n}\n.md-field.md-theme-myTheme.md-disabled label[data-v-db87264e],\n.md-field.md-theme-myTheme.md-disabled .md-input[data-v-db87264e],\n.md-field.md-theme-myTheme.md-disabled .md-textarea[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myTheme > .md-icon[data-v-db87264e]:after {\n  background-color: #fafafa;\n  background-color: var(--md-theme-myTheme-background-variant, #fafafa);\n}\n.md-field.md-theme-myTheme.md-invalid[data-v-db87264e]:after {\n  background-color: #ff1744;\n  background-color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid.md-has-textarea[data-v-db87264e]:not(.md-autogrow):before {\n  border-color: #ff1744;\n  border-color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid label[data-v-db87264e] {\n  color: #ff1744;\n  color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid .md-error[data-v-db87264e] {\n  color: #ff1744;\n  color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid .md-date-icon[data-v-db87264e],\n.md-field.md-theme-myTheme.md-invalid .md-date-icon svg[data-v-db87264e] {\n  color: #ff1744;\n  color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n  fill: #ff1744;\n  fill: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-focused .md-input[data-v-db87264e],\n.md-field.md-theme-myTheme.md-focused .md-textarea[data-v-db87264e], .md-field.md-theme-myTheme.md-highlight .md-input[data-v-db87264e],\n.md-field.md-theme-myTheme.md-highlight .md-textarea[data-v-db87264e] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-field.md-theme-myTheme.md-focused > .md-icon[data-v-db87264e], .md-field.md-theme-myTheme.md-highlight > .md-icon[data-v-db87264e] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n  fill: #9C27B0;\n  fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-field.md-theme-myTheme.md-focused label[data-v-db87264e] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-field.md-theme-myTheme.md-disabled .md-icon svg[data-v-db87264e] {\n  fill: rgba(0, 0, 0, 0.26);\n  fill: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-icon.md-theme-myTheme.md-icon-image svg[data-v-db87264e] {\n  fill: rgba(0, 0, 0, 0.54);\n  fill: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-icon.md-theme-myTheme.md-icon-image svg.md-primary[data-v-db87264e] {\n    fill: #9C27B0;\n    fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-icon.md-theme-myTheme.md-icon-image svg.md-accent[data-v-db87264e] {\n    fill: #E91E63;\n    fill: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-icon.md-theme-myTheme.md-icon-font[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-icon.md-theme-myTheme.md-icon-font.md-primary[data-v-db87264e] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-icon.md-theme-myTheme.md-icon-font.md-accent[data-v-db87264e] {\n    color: #E91E63;\n    color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-list.md-theme-myTheme[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myTheme.md-double-line .md-list-item-text[data-v-db87264e] :nth-child(2) {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-list.md-theme-myTheme.md-triple-line .md-list-item-text[data-v-db87264e] :nth-child(3) {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-list.md-theme-myTheme .md-highlight .md-list-item-container[data-v-db87264e] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-list.md-theme-myTheme .md-list-item-container[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myTheme .md-list-item-container[data-v-db87264e]:not(.md-list-item-default):not([disabled]):hover {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myTheme [disabled][data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-list.md-theme-myTheme .md-selected .md-list-item-content[data-v-db87264e],\n  .md-list.md-theme-myTheme .router-link-exact-active .md-list-item-content[data-v-db87264e] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-list.md-theme-myTheme .md-list-item-expand.md-active[data-v-db87264e] {\n    border-color: rgba(0, 0, 0, 0.12);\n    border-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-menu-item.md-theme-myTheme.md-primary .md-list-item-link[data-v-db87264e],\n.md-menu-item.md-theme-myTheme.md-primary .md-list-item-router[data-v-db87264e],\n.md-menu-item.md-theme-myTheme.md-primary .md-list-item-button[data-v-db87264e] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-menu-item.md-theme-myTheme.md-accent .md-list-item-link[data-v-db87264e],\n.md-menu-item.md-theme-myTheme.md-accent .md-list-item-router[data-v-db87264e],\n.md-menu-item.md-theme-myTheme.md-accent .md-list-item-button[data-v-db87264e] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate[data-v-db87264e], .md-progress-bar.md-theme-myTheme.md-query[data-v-db87264e] {\n  background-color: rgba(156, 39, 176, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate .md-progress-bar-track[data-v-db87264e]:after,\n  .md-progress-bar.md-theme-myTheme.md-indeterminate .md-progress-bar-fill[data-v-db87264e]:after, .md-progress-bar.md-theme-myTheme.md-query .md-progress-bar-track[data-v-db87264e]:after,\n  .md-progress-bar.md-theme-myTheme.md-query .md-progress-bar-fill[data-v-db87264e]:after {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate.md-accent[data-v-db87264e], .md-progress-bar.md-theme-myTheme.md-query.md-accent[data-v-db87264e] {\n    background-color: rgba(233, 30, 99, 0.38);\n    background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate.md-accent .md-progress-bar-track[data-v-db87264e]:after,\n    .md-progress-bar.md-theme-myTheme.md-indeterminate.md-accent .md-progress-bar-fill[data-v-db87264e]:after, .md-progress-bar.md-theme-myTheme.md-query.md-accent .md-progress-bar-track[data-v-db87264e]:after,\n    .md-progress-bar.md-theme-myTheme.md-query.md-accent .md-progress-bar-fill[data-v-db87264e]:after {\n      background-color: #E91E63;\n      background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-progress-bar.md-theme-myTheme.md-determinate[data-v-db87264e] {\n  background-color: rgba(156, 39, 176, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-determinate .md-progress-bar-fill[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-progress-bar.md-theme-myTheme.md-determinate.md-accent[data-v-db87264e] {\n    background-color: rgba(233, 30, 99, 0.38);\n    background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-determinate.md-accent .md-progress-bar-fill[data-v-db87264e] {\n      background-color: #E91E63;\n      background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-progress-bar.md-theme-myTheme.md-buffer .md-progress-bar-fill[data-v-db87264e] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-progress-bar.md-theme-myTheme.md-buffer .md-progress-bar-track[data-v-db87264e] {\n  background-color: rgba(156, 39, 176, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-buffer .md-progress-bar-buffer[data-v-db87264e] {\n  border-color: rgba(156, 39, 176, 0.38);\n  border-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-buffer.md-accent .md-progress-bar-fill[data-v-db87264e] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-progress-bar.md-theme-myTheme.md-buffer.md-accent .md-progress-bar-track[data-v-db87264e] {\n  background-color: rgba(233, 30, 99, 0.38);\n  background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-buffer.md-accent .md-progress-bar-buffer[data-v-db87264e] {\n  border-color: rgba(233, 30, 99, 0.38);\n  border-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-progress-spinner.md-theme-myTheme .md-progress-spinner-circle[data-v-db87264e] {\n  stroke: #9C27B0;\n  stroke: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-progress-spinner.md-theme-myTheme.md-accent .md-progress-spinner-circle[data-v-db87264e] {\n  stroke: #E91E63;\n  stroke: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-radio.md-theme-myTheme.md-checked .md-radio-container[data-v-db87264e] {\n  border-color: #E91E63;\n  border-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-radio.md-theme-myTheme.md-checked .md-radio-container[data-v-db87264e]:after {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-radio.md-theme-myTheme.md-checked .md-ripple[data-v-db87264e] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-radio.md-theme-myTheme.md-checked.md-primary .md-radio-container[data-v-db87264e] {\n  border-color: #9C27B0;\n  border-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-radio.md-theme-myTheme.md-checked.md-primary .md-radio-container[data-v-db87264e]:after {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-radio.md-theme-myTheme.md-checked.md-primary .md-ripple[data-v-db87264e] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-radio.md-theme-myTheme .md-radio-container[data-v-db87264e] {\n  border-color: rgba(0, 0, 0, 0.54);\n}\n.md-radio.md-theme-myTheme.md-disabled .md-radio-container[data-v-db87264e] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-radio.md-theme-myTheme.md-disabled.md-checked .md-radio-container[data-v-db87264e] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-radio.md-theme-myTheme.md-disabled.md-checked .md-radio-container[data-v-db87264e]:after {\n    background-color: rgba(0, 0, 0, 0.26);\n}\n.md-snackbar.md-theme-myTheme[data-v-db87264e] {\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-text-primary, #fff);\n  background-color: #323232;\n}\n.md-steppers.md-theme-myTheme[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-steppers.md-theme-myTheme .md-stepper-icon[data-v-db87264e]:after, .md-steppers.md-theme-myTheme .md-stepper-icon[data-v-db87264e]:before,\n  .md-steppers.md-theme-myTheme .md-stepper-number[data-v-db87264e]:after,\n  .md-steppers.md-theme-myTheme .md-stepper-number[data-v-db87264e]:before,\n  .md-steppers.md-theme-myTheme .md-stepper[data-v-db87264e]:after,\n  .md-steppers.md-theme-myTheme .md-stepper[data-v-db87264e]:before {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-steppers.md-theme-myTheme .md-stepper-number[data-v-db87264e] {\n    background-color: rgba(0, 0, 0, 0.38);\n    background-color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-text-hint, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-number svg[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-text-hint, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-text-hint, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header .md-button-content[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.38);\n    color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-steppers.md-theme-myTheme .md-stepper-header .md-button-content[data-v-db87264e]:after, .md-steppers.md-theme-myTheme .md-stepper-header .md-button-content[data-v-db87264e]:before {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-active .md-button-content[data-v-db87264e], .md-steppers.md-theme-myTheme .md-stepper-header.md-done .md-button-content[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-active .md-stepper-number[data-v-db87264e], .md-steppers.md-theme-myTheme .md-stepper-header.md-done .md-stepper-number[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-active .md-stepper-number svg[data-v-db87264e], .md-steppers.md-theme-myTheme .md-stepper-header.md-done .md-stepper-number svg[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-error .md-button-content[data-v-db87264e] {\n    color: #ff1744;\n    color: var(--md-theme-myTheme-steppervariant, #ff1744);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-error .md-icon svg[data-v-db87264e] {\n    color: #ff1744;\n    color: var(--md-theme-myTheme-steppervariant, #ff1744);\n    fill: #ff1744;\n    fill: var(--md-theme-myTheme-steppervariant, #ff1744);\n}\n.md-subheader.md-theme-myTheme[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-subheader.md-theme-myTheme.md-primary[data-v-db87264e] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-switch.md-theme-myTheme.md-checked .md-switch-container[data-v-db87264e] {\n  background-color: rgba(233, 30, 99, 0.38);\n  background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-switch.md-theme-myTheme.md-checked .md-switch-thumb[data-v-db87264e] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-switch.md-theme-myTheme.md-checked .md-ripple[data-v-db87264e] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-switch.md-theme-myTheme.md-checked.md-primary .md-switch-container[data-v-db87264e] {\n  background-color: rgba(156, 39, 176, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-switch.md-theme-myTheme.md-checked.md-primary .md-switch-thumb[data-v-db87264e] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-switch.md-theme-myTheme.md-checked.md-primary .md-ripple[data-v-db87264e] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-switch.md-theme-myTheme .md-switch-container[data-v-db87264e] {\n  background-color: rgba(0, 0, 0, 0.38);\n}\n.md-switch.md-theme-myTheme .md-switch-thumb[data-v-db87264e] {\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myTheme-switchvariant, #f5f5f5);\n}\n.md-switch.md-theme-myTheme.md-disabled .md-switch-container[data-v-db87264e] {\n  background-color: rgba(0, 0, 0, 0.12);\n}\n.md-switch.md-theme-myTheme.md-disabled .md-switch-thumb[data-v-db87264e] {\n  background-color: #bdbdbd;\n  background-color: var(--md-theme-myTheme-switchvariant, #bdbdbd);\n}\n.md-table.md-theme-myTheme .md-table-content[data-v-db87264e],\n.md-table.md-theme-myTheme .md-table-alternate-header[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-table.md-theme-myTheme .md-table-alternate-header .md-table-toolbar[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n  background-color: rgba(233, 30, 99, 0.2);\n  background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.2));\n}\n.md-table.md-theme-myTheme .md-table-row:hover:not(.md-header-row) .md-table-cell[data-v-db87264e] {\n  background-color: rgba(0, 0, 0, 0.08);\n  background-color: var(--md-theme-myTheme-highlight-on-background, rgba(0, 0, 0, 0.08));\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected[data-v-db87264e], .md-table.md-theme-myTheme .md-table-row.md-selected-single[data-v-db87264e] {\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myTheme-rowvariant, #f5f5f5);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary[data-v-db87264e], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary .md-ripple[data-v-db87264e], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary .md-ripple[data-v-db87264e] {\n      color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary .md-checkbox-container[data-v-db87264e], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary .md-checkbox-container[data-v-db87264e] {\n      background-color: #fff;\n      border-color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary .md-checkbox-container[data-v-db87264e]:after, .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary .md-checkbox-container[data-v-db87264e]:after {\n        border-color: #9C27B0;\n        border-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent[data-v-db87264e], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent[data-v-db87264e] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent .md-ripple[data-v-db87264e], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent .md-ripple[data-v-db87264e] {\n      color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent .md-checkbox-container[data-v-db87264e], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent .md-checkbox-container[data-v-db87264e] {\n      background-color: #fff;\n      border-color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent .md-checkbox-container[data-v-db87264e]:after, .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent .md-checkbox-container[data-v-db87264e]:after {\n        border-color: #E91E63;\n        border-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-table.md-theme-myTheme .md-table-row td[data-v-db87264e] {\n  border-top-color: rgba(0, 0, 0, 0.12);\n  border-top-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-table.md-theme-myTheme .md-table-head[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-table.md-theme-myTheme .md-table-fixed-header-active[data-v-db87264e] {\n  border-bottom-color: rgba(0, 0, 0, 0.12);\n  border-bottom-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-table.md-theme-myTheme .md-sortable[data-v-db87264e]:hover, .md-table.md-theme-myTheme .md-sortable.md-sorted[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-table.md-theme-myTheme .md-sortable:hover svg[data-v-db87264e], .md-table.md-theme-myTheme .md-sortable.md-sorted svg[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n    fill: rgba(0, 0, 0, 0.87);\n    fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-table.md-theme-myTheme .md-table-pagination[data-v-db87264e] {\n  border-top-color: rgba(0, 0, 0, 0.12);\n  border-top-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background-on-background, #fff);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[disabled][data-v-db87264e] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon[data-v-db87264e] {\n      color: rgba(0, 0, 0, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon svg[data-v-db87264e] {\n        fill: rgba(0, 0, 0, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active[data-v-db87264e] {\n      color: #9C27B0;\n      color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon[data-v-db87264e] {\n        color: #9C27B0;\n        color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-db87264e] {\n          fill: #9C27B0;\n          fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-indicator[data-v-db87264e] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation[data-v-db87264e] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[data-v-db87264e] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[disabled][data-v-db87264e] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon[data-v-db87264e] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon svg[data-v-db87264e] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon[data-v-db87264e] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-db87264e] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-indicator[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation[data-v-db87264e] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[data-v-db87264e] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[disabled][data-v-db87264e] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon[data-v-db87264e] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon svg[data-v-db87264e] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon[data-v-db87264e] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-db87264e] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-indicator[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background-on-background, #fff);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[disabled][data-v-db87264e] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon[data-v-db87264e] {\n      color: rgba(0, 0, 0, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon svg[data-v-db87264e] {\n        fill: rgba(0, 0, 0, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active[data-v-db87264e] {\n      color: #9C27B0;\n      color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon[data-v-db87264e] {\n        color: #9C27B0;\n        color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-db87264e] {\n          fill: #9C27B0;\n          fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-indicator[data-v-db87264e] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation[data-v-db87264e] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[data-v-db87264e] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[disabled][data-v-db87264e] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon[data-v-db87264e] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon svg[data-v-db87264e] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon[data-v-db87264e] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-db87264e] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-indicator[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation[data-v-db87264e] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[data-v-db87264e] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[disabled][data-v-db87264e] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon[data-v-db87264e] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon svg[data-v-db87264e] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon[data-v-db87264e] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-db87264e] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-indicator[data-v-db87264e] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme[data-v-db87264e] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myTheme-toolbarvariant, #f5f5f5);\n}\n.md-toolbar.md-theme-myTheme .md-icon[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme .md-icon svg[data-v-db87264e] {\n      fill: rgba(0, 0, 0, 0.87);\n      fill: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme .md-title[data-v-db87264e],\n  .md-toolbar.md-theme-myTheme .md-display-1[data-v-db87264e],\n  .md-toolbar.md-theme-myTheme .md-display-2[data-v-db87264e] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-primary[data-v-db87264e] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-icon[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-icon svg[data-v-db87264e] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-button[data-v-db87264e]:not([disabled]):not(.md-raised) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-title[data-v-db87264e],\n    .md-toolbar.md-theme-myTheme.md-primary .md-display-1[data-v-db87264e],\n    .md-toolbar.md-theme-myTheme.md-primary .md-display-2[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent[data-v-db87264e] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-icon[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-icon svg[data-v-db87264e] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-button[data-v-db87264e]:not([disabled]):not(.md-raised) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-title[data-v-db87264e],\n    .md-toolbar.md-theme-myTheme.md-accent .md-display-1[data-v-db87264e],\n    .md-toolbar.md-theme-myTheme.md-accent .md-display-2[data-v-db87264e] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-transparent[data-v-db87264e] {\n    background-color: transparent;\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-transparent .md-icon[data-v-db87264e] {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-transparent .md-icon svg[data-v-db87264e] {\n        fill: rgba(0, 0, 0, 0.87);\n        fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-transparent .md-title[data-v-db87264e],\n    .md-toolbar.md-theme-myTheme.md-transparent .md-display-1[data-v-db87264e],\n    .md-toolbar.md-theme-myTheme.md-transparent .md-display-2[data-v-db87264e] {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-tooltip.md-theme-myTheme[data-v-db87264e] {\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-tooltip, #fff);\n  background-color: rgba(97, 97, 97, 0.9);\n  background-color: var(--md-theme-myTheme-tooltip-on-background, rgba(97, 97, 97, 0.9));\n}\n.md-badge.md-theme-myTheme[data-v-db87264e] {\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-badge.md-theme-myTheme.md-primary[data-v-db87264e] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 233 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['old_comaing'],
+    mixins: [__WEBPACK_IMPORTED_MODULE_1_vuelidate__["validationMixin"]],
+    data: function data() {
+        return {
+            form: {
+                new_campaign: null,
+                trigger: null,
+                id_campaign: null
+            },
+            userSaved: false,
+            sending: false
+        };
+    },
+    validations: {
+        form: {
+
+            trigger: {
+                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+            },
+            new_campaign: {
+                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+            }
+        }
+    },
+    methods: {
+        getValidationClass: function getValidationClass(fieldName) {
+            var field = this.$v.form[fieldName];
+
+            if (field) {
+                return {
+                    'md-invalid': field.$invalid && field.$dirty
+                };
+            }
+        },
+        clearForm: function clearForm() {
+            this.$v.$reset();
+
+            this.form.id_campaign = null;
+            this.form.new_campaign = null;
+            this.form.trigger = null;
+        },
+        savePixel: function savePixel() {
+            var _this = this;
+
+            this.sending = true;
+            this.form.id_campaign = this.old_comaing;
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/containers', this.form).then(function (response) {
+
+                _this.form = response.data.data;
+                console.log(_this.form);
+                _this.$emit('AddTrigger', { data: _this.form });
+            });
+
+            window.setTimeout(function () {
+                _this.sending = false;
+                _this.close();
+                _this.clearForm();
+            }, 1500);
+        },
+        validateUser: function validateUser() {
+
+            this.$v.$touch();
+
+            if (!this.$v.$invalid) {
+
+                this.savePixel();
+            }
+        },
+        close: function close() {
+            this.$emit('CloseTriggerDialog');
+        }
+    }
+});
+
+/***/ }),
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -102136,72 +102259,170 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c(
-      "div",
-      { staticClass: "card-expansion" },
+      "form",
+      {
+        staticClass: "md-layout",
+        attrs: { novalidate: "" },
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.validateUser($event)
+          }
+        }
+      },
       [
         _c(
           "md-card",
+          {
+            staticClass: "md-layout-item md-small-size-100",
+            attrs: { "md-with-hover": "" }
+          },
           [
             _c(
-              "md-card-area",
+              "md-toolbar",
+              {
+                staticClass: "md-primary",
+                attrs: { "md-theme": "myTheme", "md-aligment": "space-between" }
+              },
               [
+                _c("div", { staticClass: "md-title" }, [
+                  _vm._v("Создать Фильтр")
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c("md-card-content", [
+              _c("div", { staticClass: "md-layout md-gutter" }, [
                 _c(
-                  "md-card-media",
+                  "div",
+                  { staticClass: "md-layout-item md-small-size-100" },
                   [
-                    _c("md-toolbar", { staticClass: "md-dense" }, [
-                      _c("h3", { staticClass: "md-title" }, [_vm._v("Скрипт")])
-                    ]),
-                    _vm._v(" "),
-                    _c("md-content", { staticClass: "md-scrollbar" }, [
-                      _c("h1", [
-                        _vm._v(
-                          "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias excepturi expedita fuga in ipsa ipsam quam repellendus temporibus tenetur. Consectetur culpa debitis eaque illum nostrum! Ex impedit porro possimus quasi!"
-                        )
-                      ])
-                    ])
+                    _c(
+                      "md-field",
+                      {
+                        class: _vm.getValidationClass("trigger"),
+                        attrs: { "md-theme": "myTheme" }
+                      },
+                      [
+                        _c("label", { attrs: { for: "trigger" } }, [
+                          _vm._v("trigger")
+                        ]),
+                        _vm._v(" "),
+                        _c("md-input", {
+                          attrs: {
+                            name: "trigger",
+                            id: "trigger",
+                            autocomplete: "trigger",
+                            disabled: _vm.sending
+                          },
+                          model: {
+                            value: _vm.form.trigger,
+                            callback: function($$v) {
+                              _vm.$set(_vm.form, "trigger", $$v)
+                            },
+                            expression: "form.trigger"
+                          }
+                        }),
+                        _vm._v(" "),
+                        !_vm.$v.form.trigger.required
+                          ? _c("span", { staticClass: "md-error" }, [
+                              _vm._v("The trigger is required")
+                            ])
+                          : !_vm.$v.form.trigger.minLength
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("Invalid trigger")
+                              ])
+                            : _vm._e()
+                      ],
+                      1
+                    )
                   ],
                   1
                 ),
                 _vm._v(" "),
-                _c("md-card-header", [
-                  _c("div", { staticClass: "md-title" }, [
-                    _vm._v("Container: " + _vm._s(_vm.$route.params.id))
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "md-subhead" }, [
-                    _vm._v("Subtitle here")
-                  ])
-                ])
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "md-card-actions",
-              { attrs: { "md-alignment": "space-between" } },
-              [
                 _c(
                   "div",
+                  { staticClass: "md-layout-item md-small-size-100" },
                   [
-                    _c("md-button", [_vm._v("Edit")]),
-                    _vm._v(" "),
-                    _c("md-button", [_vm._v("Remove")])
+                    _c(
+                      "md-field",
+                      {
+                        class: _vm.getValidationClass("id_campaign"),
+                        attrs: { "md-theme": "myTheme" }
+                      },
+                      [
+                        _c("label", { attrs: { for: "new_campaign" } }, [
+                          _vm._v("new_campaign")
+                        ]),
+                        _vm._v(" "),
+                        _c("md-input", {
+                          attrs: {
+                            name: "new_campaign",
+                            id: "new_campaign",
+                            autocomplete: "new_campaign",
+                            disabled: _vm.sending
+                          },
+                          model: {
+                            value: _vm.form.new_campaign,
+                            callback: function($$v) {
+                              _vm.$set(_vm.form, "new_campaign", $$v)
+                            },
+                            expression: "form.new_campaign"
+                          }
+                        }),
+                        _vm._v(" "),
+                        !_vm.$v.form.new_campaign.required
+                          ? _c("span", { staticClass: "md-error" }, [
+                              _vm._v("The new_campaign is required")
+                            ])
+                          : !_vm.$v.form.new_campaign.minLength
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("Invalid new_campaign")
+                              ])
+                            : _vm._e()
+                      ],
+                      1
+                    )
                   ],
                   1
                 )
-              ]
+              ])
+            ]),
+            _vm._v(" "),
+            _vm.sending
+              ? _c("md-progress-bar", { attrs: { "md-mode": "indeterminate" } })
+              : _vm._e(),
+            _vm._v(" "),
+            _c(
+              "md-card-actions",
+              [
+                _c(
+                  "md-button",
+                  {
+                    staticClass: "md-primary",
+                    attrs: { "md-theme": "myTheme" },
+                    on: { click: _vm.close }
+                  },
+                  [_vm._v("Отмена")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "md-button",
+                  {
+                    staticClass: "md-primary",
+                    attrs: {
+                      type: "submit",
+                      "md-theme": "myTheme",
+                      disabled: _vm.sending
+                    }
+                  },
+                  [_vm._v("Сохранить")]
+                )
+              ],
+              1
             )
           ],
           1
-        ),
-        _vm._v(" "),
-        _c(
-          "router-link",
-          {
-            staticClass: "nav-link active",
-            attrs: { to: { name: "companies" } }
-          },
-          [_vm._v("Назад")]
         )
       ],
       1
@@ -102214,15 +102435,1455 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-db87264e", module.exports)
+  }
+}
+
+/***/ }),
+/* 235 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "md-toolbar",
+        { staticClass: "md-accent", attrs: { "md-elevation": "1" } },
+        [
+          _c("h3", { staticClass: "md-title", staticStyle: { flex: "1" } }, [
+            _vm._v("Title")
+          ]),
+          _vm._v(" "),
+          _c(
+            "md-button",
+            [
+              _c(
+                "router-link",
+                {
+                  staticClass: "nav-link active",
+                  attrs: { to: { name: "companies" } }
+                },
+                [_vm._v("Назад")]
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "md-button",
+            {
+              staticClass: "md-primary md-raised",
+              on: {
+                click: function($event) {
+                  _vm.showAddDialog = true
+                }
+              }
+            },
+            [_vm._v("Создать")]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "md-layout" },
+        [
+          _c(
+            "div",
+            { staticClass: "md-layout-item" },
+            [
+              _c(
+                "md-card",
+                {
+                  staticClass: "md-accent",
+                  attrs: { "md-theme": "myTheme", "md-with-hover": "" }
+                },
+                [
+                  _c(
+                    "md-card-media",
+                    [
+                      _c(
+                        "md-toolbar",
+                        {
+                          staticClass: "md-dense md-primary",
+                          attrs: { "md-theme": "myTheme" }
+                        },
+                        [
+                          _c(
+                            "div",
+                            { staticClass: "md-layout-item md-size-80" },
+                            [
+                              _c("h3", { staticClass: "md-title" }, [
+                                _vm._v("Фильтр:")
+                              ])
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "md-layout-item md-size-20 text-right"
+                            },
+                            [
+                              _c(
+                                "md-chip",
+                                {
+                                  staticClass: "md-primary",
+                                  attrs: {
+                                    "md-theme": "myBtnTheme",
+                                    "md-clickable": ""
+                                  }
+                                },
+                                [_vm._v(_vm._s(_vm.url))]
+                              )
+                            ],
+                            1
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("md-content", { staticClass: "md-scrollbar" }, [
+                        _c("div", { staticClass: "txt-script" }, [
+                          _c("span", { staticClass: "has-tag" }, [_vm._v("<")]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "has-name" }, [
+                            _vm._v("script")
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "has-tag" }, [_vm._v(">")]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "text-p" }, [
+                            _c("span", { staticClass: "has-string" }, [
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("var")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("script")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" = ")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("document")
+                              ]),
+                              _vm._v(" . "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("createElement")
+                              ]),
+                              _vm._v("('script')"),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("script")
+                              ]),
+                              _vm._v(" . "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v(" src ")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" = ")
+                              ]),
+                              _vm._v(" '//sonar.semantiqo.com/4e3ll/check.js'"),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("document")
+                              ]),
+                              _vm._v("."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("getElementsByTagName")
+                              ]),
+                              _vm._v("('head')["),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" 0 ")
+                              ]),
+                              _vm._v("]."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("appendChild")
+                              ]),
+                              _vm._v("(script) "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("var")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("script")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" = ")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("document")
+                              ]),
+                              _vm._v("."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("createElement")
+                              ]),
+                              _vm._v("('script')"),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("script")
+                              ]),
+                              _vm._v(" . "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v(" src ")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" = ")
+                              ]),
+                              _vm._v(
+                                " '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign="
+                              ),
+                              _c("span", { staticClass: "has-id" }, [
+                                _vm._v(_vm._s(_vm.id))
+                              ]),
+                              _vm._v(
+                                "&password=htnfhutn&type=1&userData=$USERDATA'"
+                              ),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("document")
+                              ]),
+                              _vm._v("."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("getElementsByTagName")
+                              ]),
+                              _vm._v("('head')["),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" 0 ")
+                              ]),
+                              _vm._v("]."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("appendChild")
+                              ]),
+                              _vm._v("(script) "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("var")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("script")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" = ")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("document")
+                              ]),
+                              _vm._v("."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("createElement")
+                              ]),
+                              _vm._v("('script')"),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("script")
+                              ]),
+                              _vm._v(" . "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v(" src ")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" = ")
+                              ]),
+                              _vm._v(
+                                " '//leadslabpixels.net/Pixel/txe?idClient=16&idCampaign="
+                              ),
+                              _c("span", { staticClass: "has-id" }, [
+                                _vm._v(_vm._s(_vm.id))
+                              ]),
+                              _vm._v("&password=htnfhutn'"),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("document")
+                              ]),
+                              _vm._v("."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("getElementsByTagName")
+                              ]),
+                              _vm._v("('head')["),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" 0 ")
+                              ]),
+                              _vm._v("]."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("appendChild")
+                              ]),
+                              _vm._v("(script);'"),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("document")
+                              ]),
+                              _vm._v("."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("getElementsByTagName")
+                              ]),
+                              _vm._v("('head')["),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" 0 ")
+                              ]),
+                              _vm._v("]."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("appendChild")
+                              ]),
+                              _vm._v("(script) "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("var")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("script")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" = ")
+                              ]),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "has-attr" }, [
+                                _vm._v("document")
+                              ]),
+                              _vm._v("."),
+                              _c("span", { staticClass: "has_n" }, [
+                                _vm._v("createElement")
+                              ]),
+                              _vm._v("('script')"),
+                              _c("span", { staticClass: "has-tag" }, [
+                                _vm._v(" ; ")
+                              ]),
+                              _vm._v(" "),
+                              _c("br")
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "has-tag" }, [_vm._v("<")]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "has-name" }, [
+                            _vm._v("/script")
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "has-tag" }, [_vm._v(">")])
+                        ])
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "md-ripple",
+                    [
+                      _c("md-card-header", [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "md-layout md-gutter md-alignment-center-space-between"
+                          },
+                          [
+                            _c(
+                              "div",
+                              { staticClass: "md-layout-item md-size-75" },
+                              [
+                                _c("div", { staticClass: "md-title" }, [
+                                  _vm._v("Код компании: " + _vm._s(_vm.id))
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "md-subhead" }, [
+                                  _vm._v(
+                                    "Поместите этот скрипт в тег\n                                    "
+                                  ),
+                                  _c("b", [
+                                    _c("span", { staticClass: "has-tag" }, [
+                                      _vm._v("<")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("span", { staticClass: "has-name" }, [
+                                      _vm._v("head")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("span", { staticClass: "has-tag" }, [
+                                      _vm._v(">")
+                                    ])
+                                  ]),
+                                  _vm._v(
+                                    "\n                                    вашего сайта "
+                                  )
+                                ])
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "md-layout-item md-size-25 text-right"
+                              },
+                              [
+                                _c(
+                                  "md-button",
+                                  {
+                                    staticClass: "md-fab md-mini md-primary",
+                                    attrs: {
+                                      "md-theme": "myBtnTheme",
+                                      disabled: ""
+                                    }
+                                  },
+                                  [_c("md-icon", [_vm._v("edit")])],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "md-button",
+                                  {
+                                    staticClass: "md-fab md-mini md-primary",
+                                    attrs: {
+                                      "md-theme": "myBtnTheme",
+                                      disabled: ""
+                                    }
+                                  },
+                                  [_c("md-icon", [_vm._v("delete")])],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        )
+                      ])
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _vm._l(_vm.containers, function(item) {
+            return _c(
+              "div",
+              { staticClass: "md-layout-item" },
+              [
+                _c(
+                  "md-card",
+                  {
+                    staticClass: "md-accent",
+                    attrs: { "md-theme": "myTheme", "md-with-hover": "" }
+                  },
+                  [
+                    _c(
+                      "md-card-media",
+                      [
+                        _c(
+                          "md-toolbar",
+                          {
+                            staticClass: "md-dense md-primary",
+                            attrs: { "md-theme": "myTheme" }
+                          },
+                          [
+                            _c(
+                              "div",
+                              { staticClass: "md-layout-item md-size-80" },
+                              [
+                                _c("h3", { staticClass: "md-title" }, [
+                                  _vm._v("Фильтр:")
+                                ])
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "md-layout-item md-size-20 text-right"
+                              },
+                              [
+                                _c(
+                                  "md-chip",
+                                  {
+                                    staticClass: "md-primary",
+                                    attrs: {
+                                      "md-theme": "myBtnTheme",
+                                      "md-clickable": ""
+                                    }
+                                  },
+                                  [_vm._v(_vm._s(item.trigger))]
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("md-content", { staticClass: "md-scrollbar" }, [
+                          _c("div", { staticClass: "txt-script" }, [
+                            _c("span", { staticClass: "has-tag" }, [
+                              _vm._v("<")
+                            ]),
+                            _vm._v(" "),
+                            _c("span", { staticClass: "has-name" }, [
+                              _vm._v("script")
+                            ]),
+                            _vm._v(" "),
+                            _c("span", { staticClass: "has-tag" }, [
+                              _vm._v(">")
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "text-p" }, [
+                              _c("span", { staticClass: "has-string" }, [
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("var")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("script")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" = ")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("document")
+                                ]),
+                                _vm._v(" . "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("createElement")
+                                ]),
+                                _vm._v("('script')"),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("script")
+                                ]),
+                                _vm._v(" . "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v(" src ")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" = ")
+                                ]),
+                                _vm._v(
+                                  " '//sonar.semantiqo.com/4e3ll/check.js'"
+                                ),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("document")
+                                ]),
+                                _vm._v("."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("getElementsByTagName")
+                                ]),
+                                _vm._v("('head')["),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" 0 ")
+                                ]),
+                                _vm._v("]."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("appendChild")
+                                ]),
+                                _vm._v("(script) "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("var")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("script")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" = ")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("document")
+                                ]),
+                                _vm._v("."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("createElement")
+                                ]),
+                                _vm._v("('script')"),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("script")
+                                ]),
+                                _vm._v(" . "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v(" src ")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" = ")
+                                ]),
+                                _vm._v(
+                                  " '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign="
+                                ),
+                                _c("span", { staticClass: "has-id" }, [
+                                  _vm._v(_vm._s(item.new_campaign))
+                                ]),
+                                _vm._v(
+                                  "&password=htnfhutn&type=1&userData=$USERDATA'"
+                                ),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("document")
+                                ]),
+                                _vm._v("."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("getElementsByTagName")
+                                ]),
+                                _vm._v("('head')["),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" 0 ")
+                                ]),
+                                _vm._v("]."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("appendChild")
+                                ]),
+                                _vm._v("(script) "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("var")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("script")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" = ")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("document")
+                                ]),
+                                _vm._v("."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("createElement")
+                                ]),
+                                _vm._v("('script')"),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("script")
+                                ]),
+                                _vm._v(" . "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v(" src ")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" = ")
+                                ]),
+                                _vm._v(
+                                  " '//leadslabpixels.net/Pixel/txe?idClient=16&idCampaign="
+                                ),
+                                _c("span", { staticClass: "has-id" }, [
+                                  _vm._v(_vm._s(item.new_campaign))
+                                ]),
+                                _vm._v("&password=htnfhutn'"),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("document")
+                                ]),
+                                _vm._v("."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("getElementsByTagName")
+                                ]),
+                                _vm._v("('head')["),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" 0 ")
+                                ]),
+                                _vm._v("]."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("appendChild")
+                                ]),
+                                _vm._v("(script);'"),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("document")
+                                ]),
+                                _vm._v("."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("getElementsByTagName")
+                                ]),
+                                _vm._v("('head')["),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" 0 ")
+                                ]),
+                                _vm._v("]."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("appendChild")
+                                ]),
+                                _vm._v("(script) "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("var")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("script")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" = ")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "has-attr" }, [
+                                  _vm._v("document")
+                                ]),
+                                _vm._v("."),
+                                _c("span", { staticClass: "has_n" }, [
+                                  _vm._v("createElement")
+                                ]),
+                                _vm._v("('script')"),
+                                _c("span", { staticClass: "has-tag" }, [
+                                  _vm._v(" ; ")
+                                ]),
+                                _vm._v(" "),
+                                _c("br")
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("span", { staticClass: "has-tag" }, [
+                              _vm._v("<")
+                            ]),
+                            _vm._v(" "),
+                            _c("span", { staticClass: "has-name" }, [
+                              _vm._v("/script")
+                            ]),
+                            _vm._v(" "),
+                            _c("span", { staticClass: "has-tag" }, [
+                              _vm._v(">")
+                            ])
+                          ])
+                        ])
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "md-ripple",
+                      [
+                        _c("md-card-header", [
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "md-layout md-gutter md-alignment-center-space-between"
+                            },
+                            [
+                              _c(
+                                "div",
+                                { staticClass: "md-layout-item md-size-75" },
+                                [
+                                  _c("div", { staticClass: "md-title" }, [
+                                    _vm._v(
+                                      "Код компании: " +
+                                        _vm._s(item.new_campaign)
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "md-subhead" }, [
+                                    _vm._v(
+                                      "Поместите этот скрипт в тег\n                                    "
+                                    ),
+                                    _c("b", [
+                                      _c("span", { staticClass: "has-tag" }, [
+                                        _vm._v("<")
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("span", { staticClass: "has-name" }, [
+                                        _vm._v("head")
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("span", { staticClass: "has-tag" }, [
+                                        _vm._v(">")
+                                      ])
+                                    ]),
+                                    _vm._v(
+                                      "\n                                    вашего сайта "
+                                    )
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  staticClass:
+                                    "md-layout-item md-size-25 text-right"
+                                },
+                                [
+                                  _c(
+                                    "md-button",
+                                    {
+                                      staticClass: "md-fab md-mini md-primary",
+                                      attrs: { "md-theme": "myBtnTheme" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.showEditFilterDialog(item)
+                                        }
+                                      }
+                                    },
+                                    [_c("md-icon", [_vm._v("edit")])],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "md-button",
+                                    {
+                                      staticClass: "md-fab md-mini md-primary",
+                                      attrs: { "md-theme": "myBtnTheme" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.deleteFilter(item)
+                                        }
+                                      }
+                                    },
+                                    [_c("md-icon", [_vm._v("delete")])],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ]
+                          )
+                        ])
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ],
+              1
+            )
+          })
+        ],
+        2
+      ),
+      _vm._v(" "),
+      _c(
+        "md-dialog",
+        {
+          attrs: { "md-active": _vm.showAddDialog },
+          on: {
+            "update:mdActive": function($event) {
+              _vm.showAddDialog = $event
+            }
+          }
+        },
+        [
+          _c("add", {
+            attrs: { old_comaing: _vm.id },
+            on: { AddTrigger: _vm.showLog, CloseTriggerDialog: _vm.closeDialog }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "md-dialog",
+        {
+          attrs: { "md-active": _vm.showEditDialog },
+          on: {
+            "update:mdActive": function($event) {
+              _vm.showEditDialog = $event
+            }
+          }
+        },
+        [
+          _c("edit", {
+            attrs: { form: _vm.editTrigger },
+            on: { ShowLogEdit: _vm.showLogEdit, editTriggerE: _vm.closeDialog }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "md-snackbar",
+        {
+          attrs: { "md-active": _vm.userSaved },
+          on: {
+            "update:mdActive": function($event) {
+              _vm.userSaved = $event
+            }
+          }
+        },
+        [_vm._v("Trigger " + _vm._s(_vm.lastUser) + " был добавлен успешно!")]
+      ),
+      _vm._v(" "),
+      _c(
+        "md-snackbar",
+        {
+          attrs: { "md-active": _vm.userEdit },
+          on: {
+            "update:mdActive": function($event) {
+              _vm.userEdit = $event
+            }
+          }
+        },
+        [_vm._v("Trigger " + _vm._s(_vm.lastUser) + " изменен успешно!")]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-5a15a971", module.exports)
   }
 }
 
 /***/ }),
-/* 231 */
+/* 236 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(254)
+}
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(256)
+/* template */
+var __vue_template__ = __webpack_require__(257)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-5f0e893c"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/containers/EditTrigger.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5f0e893c", Component.options)
+  } else {
+    hotAPI.reload("data-v-5f0e893c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 254 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(255);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(6)("32099912", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5f0e893c\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./EditTrigger.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5f0e893c\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./EditTrigger.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 255 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material palette\n * ---\n * @access public\n * @type map\n * @group themes\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * $foo-palette: (\n *   primary: md-get-palette-color(indigo, 500),\n *   accent: md-get-palette-color(pink, 500),\n *   theme: \"light\"\n * );\n *\n * ---\n * @access public\n * ---\n * @param {color} $type —  The desired color based on material palette\n * @param {string} $type —  A valid hue\n */\n/**\n * Get the current theme mode from the current theme\n * ---\n * Usage example:\n *\n * $theme-mode: md-get-theme-mode()\n *\n * ---\n * @access private\n */\n/**\n * Theme any css property based on the current palette, accepting a themable\n * value that will give an contrasted\n * ---\n * Usage example:\n *\n * .md-foo {\n *   min-width: 88px;\n *   height: 40px;\n *   background: md-theme(primary);\n * }\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The themable value\n */\n/**\n * Get a color based on type by theme\n * ---\n * Usage example:\n *\n * $color: md-get-color-by-theme(dark, primary)\n *\n * ---\n * @access public\n * ---\n * @param {string} $color-theme —  The theme color | Accepts dark or light\n * @param {string} $type —  The color type\n */\n/**\n * Get a color based on type only\n * ---\n * Usage example:\n *\n * $color1: md-get-color-by-type(background, dark)\n * $color1: md-get-color-by-type(accent)\n *\n * ---\n * @access public\n * ---\n * @param {string} $type —  The color type\n * @param {string} $theme —  The fallback theme\n */\n/**\n * The default theme palette\n * primary: indigo 500 #3f51b5\n * accent: pink 500 #e91e63\n * theme: light\n *\n * It can be used just before importing the Vue Material stylesheet\n *\n * ---\n * @access public\n * @type colormap\n * @group themes\n */\n/**\n * Temporary variable to store all themable values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Map variable to store all themes to be processed by each component\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Store the current theme name\n * ---\n * @access private\n * @type string\n * @group themes\n */\n/**\n * The color contrast values\n * ---\n * @access private\n * @type map\n * @group themes\n */\n/**\n * Hightly based on: \"Using Sass to automatically pick text colors\"\n * https://medium.com/dev-channel/using-sass-to-automatically-pick-text-colors-4ba7645d2796\n */\n/**\n * Precomputed linear color channel values, for use in contrast calculations.\n * See https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-tests\n * ---\n *\n *  Algorithm, for c in 0 to 255:\n *  f(c) {\n *    c = c / 255;\n *    return c < 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);\n *  }\n *\n *  This lookup table is needed since there is no `pow` in SASS.\n *\n * ---\n * @access private\n * @type Map\n * @group themes\n */\n/**\n * Calculate the luminance for a color.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The color to be analysed\n */\n/**\n * Calculate the contrast ratio between two colors.\n * ---\n * @access private\n * ---\n * @param {string} $bg —  The bg color\n * @param {string} $fg —  The fg color to be compared\n */\n/**\n * Determine whether to use dark or light text on top of given color.\n * Returns dark or light depending on the contrast ratio.\n * ---\n * @access private\n * ---\n * @param {string} $color —  The desired color to be compared\n */\n/**\n * Override extending the default palette giving new values. It will extend\n * the default values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-override-palette ((\n *   accent: blue,\n *   theme: \"dark\"\n * ))\n *\n * ---\n * @access public\n * @param {map} $palette —  The new palette\n */\n/**\n * Create a new theme based on a given palette. It will extend the default\n * values of the palette if has a property missing.\n * ---\n * Usage example:\n *\n * @include md-register-theme(\"alternative\", (\n *   primary: #212121,\n *   accent: #CDDC39,\n *   theme: dark\n * ));\n *\n * ---\n * @access public\n * @param {string} $name —  The theme name to be used with the Vue Material\n * @param {map} $palette [$md-default-palette] —  The theme palette\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes.\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     background: md-theme(primary);\n *     color: md-theme(text-primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       background: md-theme(accent);\n *       color: md-theme(text-accent);\n *     };\n *   }\n * }\n */\n/**\n * Theme pieces of a given scss code for all pre registered themes based on parent.\n * ---\n * Usage example:\n *\n * .md-foo {\n *   @include md-theme-component-relative() {\n *     @include md-theme-property(background, primary);\n *   }\n * }\n */\n/**\n * Theme a single css property\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property(background, primary);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n *\n *   &.md-accent {\n *     @include md-theme-component() {\n *       @include md-theme-property(background, accent);\n *       @include md-theme-property(color, text-primary, accent);\n *     }\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {number} $opacity —  The opacity amount\n */\n/**\n * Theme a single css property darkening the color by a certain amount\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-darken(background, primary, background, 10%);\n *     @include md-theme-property(color, text-primary, primary);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $type —  A palette type\n * @param {string} $background —  The background color to analyse contrast\n * @param {string} $darken —  The darken amount to apply to the color\n */\n/**\n * Theme a single css property by\n * ---\n * Usage example:\n *\n * .md-button {\n *   min-width: 88px;\n *   height: 40px;\n *   display: inline-block;\n *   border-radius: 2px;\n *   transition: .3s ease;\n *\n *   @include md-theme-component() {\n *     @include md-theme-property-by-hue(background, grey, 100, toolbar, background);\n *     @include md-theme-property(color, text-primary, background);\n *   }\n * }\n *\n * ---\n * @access public\n * @param {string} $property —  The css property\n * @param {string} $color —  A valid material palette color name\n * @param {string} $hue —  The hue amount to get the hex color\n * @param {string} $type —  The type of variable\n * @param {string} $variant —  The type of constrasted variable\n */\n[data-v-5f0e893c]:root {\n  --md-theme-myTheme-primary: #9C27B0\n    ;\n  --md-theme-myTheme-accent: #E91E63\n    ;\n  --md-theme-myTheme-theme: light\n    ;\n}\n.md-theme-myTheme[data-v-5f0e893c] :not(input):not(textarea)::-moz-selection {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myTheme[data-v-5f0e893c] :not(input):not(textarea)::selection {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-theme-myTheme a[data-v-5f0e893c]:not(.md-button) {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-theme-myTheme a[data-v-5f0e893c]:not(.md-button):hover {\n    color: rgba(156, 39, 176, 0.8);\n    color: var(--md-theme-myTheme-primary-on-background, rgba(156, 39, 176, 0.8));\n}\n.md-theme-myTheme a:not(.md-button).md-accent[data-v-5f0e893c] {\n    color: #E91E63;\n    color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-theme-myTheme a:not(.md-button).md-accent[data-v-5f0e893c]:hover {\n      color: rgba(233, 30, 99, 0.8);\n      color: var(--md-theme-myTheme-accent-on-background, rgba(233, 30, 99, 0.8));\n}\nhtml.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: #fafafa;\n  background-color: var(--md-theme-myTheme-background-variant, #fafafa);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-theme-myTheme .md-caption[data-v-5f0e893c], .md-theme-myTheme\n.md-display-1[data-v-5f0e893c], .md-theme-myTheme\n.md-display-2[data-v-5f0e893c], .md-theme-myTheme\n.md-display-3[data-v-5f0e893c], .md-theme-myTheme\n.md-display-4[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background-variant, rgba(0, 0, 0, 0.54));\n}\n.md-scrollbar.md-theme-myTheme[data-v-5f0e893c]::-webkit-scrollbar-corner, .md-scrollbar.md-theme-myTheme[data-v-5f0e893c]::-webkit-scrollbar-track {\n  background: #e1e1e1;\n  background: var(--md-theme-myTheme-scrollbar-background-on-background-variant, #e1e1e1);\n}\n.md-scrollbar.md-theme-myTheme[data-v-5f0e893c]::-webkit-scrollbar-thumb {\n  background: #757575;\n  background: var(--md-theme-myTheme-scrollbar-on-background-variant, #757575);\n}\n.md-app:not(.md-overlap).md-theme-myTheme[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-list.md-theme-myTheme .md-autocomplete-items .md-highlight-text-match[data-v-5f0e893c] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-list.md-theme-myTheme .md-autocomplete-loading[data-v-5f0e893c] {\n  background-color: rgba(255, 255, 255, 0.54);\n  background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.54));\n}\n.md-autocomplete.md-theme-myTheme.md-autocomplete-box[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused label[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.38);\n    color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box[data-v-5f0e893c] {\n    background-color: rgba(255, 255, 255, 0.12);\n    background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.12));\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box label[data-v-5f0e893c],\n    .md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box input[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      -webkit-text-fill-color: #fff;\n      -webkit-text-fill-color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box svg[data-v-5f0e893c] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused[data-v-5f0e893c] {\n      background-color: #fff;\n      background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused label[data-v-5f0e893c],\n      .md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused input[data-v-5f0e893c] {\n        color: rgba(0, 0, 0, 0.38);\n        color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n        -webkit-text-fill-color: rgba(0, 0, 0, 0.38);\n        -webkit-text-fill-color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-toolbar .md-autocomplete.md-theme-myTheme.md-autocomplete-box.md-focused svg[data-v-5f0e893c] {\n        fill: rgba(0, 0, 0, 0.38);\n        fill: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-autocomplete-box-content.md-theme-myTheme[data-v-5f0e893c]:after {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  border-bottom-color: rgba(0, 0, 0, 0.12);\n  border-bottom-color: var(--md-theme-myTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-avatar.md-theme-myTheme.md-avatar-icon[data-v-5f0e893c] {\n  background-color: rgba(0, 0, 0, 0.38);\n  background-color: var(--md-theme-myTheme-icon-disabled, rgba(0, 0, 0, 0.38));\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-icon-disabled, #fff);\n}\n.md-avatar.md-theme-myTheme.md-avatar-icon .md-icon[data-v-5f0e893c] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-icon-disabled, #fff);\n    fill: #fff;\n    fill: var(--md-theme-myTheme-text-primary-on-icon-disabled, #fff);\n}\n.md-avatar.md-theme-myTheme.md-primary[data-v-5f0e893c] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-avatar.md-theme-myTheme.md-primary.md-avatar-icon[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-avatar.md-theme-myTheme.md-primary.md-avatar-icon .md-icon[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-avatar.md-theme-myTheme.md-accent[data-v-5f0e893c] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-avatar.md-theme-myTheme.md-accent.md-avatar-icon[data-v-5f0e893c] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-avatar.md-theme-myTheme.md-accent.md-avatar-icon .md-icon[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed .md-bottom-bar-item.md-active[data-v-5f0e893c] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed .md-bottom-bar-item.md-active .md-icon[data-v-5f0e893c] {\n      color: #9C27B0;\n      color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-fixed .md-bottom-bar-item.md-active .md-icon svg[data-v-5f0e893c] {\n        fill: #9C27B0;\n        fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift[data-v-5f0e893c] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n  color: rgba(255, 255, 255, 0.7);\n  color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift > .md-ripple .md-ripple-wave[data-v-5f0e893c] {\n    background-color: #771e86;\n    background-color: var(--md-theme-myTheme-primary-on-primary, #771e86);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-icon[data-v-5f0e893c] {\n    color: #fff;\n    color: var(--md-theme-myTheme-icon-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-icon svg[data-v-5f0e893c] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-icon-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-bottom-bar-item[data-v-5f0e893c] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-bottom-bar-item .md-active .md-icon[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-type-shift .md-bottom-bar-item .md-active .md-icon svg[data-v-5f0e893c] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active[data-v-5f0e893c] {\n    color: #E91E63;\n    color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active .md-icon[data-v-5f0e893c] {\n      color: #E91E63;\n      color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-fixed .md-bottom-bar-item.md-active .md-icon svg[data-v-5f0e893c] {\n        fill: #E91E63;\n        fill: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift[data-v-5f0e893c] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n  color: rgba(255, 255, 255, 0.7);\n  color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift > .md-ripple .md-ripple-wave[data-v-5f0e893c] {\n    background-color: #c1134e;\n    background-color: var(--md-theme-myTheme-accent-on-accent, #c1134e);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-icon[data-v-5f0e893c] {\n    color: #fff;\n    color: var(--md-theme-myTheme-icon-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-icon svg[data-v-5f0e893c] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-icon-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-bottom-bar-item[data-v-5f0e893c] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-bottom-bar-item .md-active .md-icon[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-bottom-bar.md-theme-myTheme.md-accent.md-type-shift .md-bottom-bar-item .md-active .md-icon svg[data-v-5f0e893c] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-button.md-theme-myTheme.md-primary[data-v-5f0e893c] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-primary .md-icon-font[data-v-5f0e893c] {\n      color: #9C27B0;\n      color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-primary .md-icon-image[data-v-5f0e893c] {\n      fill: #9C27B0;\n      fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-accent[data-v-5f0e893c] {\n    color: #E91E63;\n    color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-button.md-theme-myTheme.md-accent .md-icon-font[data-v-5f0e893c] {\n      color: #E91E63;\n      color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-button.md-theme-myTheme.md-accent .md-icon-image[data-v-5f0e893c] {\n      fill: #E91E63;\n      fill: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-button.md-theme-myTheme.md-raised[disabled][data-v-5f0e893c] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-disabled-background-on-background, rgba(0, 0, 0, 0.12));\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-button.md-theme-myTheme.md-raised[data-v-5f0e893c]:not([disabled]) {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-primary[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      background-color: #9C27B0;\n      background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-primary .md-icon-font[data-v-5f0e893c] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-primary .md-icon-image[data-v-5f0e893c] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-accent[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n      background-color: #E91E63;\n      background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-accent .md-icon-font[data-v-5f0e893c] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-raised:not([disabled]).md-accent .md-icon-image[data-v-5f0e893c] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-fab[disabled][data-v-5f0e893c] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-disabled-background-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-button.md-theme-myTheme.md-fab[data-v-5f0e893c]:not([disabled]) {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]) .md-icon-font[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]) .md-icon-image[data-v-5f0e893c] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]).md-primary[data-v-5f0e893c] {\n      background-color: #9C27B0;\n      background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]).md-primary .md-icon-font[data-v-5f0e893c] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme.md-fab:not([disabled]).md-primary .md-icon-image[data-v-5f0e893c] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-button.md-theme-myTheme[disabled][data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-button.md-theme-myTheme[disabled] .md-icon-font[data-v-5f0e893c] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myTheme-icon-disabled-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-button.md-theme-myTheme[disabled] .md-icon-image[data-v-5f0e893c] {\n      fill: rgba(0, 0, 0, 0.38);\n      fill: var(--md-theme-myTheme-icon-disabled-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-card.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-myTheme .md-card-expand .md-card-actions[data-v-5f0e893c] {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-card.md-theme-myTheme .md-card-header .md-button[data-v-5f0e893c]:not(.md-primary):not(.md-accent),\n  .md-card.md-theme-myTheme .md-card-actions .md-button[data-v-5f0e893c]:not(.md-primary):not(.md-accent) {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-card.md-theme-myTheme .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5f0e893c],\n    .md-card.md-theme-myTheme .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5f0e893c] {\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.54));\n      fill: rgba(0, 0, 0, 0.54);\n      fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-card.md-theme-myTheme > .md-card-area[data-v-5f0e893c]:after {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-card.md-theme-myTheme.md-primary[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-myTheme.md-primary .md-card-expand .md-card-actions[data-v-5f0e893c] {\n      background-color: #9C27B0;\n      background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-card.md-theme-myTheme.md-primary .md-card-header .md-button[data-v-5f0e893c]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-myTheme.md-primary .md-card-actions .md-button[data-v-5f0e893c]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-card.md-theme-myTheme.md-primary .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5f0e893c],\n      .md-card.md-theme-myTheme.md-primary .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5f0e893c] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-myTheme.md-primary > .md-card-area[data-v-5f0e893c]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-primary, rgba(255, 255, 255, 0.12));\n}\n.md-card.md-theme-myTheme.md-accent[data-v-5f0e893c] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-myTheme.md-accent .md-card-expand .md-card-actions[data-v-5f0e893c] {\n      background-color: #E91E63;\n      background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-card.md-theme-myTheme.md-accent .md-card-header .md-button[data-v-5f0e893c]:not(.md-primary):not(.md-accent),\n    .md-card.md-theme-myTheme.md-accent .md-card-actions .md-button[data-v-5f0e893c]:not(.md-primary):not(.md-accent) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-card.md-theme-myTheme.md-accent .md-card-header .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5f0e893c],\n      .md-card.md-theme-myTheme.md-accent .md-card-actions .md-button:not(.md-primary):not(.md-accent).md-icon-button .md-icon[data-v-5f0e893c] {\n        color: rgba(255, 255, 255, 0.54);\n        color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n        fill: rgba(255, 255, 255, 0.54);\n        fill: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.54));\n}\n.md-card.md-theme-myTheme.md-accent > .md-card-area[data-v-5f0e893c]:after {\n      background-color: rgba(255, 255, 255, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-accent, rgba(255, 255, 255, 0.12));\n}\n.md-checkbox.md-theme-myTheme.md-checked .md-checkbox-container[data-v-5f0e893c] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n  border-color: #E91E63;\n  border-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-checkbox.md-theme-myTheme.md-checked .md-checkbox-container[data-v-5f0e893c]:after {\n    border-color: #fff;\n    border-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-checkbox.md-theme-myTheme.md-checked .md-ripple[data-v-5f0e893c] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-5f0e893c] {\n  border-color: rgba(0, 0, 0, 0.54);\n  background-color: rgba(255, 255, 255, 0.3);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-5f0e893c]:after {\n    border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-ripple[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-checked.md-primary .md-checkbox-container[data-v-5f0e893c] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n  border-color: #9C27B0;\n  border-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-checkbox.md-theme-myTheme.md-checked.md-primary .md-ripple[data-v-5f0e893c] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-5f0e893c] {\n  border-color: rgba(0, 0, 0, 0.54);\n  background-color: transparent;\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-checkbox-container[data-v-5f0e893c]:after {\n    border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-indeterminate .md-ripple[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme .md-checkbox-container[data-v-5f0e893c] {\n  border-color: rgba(0, 0, 0, 0.54);\n}\n.md-checkbox.md-theme-myTheme.md-disabled .md-checkbox-container[data-v-5f0e893c] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-checkbox.md-theme-myTheme.md-disabled.md-checked .md-checkbox-container[data-v-5f0e893c] {\n  border-color: rgba(0, 0, 0, 0.26);\n  background-color: rgba(0, 0, 0, 0.26);\n}\n.md-chip.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: rgba(0, 0, 0, 0.12);\n  background-color: var(--md-theme-myTheme-highlight, rgba(0, 0, 0, 0.12));\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary, rgba(0, 0, 0, 0.87));\n}\n.md-chip.md-theme-myTheme .md-icon.md-icon-image svg[data-v-5f0e893c] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-text-primary, #fff);\n    fill: #fff;\n    fill: var(--md-theme-myTheme-text-primary-on-text-primary, #fff);\n}\n.md-chip.md-theme-myTheme.md-deletable[data-v-5f0e893c]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-clickable[data-v-5f0e893c]:not(.md-disabled):hover {\n    background-color: rgba(0, 0, 0, 0.54);\n    background-color: var(--md-theme-myTheme-icon, rgba(0, 0, 0, 0.54));\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myTheme.md-deletable:not(.md-disabled):hover .md-icon[data-v-5f0e893c], .md-chip.md-theme-myTheme.md-clickable:not(.md-disabled):hover .md-icon[data-v-5f0e893c] {\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myTheme.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5f0e893c], .md-chip.md-theme-myTheme.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5f0e893c] {\n      background-color: rgba(255, 255, 255, 0.87);\n      background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.87));\n      color: rgba(0, 0, 0, 0.54);\n      color: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myTheme.md-deletable:not(.md-disabled):hover .md-input-action .md-icon svg[data-v-5f0e893c], .md-chip.md-theme-myTheme.md-clickable:not(.md-disabled):hover .md-input-action .md-icon svg[data-v-5f0e893c] {\n        fill: rgba(0, 0, 0, 0.54);\n        fill: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n        color: rgba(0, 0, 0, 0.54);\n        color: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myTheme.md-primary[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-chip.md-theme-myTheme.md-primary .md-input-action[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-icon-on-disabled, #fff);\n      background-color: rgba(0, 0, 0, 0.26);\n      background-color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-chip.md-theme-myTheme.md-primary.md-deletable[data-v-5f0e893c]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-primary.md-clickable[data-v-5f0e893c]:not(.md-disabled):hover {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n      background-color: rgba(0, 0, 0, 0.54);\n      background-color: var(--md-theme-myTheme-icon, rgba(0, 0, 0, 0.54));\n}\n.md-chip.md-theme-myTheme.md-primary.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5f0e893c], .md-chip.md-theme-myTheme.md-primary.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5f0e893c] {\n        background-color: rgba(255, 255, 255, 0.87);\n        background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.87));\n}\n.md-chip.md-theme-myTheme.md-accent[data-v-5f0e893c], .md-chip.md-theme-myTheme.md-duplicated[data-v-5f0e893c] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-chip.md-theme-myTheme.md-accent .md-input-action[data-v-5f0e893c], .md-chip.md-theme-myTheme.md-duplicated .md-input-action[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-icon-on-disabled, #fff);\n      background-color: rgba(0, 0, 0, 0.26);\n      background-color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.26));\n}\n.md-chip.md-theme-myTheme.md-accent.md-deletable[data-v-5f0e893c]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-accent.md-clickable[data-v-5f0e893c]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-duplicated.md-deletable[data-v-5f0e893c]:not(.md-disabled):hover, .md-chip.md-theme-myTheme.md-duplicated.md-clickable[data-v-5f0e893c]:not(.md-disabled):hover {\n      background-color: rgba(0, 0, 0, 0.54);\n      background-color: var(--md-theme-myTheme-icon, rgba(0, 0, 0, 0.54));\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-icon, #fff);\n}\n.md-chip.md-theme-myTheme.md-accent.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5f0e893c], .md-chip.md-theme-myTheme.md-accent.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5f0e893c], .md-chip.md-theme-myTheme.md-duplicated.md-deletable:not(.md-disabled):hover .md-input-action[data-v-5f0e893c], .md-chip.md-theme-myTheme.md-duplicated.md-clickable:not(.md-disabled):hover .md-input-action[data-v-5f0e893c] {\n        background-color: rgba(255, 255, 255, 0.87);\n        background-color: var(--md-theme-myTheme-background, rgba(255, 255, 255, 0.87));\n}\n.md-chip.md-theme-myTheme.md-disabled[data-v-5f0e893c] {\n    background-color: rgba(0, 0, 0, 0.1);\n    background-color: var(--md-theme-myTheme-highlight, rgba(0, 0, 0, 0.1));\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent, rgba(0, 0, 0, 0.54));\n}\n.md-chips.md-theme-myTheme .md-clear[data-v-5f0e893c] {\n  background-color: rgba(0, 0, 0, 0.2);\n}\n.md-content.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-content.md-theme-myTheme.md-primary[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-content.md-theme-myTheme.md-accent[data-v-5f0e893c] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-app .md-content.md-theme-myTheme[data-v-5f0e893c] {\n    border-left-color: rgba(0, 0, 0, 0.12);\n    border-left-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n    border-right-color: rgba(0, 0, 0, 0.12);\n    border-right-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-datepicker-dialog.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-header[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-body-header[data-v-5f0e893c]:after, .md-datepicker-dialog.md-theme-myTheme .md-datepicker-body-header[data-v-5f0e893c]:before {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-body-footer[data-v-5f0e893c] {\n    background-color: #fff;\n    background-color: var(--md-theme-myTheme-background, #fff);\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-week[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-disabled[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-today[data-v-5f0e893c] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-day-button[data-v-5f0e893c]:hover,\n  .md-datepicker-dialog.md-theme-myTheme .md-datepicker-month-button[data-v-5f0e893c]:hover,\n  .md-datepicker-dialog.md-theme-myTheme .md-datepicker-year-button[data-v-5f0e893c]:hover {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-day-button.md-datepicker-selected[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-month-button.md-datepicker-selected[data-v-5f0e893c],\n  .md-datepicker-dialog.md-theme-myTheme .md-datepicker-year-button.md-datepicker-selected[data-v-5f0e893c] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-datepicker-dialog.md-theme-myTheme .md-datepicker-year-selector[data-v-5f0e893c] {\n    border-bottom-color: rgba(0, 0, 0, 0.12);\n    border-bottom-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-dialog.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-divider.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: rgba(0, 0, 0, 0.12);\n  background-color: var(--md-theme-myTheme-divider, rgba(0, 0, 0, 0.12));\n}\n.md-drawer.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-drawer.md-theme-myTheme.md-persistent-mini.md-left[data-v-5f0e893c] {\n    border-right-color: rgba(0, 0, 0, 0.12);\n    border-right-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-drawer.md-theme-myTheme.md-persistent-mini.md-right[data-v-5f0e893c] {\n    border-left-color: rgba(0, 0, 0, 0.12);\n    border-left-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-empty-state.md-theme-myTheme .md-empty-state-icon.md-icon-image svg[data-v-5f0e893c] {\n  fill: rgba(0, 0, 0, 0.26);\n  fill: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-empty-state.md-theme-myTheme .md-empty-state-icon.md-icon-font[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.26);\n  color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-empty-state.md-theme-myTheme.md-rounded[data-v-5f0e893c] {\n  background-color: rgba(0, 0, 0, 0.06);\n  background-color: var(--md-theme-myTheme-disabled, rgba(0, 0, 0, 0.06));\n}\n.md-empty-state.md-theme-myTheme.md-primary .md-empty-state-icon.md-icon-image svg[data-v-5f0e893c] {\n  fill: #9C27B0;\n  fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-empty-state.md-theme-myTheme.md-primary .md-empty-state-icon.md-icon-font[data-v-5f0e893c] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-empty-state.md-theme-myTheme.md-accent .md-empty-state-icon.md-icon-image svg[data-v-5f0e893c] {\n  fill: #E91E63;\n  fill: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-empty-state.md-theme-myTheme.md-accent .md-empty-state-icon.md-icon-font[data-v-5f0e893c] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-field.md-theme-myTheme[data-v-5f0e893c]:after {\n  background-color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myTheme[data-v-5f0e893c]:before {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-field.md-theme-myTheme .md-helper-text[data-v-5f0e893c],\n.md-field.md-theme-myTheme .md-count[data-v-5f0e893c],\n.md-field.md-theme-myTheme label[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myTheme .md-suffix[data-v-5f0e893c], .md-field.md-theme-myTheme .md-prefix[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myTheme .md-input[data-v-5f0e893c]::-webkit-input-placeholder,\n.md-field.md-theme-myTheme .md-textarea[data-v-5f0e893c]::-webkit-input-placeholder {\n  color: rgba(0, 0, 0, 0.54);\n}\n.md-field.md-theme-myTheme.md-focused .md-input[data-v-5f0e893c],\n.md-field.md-theme-myTheme.md-focused .md-textarea[data-v-5f0e893c], .md-field.md-theme-myTheme.md-has-value .md-input[data-v-5f0e893c],\n.md-field.md-theme-myTheme.md-has-value .md-textarea[data-v-5f0e893c] {\n  -webkit-text-fill-color: rgba(0, 0, 0, 0.87);\n}\n.md-field.md-theme-myTheme.md-has-textarea[data-v-5f0e893c]:not(.md-autogrow):after {\n  border-color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myTheme.md-has-textarea[data-v-5f0e893c]:not(.md-autogrow):before {\n  border-color: #9C27B0;\n  border-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-field.md-theme-myTheme.md-disabled[data-v-5f0e893c]:after {\n  background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.38)), color-stop(33%, rgba(0, 0, 0, 0.38)), color-stop(0%, transparent));\n  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.38) 33%, transparent 0%);\n}\n.md-field.md-theme-myTheme.md-disabled label[data-v-5f0e893c],\n.md-field.md-theme-myTheme.md-disabled .md-input[data-v-5f0e893c],\n.md-field.md-theme-myTheme.md-disabled .md-textarea[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.42);\n}\n.md-field.md-theme-myTheme > .md-icon[data-v-5f0e893c]:after {\n  background-color: #fafafa;\n  background-color: var(--md-theme-myTheme-background-variant, #fafafa);\n}\n.md-field.md-theme-myTheme.md-invalid[data-v-5f0e893c]:after {\n  background-color: #ff1744;\n  background-color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid.md-has-textarea[data-v-5f0e893c]:not(.md-autogrow):before {\n  border-color: #ff1744;\n  border-color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid label[data-v-5f0e893c] {\n  color: #ff1744;\n  color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid .md-error[data-v-5f0e893c] {\n  color: #ff1744;\n  color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-invalid .md-date-icon[data-v-5f0e893c],\n.md-field.md-theme-myTheme.md-invalid .md-date-icon svg[data-v-5f0e893c] {\n  color: #ff1744;\n  color: var(--md-theme-myTheme-fieldvariant, #ff1744);\n  fill: #ff1744;\n  fill: var(--md-theme-myTheme-fieldvariant, #ff1744);\n}\n.md-field.md-theme-myTheme.md-focused .md-input[data-v-5f0e893c],\n.md-field.md-theme-myTheme.md-focused .md-textarea[data-v-5f0e893c], .md-field.md-theme-myTheme.md-highlight .md-input[data-v-5f0e893c],\n.md-field.md-theme-myTheme.md-highlight .md-textarea[data-v-5f0e893c] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-field.md-theme-myTheme.md-focused > .md-icon[data-v-5f0e893c], .md-field.md-theme-myTheme.md-highlight > .md-icon[data-v-5f0e893c] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n  fill: #9C27B0;\n  fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-field.md-theme-myTheme.md-focused label[data-v-5f0e893c] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-field.md-theme-myTheme.md-disabled .md-icon svg[data-v-5f0e893c] {\n  fill: rgba(0, 0, 0, 0.26);\n  fill: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-icon.md-theme-myTheme.md-icon-image svg[data-v-5f0e893c] {\n  fill: rgba(0, 0, 0, 0.54);\n  fill: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-icon.md-theme-myTheme.md-icon-image svg.md-primary[data-v-5f0e893c] {\n    fill: #9C27B0;\n    fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-icon.md-theme-myTheme.md-icon-image svg.md-accent[data-v-5f0e893c] {\n    fill: #E91E63;\n    fill: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-icon.md-theme-myTheme.md-icon-font[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-icon-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-icon.md-theme-myTheme.md-icon-font.md-primary[data-v-5f0e893c] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-icon.md-theme-myTheme.md-icon-font.md-accent[data-v-5f0e893c] {\n    color: #E91E63;\n    color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-list.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myTheme.md-double-line .md-list-item-text[data-v-5f0e893c] :nth-child(2) {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-list.md-theme-myTheme.md-triple-line .md-list-item-text[data-v-5f0e893c] :nth-child(3) {\n    color: rgba(0, 0, 0, 0.54);\n    color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-list.md-theme-myTheme .md-highlight .md-list-item-container[data-v-5f0e893c] {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-list.md-theme-myTheme .md-list-item-container[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myTheme .md-list-item-container[data-v-5f0e893c]:not(.md-list-item-default):not([disabled]):hover {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-list.md-theme-myTheme [disabled][data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.26);\n    color: var(--md-theme-myTheme-disabled-on-background, rgba(0, 0, 0, 0.26));\n}\n.md-list.md-theme-myTheme .md-selected .md-list-item-content[data-v-5f0e893c],\n  .md-list.md-theme-myTheme .router-link-exact-active .md-list-item-content[data-v-5f0e893c] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-list.md-theme-myTheme .md-list-item-expand.md-active[data-v-5f0e893c] {\n    border-color: rgba(0, 0, 0, 0.12);\n    border-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-menu-item.md-theme-myTheme.md-primary .md-list-item-link[data-v-5f0e893c],\n.md-menu-item.md-theme-myTheme.md-primary .md-list-item-router[data-v-5f0e893c],\n.md-menu-item.md-theme-myTheme.md-primary .md-list-item-button[data-v-5f0e893c] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-menu-item.md-theme-myTheme.md-accent .md-list-item-link[data-v-5f0e893c],\n.md-menu-item.md-theme-myTheme.md-accent .md-list-item-router[data-v-5f0e893c],\n.md-menu-item.md-theme-myTheme.md-accent .md-list-item-button[data-v-5f0e893c] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate[data-v-5f0e893c], .md-progress-bar.md-theme-myTheme.md-query[data-v-5f0e893c] {\n  background-color: rgba(156, 39, 176, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate .md-progress-bar-track[data-v-5f0e893c]:after,\n  .md-progress-bar.md-theme-myTheme.md-indeterminate .md-progress-bar-fill[data-v-5f0e893c]:after, .md-progress-bar.md-theme-myTheme.md-query .md-progress-bar-track[data-v-5f0e893c]:after,\n  .md-progress-bar.md-theme-myTheme.md-query .md-progress-bar-fill[data-v-5f0e893c]:after {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate.md-accent[data-v-5f0e893c], .md-progress-bar.md-theme-myTheme.md-query.md-accent[data-v-5f0e893c] {\n    background-color: rgba(233, 30, 99, 0.38);\n    background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-indeterminate.md-accent .md-progress-bar-track[data-v-5f0e893c]:after,\n    .md-progress-bar.md-theme-myTheme.md-indeterminate.md-accent .md-progress-bar-fill[data-v-5f0e893c]:after, .md-progress-bar.md-theme-myTheme.md-query.md-accent .md-progress-bar-track[data-v-5f0e893c]:after,\n    .md-progress-bar.md-theme-myTheme.md-query.md-accent .md-progress-bar-fill[data-v-5f0e893c]:after {\n      background-color: #E91E63;\n      background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-progress-bar.md-theme-myTheme.md-determinate[data-v-5f0e893c] {\n  background-color: rgba(156, 39, 176, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-determinate .md-progress-bar-fill[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-progress-bar.md-theme-myTheme.md-determinate.md-accent[data-v-5f0e893c] {\n    background-color: rgba(233, 30, 99, 0.38);\n    background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-determinate.md-accent .md-progress-bar-fill[data-v-5f0e893c] {\n      background-color: #E91E63;\n      background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-progress-bar.md-theme-myTheme.md-buffer .md-progress-bar-fill[data-v-5f0e893c] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-progress-bar.md-theme-myTheme.md-buffer .md-progress-bar-track[data-v-5f0e893c] {\n  background-color: rgba(156, 39, 176, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-buffer .md-progress-bar-buffer[data-v-5f0e893c] {\n  border-color: rgba(156, 39, 176, 0.38);\n  border-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-buffer.md-accent .md-progress-bar-fill[data-v-5f0e893c] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-progress-bar.md-theme-myTheme.md-buffer.md-accent .md-progress-bar-track[data-v-5f0e893c] {\n  background-color: rgba(233, 30, 99, 0.38);\n  background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-progress-bar.md-theme-myTheme.md-buffer.md-accent .md-progress-bar-buffer[data-v-5f0e893c] {\n  border-color: rgba(233, 30, 99, 0.38);\n  border-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-progress-spinner.md-theme-myTheme .md-progress-spinner-circle[data-v-5f0e893c] {\n  stroke: #9C27B0;\n  stroke: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-progress-spinner.md-theme-myTheme.md-accent .md-progress-spinner-circle[data-v-5f0e893c] {\n  stroke: #E91E63;\n  stroke: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-radio.md-theme-myTheme.md-checked .md-radio-container[data-v-5f0e893c] {\n  border-color: #E91E63;\n  border-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-radio.md-theme-myTheme.md-checked .md-radio-container[data-v-5f0e893c]:after {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-radio.md-theme-myTheme.md-checked .md-ripple[data-v-5f0e893c] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-radio.md-theme-myTheme.md-checked.md-primary .md-radio-container[data-v-5f0e893c] {\n  border-color: #9C27B0;\n  border-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-radio.md-theme-myTheme.md-checked.md-primary .md-radio-container[data-v-5f0e893c]:after {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-radio.md-theme-myTheme.md-checked.md-primary .md-ripple[data-v-5f0e893c] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-radio.md-theme-myTheme .md-radio-container[data-v-5f0e893c] {\n  border-color: rgba(0, 0, 0, 0.54);\n}\n.md-radio.md-theme-myTheme.md-disabled .md-radio-container[data-v-5f0e893c] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-radio.md-theme-myTheme.md-disabled.md-checked .md-radio-container[data-v-5f0e893c] {\n  border-color: rgba(0, 0, 0, 0.26);\n}\n.md-radio.md-theme-myTheme.md-disabled.md-checked .md-radio-container[data-v-5f0e893c]:after {\n    background-color: rgba(0, 0, 0, 0.26);\n}\n.md-snackbar.md-theme-myTheme[data-v-5f0e893c] {\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-text-primary, #fff);\n  background-color: #323232;\n}\n.md-steppers.md-theme-myTheme[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-steppers.md-theme-myTheme .md-stepper-icon[data-v-5f0e893c]:after, .md-steppers.md-theme-myTheme .md-stepper-icon[data-v-5f0e893c]:before,\n  .md-steppers.md-theme-myTheme .md-stepper-number[data-v-5f0e893c]:after,\n  .md-steppers.md-theme-myTheme .md-stepper-number[data-v-5f0e893c]:before,\n  .md-steppers.md-theme-myTheme .md-stepper[data-v-5f0e893c]:after,\n  .md-steppers.md-theme-myTheme .md-stepper[data-v-5f0e893c]:before {\n    background-color: rgba(0, 0, 0, 0.12);\n    background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-steppers.md-theme-myTheme .md-stepper-number[data-v-5f0e893c] {\n    background-color: rgba(0, 0, 0, 0.38);\n    background-color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-text-hint, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-number svg[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-text-hint, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-text-hint, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header .md-button-content[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.38);\n    color: var(--md-theme-myTheme-text-hint-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-steppers.md-theme-myTheme .md-stepper-header .md-button-content[data-v-5f0e893c]:after, .md-steppers.md-theme-myTheme .md-stepper-header .md-button-content[data-v-5f0e893c]:before {\n      background-color: rgba(0, 0, 0, 0.12);\n      background-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-active .md-button-content[data-v-5f0e893c], .md-steppers.md-theme-myTheme .md-stepper-header.md-done .md-button-content[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-active .md-stepper-number[data-v-5f0e893c], .md-steppers.md-theme-myTheme .md-stepper-header.md-done .md-stepper-number[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-active .md-stepper-number svg[data-v-5f0e893c], .md-steppers.md-theme-myTheme .md-stepper-header.md-done .md-stepper-number svg[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n      fill: #fff;\n      fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-error .md-button-content[data-v-5f0e893c] {\n    color: #ff1744;\n    color: var(--md-theme-myTheme-steppervariant, #ff1744);\n}\n.md-steppers.md-theme-myTheme .md-stepper-header.md-error .md-icon svg[data-v-5f0e893c] {\n    color: #ff1744;\n    color: var(--md-theme-myTheme-steppervariant, #ff1744);\n    fill: #ff1744;\n    fill: var(--md-theme-myTheme-steppervariant, #ff1744);\n}\n.md-subheader.md-theme-myTheme[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-subheader.md-theme-myTheme.md-primary[data-v-5f0e893c] {\n    color: #9C27B0;\n    color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-switch.md-theme-myTheme.md-checked .md-switch-container[data-v-5f0e893c] {\n  background-color: rgba(233, 30, 99, 0.38);\n  background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.38));\n}\n.md-switch.md-theme-myTheme.md-checked .md-switch-thumb[data-v-5f0e893c] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-switch.md-theme-myTheme.md-checked .md-ripple[data-v-5f0e893c] {\n  color: #E91E63;\n  color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-switch.md-theme-myTheme.md-checked.md-primary .md-switch-container[data-v-5f0e893c] {\n  background-color: rgba(156, 39, 176, 0.38);\n  background-color: var(--md-theme-myTheme-primary-on-, rgba(156, 39, 176, 0.38));\n}\n.md-switch.md-theme-myTheme.md-checked.md-primary .md-switch-thumb[data-v-5f0e893c] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-switch.md-theme-myTheme.md-checked.md-primary .md-ripple[data-v-5f0e893c] {\n  color: #9C27B0;\n  color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-switch.md-theme-myTheme .md-switch-container[data-v-5f0e893c] {\n  background-color: rgba(0, 0, 0, 0.38);\n}\n.md-switch.md-theme-myTheme .md-switch-thumb[data-v-5f0e893c] {\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myTheme-switchvariant, #f5f5f5);\n}\n.md-switch.md-theme-myTheme.md-disabled .md-switch-container[data-v-5f0e893c] {\n  background-color: rgba(0, 0, 0, 0.12);\n}\n.md-switch.md-theme-myTheme.md-disabled .md-switch-thumb[data-v-5f0e893c] {\n  background-color: #bdbdbd;\n  background-color: var(--md-theme-myTheme-switchvariant, #bdbdbd);\n}\n.md-table.md-theme-myTheme .md-table-content[data-v-5f0e893c],\n.md-table.md-theme-myTheme .md-table-alternate-header[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background, #fff);\n}\n.md-table.md-theme-myTheme .md-table-alternate-header .md-table-toolbar[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n  background-color: rgba(233, 30, 99, 0.2);\n  background-color: var(--md-theme-myTheme-accent-on-, rgba(233, 30, 99, 0.2));\n}\n.md-table.md-theme-myTheme .md-table-row:hover:not(.md-header-row) .md-table-cell[data-v-5f0e893c] {\n  background-color: rgba(0, 0, 0, 0.08);\n  background-color: var(--md-theme-myTheme-highlight-on-background, rgba(0, 0, 0, 0.08));\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected[data-v-5f0e893c], .md-table.md-theme-myTheme .md-table-row.md-selected-single[data-v-5f0e893c] {\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myTheme-rowvariant, #f5f5f5);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary[data-v-5f0e893c], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary .md-ripple[data-v-5f0e893c], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary .md-ripple[data-v-5f0e893c] {\n      color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary .md-checkbox-container[data-v-5f0e893c], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary .md-checkbox-container[data-v-5f0e893c] {\n      background-color: #fff;\n      border-color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-primary .md-checkbox-container[data-v-5f0e893c]:after, .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-primary .md-checkbox-container[data-v-5f0e893c]:after {\n        border-color: #9C27B0;\n        border-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent[data-v-5f0e893c], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent[data-v-5f0e893c] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent .md-ripple[data-v-5f0e893c], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent .md-ripple[data-v-5f0e893c] {\n      color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent .md-checkbox-container[data-v-5f0e893c], .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent .md-checkbox-container[data-v-5f0e893c] {\n      background-color: #fff;\n      border-color: #fff;\n}\n.md-table.md-theme-myTheme .md-table-row.md-selected.md-accent .md-checkbox-container[data-v-5f0e893c]:after, .md-table.md-theme-myTheme .md-table-row.md-selected-single.md-accent .md-checkbox-container[data-v-5f0e893c]:after {\n        border-color: #E91E63;\n        border-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-table.md-theme-myTheme .md-table-row td[data-v-5f0e893c] {\n  border-top-color: rgba(0, 0, 0, 0.12);\n  border-top-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-table.md-theme-myTheme .md-table-head[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.54);\n  color: var(--md-theme-myTheme-text-accent-on-background, rgba(0, 0, 0, 0.54));\n}\n.md-table.md-theme-myTheme .md-table-fixed-header-active[data-v-5f0e893c] {\n  border-bottom-color: rgba(0, 0, 0, 0.12);\n  border-bottom-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-table.md-theme-myTheme .md-sortable[data-v-5f0e893c]:hover, .md-table.md-theme-myTheme .md-sortable.md-sorted[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-table.md-theme-myTheme .md-sortable:hover svg[data-v-5f0e893c], .md-table.md-theme-myTheme .md-sortable.md-sorted svg[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n    fill: rgba(0, 0, 0, 0.87);\n    fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-table.md-theme-myTheme .md-table-pagination[data-v-5f0e893c] {\n  border-top-color: rgba(0, 0, 0, 0.12);\n  border-top-color: var(--md-theme-myTheme-divider-on-background, rgba(0, 0, 0, 0.12));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background-on-background, #fff);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[disabled][data-v-5f0e893c] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon[data-v-5f0e893c] {\n      color: rgba(0, 0, 0, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon svg[data-v-5f0e893c] {\n        fill: rgba(0, 0, 0, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active[data-v-5f0e893c] {\n      color: #9C27B0;\n      color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon[data-v-5f0e893c] {\n        color: #9C27B0;\n        color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5f0e893c] {\n          fill: #9C27B0;\n          fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-indicator[data-v-5f0e893c] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation[data-v-5f0e893c] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[data-v-5f0e893c] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[disabled][data-v-5f0e893c] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon[data-v-5f0e893c] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon svg[data-v-5f0e893c] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon[data-v-5f0e893c] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5f0e893c] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-indicator[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation[data-v-5f0e893c] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[data-v-5f0e893c] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[disabled][data-v-5f0e893c] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon[data-v-5f0e893c] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon svg[data-v-5f0e893c] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon[data-v-5f0e893c] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5f0e893c] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-indicator[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-background-on-background, #fff);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button[disabled][data-v-5f0e893c] {\n      color: rgba(0, 0, 0, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.38));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon[data-v-5f0e893c] {\n      color: rgba(0, 0, 0, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button .md-icon svg[data-v-5f0e893c] {\n        fill: rgba(0, 0, 0, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.7));\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active[data-v-5f0e893c] {\n      color: #9C27B0;\n      color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon[data-v-5f0e893c] {\n        color: #9C27B0;\n        color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5f0e893c] {\n          fill: #9C27B0;\n          fill: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme .md-tabs-indicator[data-v-5f0e893c] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation[data-v-5f0e893c] {\n  background-color: #9C27B0;\n  background-color: var(--md-theme-myTheme-primary-on-background, #9C27B0);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[data-v-5f0e893c] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button[disabled][data-v-5f0e893c] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon[data-v-5f0e893c] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button .md-icon svg[data-v-5f0e893c] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-primary, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon[data-v-5f0e893c] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5f0e893c] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-primary .md-tabs-indicator[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation[data-v-5f0e893c] {\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent-on-background, #E91E63);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[data-v-5f0e893c] {\n    color: rgba(255, 255, 255, 0.7);\n    color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button[disabled][data-v-5f0e893c] {\n      color: rgba(255, 255, 255, 0.38);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.38));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon[data-v-5f0e893c] {\n      color: rgba(255, 255, 255, 0.7);\n      color: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button .md-icon svg[data-v-5f0e893c] {\n        fill: rgba(255, 255, 255, 0.7);\n        fill: var(--md-theme-myTheme-text-primary-on-accent, rgba(255, 255, 255, 0.7));\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon[data-v-5f0e893c] {\n        color: #fff;\n        color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-navigation .md-button.md-active .md-icon svg[data-v-5f0e893c] {\n          fill: #fff;\n          fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-tabs.md-theme-myTheme.md-accent .md-tabs-indicator[data-v-5f0e893c] {\n  background-color: #fff;\n  background-color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme[data-v-5f0e893c] {\n  color: rgba(0, 0, 0, 0.87);\n  color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n  background-color: #f5f5f5;\n  background-color: var(--md-theme-myTheme-toolbarvariant, #f5f5f5);\n}\n.md-toolbar.md-theme-myTheme .md-icon[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme .md-icon svg[data-v-5f0e893c] {\n      fill: rgba(0, 0, 0, 0.87);\n      fill: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme .md-title[data-v-5f0e893c],\n  .md-toolbar.md-theme-myTheme .md-display-1[data-v-5f0e893c],\n  .md-toolbar.md-theme-myTheme .md-display-2[data-v-5f0e893c] {\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background-variant, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-primary[data-v-5f0e893c] {\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-icon[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-icon svg[data-v-5f0e893c] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-button[data-v-5f0e893c]:not([disabled]):not(.md-raised) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-primary .md-title[data-v-5f0e893c],\n    .md-toolbar.md-theme-myTheme.md-primary .md-display-1[data-v-5f0e893c],\n    .md-toolbar.md-theme-myTheme.md-primary .md-display-2[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent[data-v-5f0e893c] {\n    background-color: #E91E63;\n    background-color: var(--md-theme-myTheme-accent, #E91E63);\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-icon[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-icon svg[data-v-5f0e893c] {\n        fill: #fff;\n        fill: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-button[data-v-5f0e893c]:not([disabled]):not(.md-raised) {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-accent .md-title[data-v-5f0e893c],\n    .md-toolbar.md-theme-myTheme.md-accent .md-display-1[data-v-5f0e893c],\n    .md-toolbar.md-theme-myTheme.md-accent .md-display-2[data-v-5f0e893c] {\n      color: #fff;\n      color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n}\n.md-toolbar.md-theme-myTheme.md-transparent[data-v-5f0e893c] {\n    background-color: transparent;\n    color: rgba(0, 0, 0, 0.87);\n    color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-transparent .md-icon[data-v-5f0e893c] {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-transparent .md-icon svg[data-v-5f0e893c] {\n        fill: rgba(0, 0, 0, 0.87);\n        fill: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-toolbar.md-theme-myTheme.md-transparent .md-title[data-v-5f0e893c],\n    .md-toolbar.md-theme-myTheme.md-transparent .md-display-1[data-v-5f0e893c],\n    .md-toolbar.md-theme-myTheme.md-transparent .md-display-2[data-v-5f0e893c] {\n      color: rgba(0, 0, 0, 0.87);\n      color: var(--md-theme-myTheme-text-primary-on-background, rgba(0, 0, 0, 0.87));\n}\n.md-tooltip.md-theme-myTheme[data-v-5f0e893c] {\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-tooltip, #fff);\n  background-color: rgba(97, 97, 97, 0.9);\n  background-color: var(--md-theme-myTheme-tooltip-on-background, rgba(97, 97, 97, 0.9));\n}\n.md-badge.md-theme-myTheme[data-v-5f0e893c] {\n  color: #fff;\n  color: var(--md-theme-myTheme-text-primary-on-accent, #fff);\n  background-color: #E91E63;\n  background-color: var(--md-theme-myTheme-accent, #E91E63);\n}\n.md-badge.md-theme-myTheme.md-primary[data-v-5f0e893c] {\n    color: #fff;\n    color: var(--md-theme-myTheme-text-primary-on-primary, #fff);\n    background-color: #9C27B0;\n    background-color: var(--md-theme-myTheme-primary, #9C27B0);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 256 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['form'],
+    mixins: [__WEBPACK_IMPORTED_MODULE_1_vuelidate__["validationMixin"]],
+    data: function data() {
+        return {
+            userSaved: false,
+            lastUser: null,
+            sending: false
+        };
+    },
+    validations: {
+        form: {
+            trigger: {
+                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+            },
+            new_campaign: {
+                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+            }
+        }
+    },
+    methods: {
+        getValidationClass: function getValidationClass(fieldName) {
+            var field = this.$v.form[fieldName];
+
+            if (field) {
+                return {
+                    'md-invalid': field.$invalid && field.$dirty
+                };
+            }
+        },
+        savePixel: function savePixel() {
+            var _this = this;
+
+            this.sending = true;
+            this.sending = true;
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/containers/' + this.form.id, this.form).then(function (response) {
+                console.log(_this.form);
+                _this.$emit('editTriggerE');
+                _this.lastUser = '' + _this.form.trigger;
+                _this.$emit('ShowLogEdit', { data: _this.lastUser });
+            });
+
+            window.setTimeout(function () {
+                _this.sending = false;
+                _this.close();
+            }, 1500);
+        },
+        validateUser: function validateUser() {
+
+            this.$v.$touch();
+
+            if (!this.$v.$invalid) {
+
+                this.savePixel();
+            }
+        },
+        close: function close() {
+            this.$emit('editTriggerE');
+        }
+    }
+});
+
+/***/ }),
+/* 257 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c(
+      "form",
+      {
+        staticClass: "md-layout",
+        attrs: { novalidate: "" },
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.validateUser($event)
+          }
+        }
+      },
+      [
+        _c(
+          "md-card",
+          {
+            staticClass: "md-layout-item md-small-size-100",
+            attrs: { "md-with-hover": "" }
+          },
+          [
+            _c(
+              "md-toolbar",
+              {
+                staticClass: "md-primary",
+                attrs: { "md-theme": "myTheme", "md-aligment": "space-between" }
+              },
+              [
+                _c("div", { staticClass: "md-title" }, [
+                  _vm._v("Редактировать Фильтр")
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c("md-card-content", [
+              _c("div", { staticClass: "md-layout md-gutter" }, [
+                _c(
+                  "div",
+                  { staticClass: "md-layout-item md-small-size-100" },
+                  [
+                    _c(
+                      "md-field",
+                      {
+                        class: _vm.getValidationClass("trigger"),
+                        attrs: { "md-theme": "myTheme" }
+                      },
+                      [
+                        _c("label", { attrs: { for: "trigger" } }, [
+                          _vm._v("trigger")
+                        ]),
+                        _vm._v(" "),
+                        _c("md-input", {
+                          attrs: {
+                            name: "trigger",
+                            id: "trigger",
+                            autocomplete: "trigger",
+                            disabled: _vm.sending
+                          },
+                          model: {
+                            value: _vm.form.trigger,
+                            callback: function($$v) {
+                              _vm.$set(_vm.form, "trigger", $$v)
+                            },
+                            expression: "form.trigger"
+                          }
+                        }),
+                        _vm._v(" "),
+                        !_vm.$v.form.trigger.required
+                          ? _c("span", { staticClass: "md-error" }, [
+                              _vm._v("The trigger is required")
+                            ])
+                          : !_vm.$v.form.trigger.minLength
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("Invalid trigger")
+                              ])
+                            : _vm._e()
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "md-layout-item md-small-size-100" },
+                  [
+                    _c(
+                      "md-field",
+                      {
+                        class: _vm.getValidationClass("id_campaign"),
+                        attrs: { "md-theme": "myTheme" }
+                      },
+                      [
+                        _c("label", { attrs: { for: "new_campaign" } }, [
+                          _vm._v("new_campaign")
+                        ]),
+                        _vm._v(" "),
+                        _c("md-input", {
+                          attrs: {
+                            name: "new_campaign",
+                            id: "new_campaign",
+                            autocomplete: "new_campaign",
+                            disabled: _vm.sending
+                          },
+                          model: {
+                            value: _vm.form.new_campaign,
+                            callback: function($$v) {
+                              _vm.$set(_vm.form, "new_campaign", $$v)
+                            },
+                            expression: "form.new_campaign"
+                          }
+                        }),
+                        _vm._v(" "),
+                        !_vm.$v.form.new_campaign.required
+                          ? _c("span", { staticClass: "md-error" }, [
+                              _vm._v("The new_campaign is required")
+                            ])
+                          : !_vm.$v.form.new_campaign.minLength
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("Invalid new_campaign")
+                              ])
+                            : _vm._e()
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _vm.sending
+              ? _c("md-progress-bar", { attrs: { "md-mode": "indeterminate" } })
+              : _vm._e(),
+            _vm._v(" "),
+            _c(
+              "md-card-actions",
+              [
+                _c(
+                  "md-button",
+                  {
+                    staticClass: "md-primary",
+                    attrs: { "md-theme": "myTheme" },
+                    on: { click: _vm.close }
+                  },
+                  [_vm._v("Отмена")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "md-button",
+                  {
+                    staticClass: "md-primary",
+                    attrs: {
+                      type: "submit",
+                      "md-theme": "myTheme",
+                      disabled: _vm.sending
+                    }
+                  },
+                  [_vm._v("Сохранить")]
+                )
+              ],
+              1
+            )
+          ],
+          1
+        )
+      ],
+      1
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-5f0e893c", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

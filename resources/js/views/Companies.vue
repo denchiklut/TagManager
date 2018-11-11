@@ -33,14 +33,12 @@
                         <!--<md-table-cell md-label="id_client" md-sort-by="id_client">{{ item.id_client }}</md-table-cell>-->
                         <!--<md-table-cell md-label="id_campaign" md-sort-by="id_campaign">{{ item.id_campaign }}</md-table-cell>-->
                         <!--<md-table-cell md-label="signature" md-sort-by="signature">{{ item.signature }}</md-table-cell>-->
-                        <md-table-cell md-label="sig" md-sort-by="sig">{{ item.sig }}</md-table-cell>
-                        <md-table-cell md-label="password" md-sort-by="password">{{ item.password }}</md-table-cell>
-                        <md-table-cell md-label="url" md-sort-by="url">{{ item.url }}</md-table-cell>
-                        <md-table-cell md-label="tm_id" md-sort-by="tm_id">
-
-
-                            <router-link :to="{ name: 'containers', params:{ id: item.tm_id }}" class="nav-link active">{{ item.tm_id }}</router-link>
+                        <md-table-cell md-label="url" md-sort-by="url">
+                            <router-link :to="{ name: 'containers', params:{ id: item.id_campaign, url: item.url }}" class="nav-link active">{{ item.url }}</router-link>
                         </md-table-cell>
+                        <md-table-cell md-label="password" md-sort-by="password">{{ item.password }}</md-table-cell>
+                        <md-table-cell md-label="sig" md-sort-by="sig">{{ item.sig }}</md-table-cell>
+                        <md-table-cell md-label="trigger" md-sort-by="trigger">{{ item.trigger }}</md-table-cell>
                         <md-table-cell md-label="created_at" md-sort-by="created_at.date" md-numeric>{{ item.created_at.date | formatDate }}</md-table-cell>
                         <md-table-cell md-label="edit">
                             <md-button class="md-fab md-mini md-primary" @click="showEditForm(item)"><md-icon>edit</md-icon></md-button>
@@ -104,7 +102,7 @@
                     .then(response => {
                         this.users = response.data.data;
                         this.searched = this.users;
-                        console.log(this.users)
+                        // console.log(this.users)
                     });
             },
             deleteItem(item) {
@@ -120,13 +118,15 @@
                 this.showDialog = false;
             },
             showEditForm(compaing) {
-
                 this.editCompain = compaing;
                 this.showDialog = true;
             },
             LogSave(data) {
                 this.lastUser = data.data;
                 this.userSaved = true;
+                window.setTimeout(() => {
+                    this.userSaved = false;
+                }, 1500)
             }
         },
         created () {

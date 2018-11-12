@@ -24,30 +24,7 @@
                           </div>
                       </md-toolbar>
                       <md-content class="md-scrollbar">
-                          <div class="txt-script">
-                              <span class="has-tag">&lt;</span>
-                              <span class="has-name">script</span>
-                              <span class="has-tag">&gt;</span>
-                              <div class="text-p">
-                                 <span class="has-string"> <br>
-                                    <span class="has-attr">var</span> <span class="has_n">script</span> <span class="has-tag"> = </span>
-                                     <span class="has-attr">document</span> . <span class="has_n">createElement</span>('script')<span class="has-tag"> ; </span> <br>
-                                   <span class="has_n">script</span> . <span class="has_n"> src </span> <span class="has-tag"> = </span> '//sonar.semantiqo.com/4e3ll/check.js'<span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">document</span>.<span class="has_n">getElementsByTagName</span>('head')[<span class="has-tag"> 0 </span>].<span class="has_n">appendChild</span>(script) <span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">var</span>  <span class="has_n">script</span>  <span class="has-tag"> = </span> <span class="has-attr">document</span>.<span class="has_n">createElement</span>('script')<span class="has-tag"> ; </span> <br>
-                                    <span class="has_n">script</span> . <span class="has_n"> src </span> <span class="has-tag"> = </span> '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign=<span class="has-id">{{id}}</span>&password=htnfhutn&type=1&userData=$USERDATA'<span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">document</span>.<span class="has_n">getElementsByTagName</span>('head')[<span class="has-tag"> 0 </span>].<span class="has_n">appendChild</span>(script) <span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">var</span>  <span class="has_n">script</span>  <span class="has-tag"> = </span> <span class="has-attr">document</span>.<span class="has_n">createElement</span>('script')<span class="has-tag"> ; </span> <br>
-                                    <span class="has_n">script</span> . <span class="has_n"> src </span>  <span class="has-tag"> = </span> '//leadslabpixels.net/Pixel/txe?idClient=16&idCampaign=<span class="has-id">{{id}}</span>&password=htnfhutn'<span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">document</span>.<span class="has_n">getElementsByTagName</span>('head')[<span class="has-tag"> 0 </span>].<span class="has_n">appendChild</span>(script);'<span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">document</span>.<span class="has_n">getElementsByTagName</span>('head')[<span class="has-tag"> 0 </span>].<span class="has_n">appendChild</span>(script) <span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">var</span>  <span class="has_n">script</span>  <span class="has-tag"> = </span> <span class="has-attr">document</span>.<span class="has_n">createElement</span>('script')<span class="has-tag"> ; </span> <br>
-                                </span>
-                              </div>
-                              <span class="has-tag">&lt;</span>
-                              <span class="has-name">/script</span>
-                              <span class="has-tag">&gt;</span>
-                          </div>
+                          <script_t :new_campaign="id"></script_t>
                       </md-content>
                   </md-card-media>
                   <md-ripple>
@@ -89,30 +66,7 @@
                           </div>
                       </md-toolbar>
                       <md-content class="md-scrollbar">
-                          <div class="txt-script">
-                              <span class="has-tag">&lt;</span>
-                              <span class="has-name">script</span>
-                              <span class="has-tag">&gt;</span>
-                              <div class="text-p">
-                                 <span class="has-string"> <br>
-                                    <span class="has-attr">var</span> <span class="has_n">script</span> <span class="has-tag"> = </span>
-                                     <span class="has-attr">document</span> . <span class="has_n">createElement</span>('script')<span class="has-tag"> ; </span> <br>
-                                   <span class="has_n">script</span> . <span class="has_n"> src </span> <span class="has-tag"> = </span> '//sonar.semantiqo.com/4e3ll/check.js'<span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">document</span>.<span class="has_n">getElementsByTagName</span>('head')[<span class="has-tag"> 0 </span>].<span class="has_n">appendChild</span>(script) <span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">var</span>  <span class="has_n">script</span>  <span class="has-tag"> = </span> <span class="has-attr">document</span>.<span class="has_n">createElement</span>('script')<span class="has-tag"> ; </span> <br>
-                                    <span class="has_n">script</span> . <span class="has_n"> src </span> <span class="has-tag"> = </span> '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign=<span class="has-id">{{item.new_campaign}}</span>&password=htnfhutn&type=1&userData=$USERDATA'<span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">document</span>.<span class="has_n">getElementsByTagName</span>('head')[<span class="has-tag"> 0 </span>].<span class="has_n">appendChild</span>(script) <span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">var</span>  <span class="has_n">script</span>  <span class="has-tag"> = </span> <span class="has-attr">document</span>.<span class="has_n">createElement</span>('script')<span class="has-tag"> ; </span> <br>
-                                    <span class="has_n">script</span> . <span class="has_n"> src </span>  <span class="has-tag"> = </span> '//leadslabpixels.net/Pixel/txe?idClient=16&idCampaign=<span class="has-id">{{item.new_campaign}}</span>&password=htnfhutn'<span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">document</span>.<span class="has_n">getElementsByTagName</span>('head')[<span class="has-tag"> 0 </span>].<span class="has_n">appendChild</span>(script);'<span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">document</span>.<span class="has_n">getElementsByTagName</span>('head')[<span class="has-tag"> 0 </span>].<span class="has_n">appendChild</span>(script) <span class="has-tag"> ; </span> <br>
-                                     <span class="has-attr">var</span>  <span class="has_n">script</span>  <span class="has-tag"> = </span> <span class="has-attr">document</span>.<span class="has_n">createElement</span>('script')<span class="has-tag"> ; </span> <br>
-                                </span>
-                              </div>
-                              <span class="has-tag">&lt;</span>
-                              <span class="has-name">/script</span>
-                              <span class="has-tag">&gt;</span>
-                          </div>
+                          <script_t :new_campaign="item.new_campaign"></script_t>
                       </md-content>
                   </md-card-media>
                   <md-ripple>
@@ -160,6 +114,7 @@
     import axios from 'axios'
     import AddTrigeger from '../components/containers/AddTrigger'
     import EditTrigger from '../components/containers/EditTrigger'
+    import template_1 from '../components/scripts/template_1'
 
     const toLower = text => {
         return text.toString().toLowerCase()
@@ -193,6 +148,7 @@
         components: {
             'add': AddTrigeger,
             'edit': EditTrigger,
+            'script_t': template_1,
         },
 
         methods: {

@@ -21,7 +21,7 @@ class CreateCompaniesTable extends Migration
             $table->string('signature');
             $table->string('sig');
             $table->string('url');
-            $table->boolean('trigger')->default(0);
+            $table->integer('trigger')->default(0);
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
         });

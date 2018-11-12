@@ -100,6 +100,7 @@ class AddPixel extends Controller
     public function destroy($id)
     {
         Companies::destroy($id);
+
         return response()->json(['message' => 'Pixel deleted successfully']);
     }
 }

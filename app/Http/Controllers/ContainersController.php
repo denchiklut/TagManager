@@ -47,12 +47,7 @@ class ContainersController extends Controller
         $trigger->save();
 
         $compaing = Companies::where('id_campaign', $request->id_campaign);
-
-        $compaing->update([
-            'trigger' => '1',
-        ]);
-
-
+        $compaing->increment('trigger');
 
         return response()->json(['data' => $trigger]);
     }
@@ -106,7 +101,13 @@ class ContainersController extends Controller
      */
     public function destroy($id)
     {
+        $trigger = Triggers::find($id);
+
         Triggers::destroy($id);
+
+        $compaing = Companies::where('id_campaign', $trigger->id_campaign);
+        $compaing->decrement('trigger');
+
         return response()->json(['data'=> 'Filter deleted successfully']);
     }
 }

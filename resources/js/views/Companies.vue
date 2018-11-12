@@ -102,7 +102,7 @@
                     .then(response => {
                         this.users = response.data.data;
                         this.searched = this.users;
-                        // console.log(this.users)
+                        console.log(this.users)
                     });
             },
             deleteItem(item) {
@@ -110,7 +110,7 @@
                     .then(response => {
                         let index = this.searched.indexOf(item);
                         this.searched.splice(index, 1);
-                        // console.log(response.data)
+                        //console.log(response.data)
                     });
             },
             closeDialog() {

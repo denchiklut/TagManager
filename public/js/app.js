@@ -29792,6 +29792,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__views_UsersIndex___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__views_UsersIndex__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__views_Containers__ = __webpack_require__(222);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__views_Containers___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__views_Containers__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__views_Templates__ = __webpack_require__(259);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__views_Templates___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9__views_Templates__);
 __webpack_require__(144);
 
 
@@ -29814,6 +29816,7 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.filter('formatDate', function (value
 
 
 
+
 var router = new __WEBPACK_IMPORTED_MODULE_2_vue_router__["a" /* default */]({
     mode: 'history',
     routes: [{
@@ -29824,6 +29827,10 @@ var router = new __WEBPACK_IMPORTED_MODULE_2_vue_router__["a" /* default */]({
         path: '/companies',
         name: 'companies',
         component: __WEBPACK_IMPORTED_MODULE_6__views_Companies___default.a
+    }, {
+        path: '/templates',
+        name: 'templates',
+        component: __WEBPACK_IMPORTED_MODULE_9__views_Templates___default.a
     }, {
         path: '/users',
         name: 'users.index',
@@ -64500,6 +64507,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'Temporary',
@@ -64625,6 +64639,30 @@ var render = function() {
                           attrs: { to: { name: "companies" } }
                         },
                         [_vm._v("Companies")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "md-list-item",
+                [
+                  _c("md-icon", [_vm._v("send")]),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    { staticClass: "md-list-item-text" },
+                    [
+                      _c(
+                        "router-link",
+                        {
+                          staticClass: "nav-link active",
+                          attrs: { to: { name: "templates" } }
+                        },
+                        [_vm._v("Templates")]
                       )
                     ],
                     1
@@ -67478,150 +67516,14 @@ module.exports = Component.exports
 
 /***/ }),
 /* 220 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
 //
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-var getUsers = function getUsers(page, callback) {
-    var params = { page: page };
-
-    __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/users', { params: params }).then(function (response) {
-        callback(null, response.data);
-    }).catch(function (error) {
-        callback(error, error.response.data);
-    });
-};
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            users: null,
-            meta: null,
-            links: {
-                first: null,
-                last: null,
-                next: null,
-                prev: null
-            },
-            error: null
-        };
-    },
-
-    computed: {
-        nextPage: function nextPage() {
-            if (!this.meta || this.meta.current_page === this.meta.last_page) {
-                return;
-            }
-
-            return this.meta.current_page + 1;
-        },
-        prevPage: function prevPage() {
-            if (!this.meta || this.meta.current_page === 1) {
-                return;
-            }
-
-            return this.meta.current_page - 1;
-        },
-        paginatonCount: function paginatonCount() {
-            if (!this.meta) {
-                return;
-            }
-
-            var _meta = this.meta,
-                current_page = _meta.current_page,
-                last_page = _meta.last_page;
-
-
-            return current_page + ' of ' + last_page;
-        }
-    },
-    beforeRouteEnter: function beforeRouteEnter(to, from, next) {
-        getUsers(to.query.page, function (err, data) {
-            next(function (vm) {
-                return vm.setData(err, data);
-            });
-        });
-    },
-
-    // when route changes and this component is already rendered,
-    // the logic will be slightly different.
-    beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
-        var _this = this;
-
-        this.users = this.links = this.meta = null;
-        getUsers(to.query.page, function (err, data) {
-            _this.setData(err, data);
-            next();
-        });
-    },
-
-    methods: {
-        goToNext: function goToNext() {
-            this.$router.push({
-                query: {
-                    page: this.nextPage
-                }
-            });
-        },
-        goToPrev: function goToPrev() {
-            this.$router.push({
-                name: 'users.index',
-                query: {
-                    page: this.prevPage
-                }
-            });
-        },
-        setData: function setData(err, _ref) {
-            var users = _ref.data,
-                links = _ref.links,
-                meta = _ref.meta;
-
-            if (err) {
-                this.error = err.toString();
-            } else {
-                this.users = users;
-                this.links = links;
-                this.meta = meta;
-            }
-        }
-    }
-});
 
 /***/ }),
 /* 221 */
@@ -67631,82 +67533,16 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "users" }, [
-    _vm.loading
-      ? _c("div", { staticClass: "loading" }, [
-          _vm._v("\n        Loading...\n    ")
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.error
-      ? _c("div", { staticClass: "error" }, [
-          _c("p", [_vm._v(_vm._s(_vm.error))]),
-          _vm._v(" "),
-          _c("p", [
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.fetchData($event)
-                  }
-                }
-              },
-              [_vm._v("\n                Try Again\n            ")]
-            )
-          ])
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.users
-      ? _c(
-          "ul",
-          _vm._l(_vm.users, function(ref) {
-            var name = ref.name
-            var email = ref.email
-            return _c("li", [
-              _c("strong", [_vm._v("Name:")]),
-              _vm._v(" " + _vm._s(name) + ",\n            "),
-              _c("strong", [_vm._v("Email:")]),
-              _vm._v(" " + _vm._s(email) + "\n        ")
-            ])
-          })
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _c("div", { staticClass: "pagination" }, [
-      _c(
-        "button",
-        {
-          attrs: { disabled: !_vm.prevPage },
-          on: {
-            click: function($event) {
-              $event.preventDefault()
-              return _vm.goToPrev($event)
-            }
-          }
-        },
-        [_vm._v("Previous")]
-      ),
-      _vm._v("\n        " + _vm._s(_vm.paginatonCount) + "\n        "),
-      _c(
-        "button",
-        {
-          attrs: { disabled: !_vm.nextPage },
-          on: {
-            click: function($event) {
-              $event.preventDefault()
-              return _vm.goToNext($event)
-            }
-          }
-        },
-        [_vm._v("Next")]
-      )
-    ])
-  ])
+  return _vm._m(0)
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [_c("h1", [_vm._v("This is users")])])
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -69664,6 +69500,141 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-3e3c311e", module.exports)
+  }
+}
+
+/***/ }),
+/* 259 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(260)
+}
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(262)
+/* template */
+var __vue_template__ = __webpack_require__(263)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-104010aa"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/views/Templates.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-104010aa", Component.options)
+  } else {
+    hotAPI.reload("data-v-104010aa", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 260 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(261);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(6)("74868ffa", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-104010aa\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Templates.vue", function() {
+     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-104010aa\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Templates.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 261 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 262 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "Templates"
+});
+
+/***/ }),
+/* 263 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm._m(0)
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [_c("h1", [_vm._v("This is template`s page")])])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-104010aa", module.exports)
   }
 }
 

@@ -32,6 +32,13 @@
                 </md-list-item>
 
                 <md-list-item>
+                    <md-icon>send</md-icon>
+                    <span class="md-list-item-text">
+                        <router-link :to="{ name: 'templates' }" class="nav-link active">Templates</router-link>
+                    </span>
+                </md-list-item>
+
+                <md-list-item>
                     <md-icon>delete</md-icon>
                     <span class="md-list-item-text">
                         <router-link :to="{ name: 'users.index' }" class="nav-link active">Users</router-link>

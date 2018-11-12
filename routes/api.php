@@ -28,7 +28,8 @@ Route::group(['prefix' => 'add'], function () {
 });
 
 Route::resource('companies', 'AddPixel');
-Route::resource('containers', 'ContainersController');
 Route::resource('/', 'AnaliticsController');
+Route::resource('containers', 'ContainersController');
+Route::resource('templates', 'TemplatesController');
 
 

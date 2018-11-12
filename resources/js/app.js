@@ -20,6 +20,7 @@ import Analytics from './views/Analytics'
 import Companies from './views/Companies'
 import UsersIndex from './views/UsersIndex'
 import Containers from './views/Containers'
+import Templates from './views/Templates'
 
 
 const router = new VueRouter({
@@ -34,6 +35,11 @@ const router = new VueRouter({
             path: '/companies',
             name: 'companies',
             component: Companies,
+        },
+        {
+            path: '/templates',
+            name: 'templates',
+            component: Templates,
         },
         {
             path: '/users',

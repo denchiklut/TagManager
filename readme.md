@@ -16,7 +16,11 @@
 - Проверить конфигурацию файла App/config/database.php
 - После клонирования репозитория выполните команду composer install
 - После клонирования репозитория выполните команду npm install
+- Выполните команду php artisan [migrate](https://laravel.ru/docs/v5/migrations)
+## Запуск проекта
 
+- Если вы работаете без Локального сервера ([XAMP](https://www.apachefriends.org/ru/index.html), [MAMP](https://www.mamp.info/en/) или [Open Server](https://ospanel.io/)) выполните команду php [artisan](http://laravel.su/docs/5.0/artisan) serve 
+- Для динамической пересборки проекта не забудьте выполнить команду npm run watch 
 
 Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
 

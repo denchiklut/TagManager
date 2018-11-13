@@ -22,7 +22,7 @@
                                     <md-content class="md-primary text_template" md-theme="myTheme">
                                         <div class="md-layout md-gutter">
                                             <div class="md-layout-item md-size-90"><script_1 :new_campaign="1"></script_1></div>
-                                            <div class="md-layout-item "><md-button  class="md-dense md-raised md-primary btn-accept" md-theme="orange-btn">Применить</md-button></div>
+                                            <div class="md-layout-item "><md-button  class="md-dense md-raised md-primary btn-accept" md-theme="orange-btn" @click="apply_template(item.name)">Применить</md-button></div>
                                         </div>
                                     </md-content>
                                 </md-list>
@@ -41,8 +41,9 @@
     export default {
         data() {
             return {
-                expandSingle: false,
                 templates: [],
+                expandSingle: false,
+                applyed: null,
             }
         },
         methods: {
@@ -53,6 +54,10 @@
                         this.templates = response.data.data;
                         console.log(this.templates)
                     });
+            },
+            apply_template(name) {
+                alert('Applying template' + name);
+                this.applyed = name;
             }
         },
         components: {

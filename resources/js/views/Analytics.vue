@@ -1,46 +1,6 @@
 <template>
     <div>
-        <!--<pre>-->
-        <!--{{this.metrics_list.query}}-->
-        <!--</pre>-->
-        <div class="container">
-
-            <div class="card text-center">
-                <div class="card-header">
-                    Долгосрочные интересы
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>Категория интересов</th>
-                            <th>Визиты</th>
-                            <th>Посетители</th>
-                            <th>Аффинити‑индекс  </th>
-                            <th>Отказы</th>
-                            <th>Глубина просмотра</th>
-                            <th>Время на сайте</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="item in this.metrics_list.data">
-                            <td>{{item.dimensions[0]['name']}}</td>
-                            <td>{{item.metrics[0]}}</td>
-                            <td>{{item.metrics[1]}}</td>
-                            <td>{{Math.round(item.metrics[2]) + '%'}}</td>
-                            <td>{{Math.round(item.metrics[3]) + '%'}}</td>
-                            <td>{{item.metrics[4].toFixed(2)}}</td>
-                            <td>{{Math.round(item.metrics[5])/100}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer text-muted">
-                    {{`С ${this.metrics_list.query.date1} по ${this.metrics_list.query.date2}`}}
-                </div>
-            </div>
-        </div>
-
+        <p>{{this.data}}</p>
     </div>
 </template>
 
@@ -48,15 +8,14 @@
     import axios from 'axios'
     export default {
         data: () => ({
-            metrics_list: [],
+            data: null,
         }),
         methods: {
             fetchData() {
                 axios
                     .get('/api')
                     .then(responce => {
-                        this.metrics_list = JSON.parse(responce.data.data);
-                        console.log(responce.data.data)
+                        this.data =responce.data.data;
                     })
             }
         },

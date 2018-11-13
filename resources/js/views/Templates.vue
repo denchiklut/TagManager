@@ -81,7 +81,7 @@
     ));
 
     @include md-register-theme("orange-btn", (
-            primary: md-get-palette-color(orange, 500)
+            primary: #ff5252
     ));
 
     // Apply the theme

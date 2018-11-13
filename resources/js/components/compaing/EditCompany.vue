@@ -17,14 +17,14 @@
                             </md-field>
                         </div>
 
-                        <div class="md-layout-item md-small-size-100">
-                            <md-field :class="getValidationClass('id_campaign')" md-theme="myTheme">
-                                <label for="id_campaign">id_campaign</label>
-                                <md-input type="number" id="id_campaign" name="id_campaign" autocomplete="id_campaign" v-model="form.id_campaign" :disabled="sending" />
-                                <span class="md-error" v-if="!$v.form.id_campaign.required">The age is required</span>
-                                <span class="md-error" v-else-if="!$v.form.id_campaign.maxlength">Invalid age</span>
-                            </md-field>
-                        </div>
+                        <!--<div class="md-layout-item md-small-size-100">-->
+                            <!--<md-field :class="getValidationClass('id_campaign')" md-theme="myTheme">-->
+                                <!--<label for="id_campaign">id_campaign</label>-->
+                                <!--<md-input type="number" id="id_campaign" name="id_campaign" autocomplete="id_campaign" v-model="form.id_campaign" :disabled="sending" />-->
+                                <!--<span class="md-error" v-if="!$v.form.id_campaign.required">The age is required</span>-->
+                                <!--<span class="md-error" v-else-if="!$v.form.id_campaign.maxlength">Invalid age</span>-->
+                            <!--</md-field>-->
+                        <!--</div>-->
 
                         <div class="md-layout-item md-small-size-100">
                             <md-field :class="getValidationClass('password')" md-theme="myTheme">

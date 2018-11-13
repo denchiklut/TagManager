@@ -15,11 +15,15 @@
                         <div v-for="item in templates">
                             <md-list-item md-expand >
                                 <md-icon>whatshot</md-icon>
-                                <span class="md-list-item-text">{{item.name}}</span>
 
+                                <span class="md-list-item-text">{{item.name}}</span>
                                 <md-list slot="md-expand">
+
                                     <md-content class="md-primary text_template" md-theme="myTheme">
-                                        <script_1 :new_campaign="1"></script_1>
+                                        <div class="md-layout md-gutter">
+                                            <div class="md-layout-item md-size-90"><script_1 :new_campaign="1"></script_1></div>
+                                            <div class="md-layout-item "><md-button  class="md-dense md-raised md-primary btn-accept" md-theme="orange-btn">Применить</md-button></div>
+                                        </div>
                                     </md-content>
                                 </md-list>
                             </md-list-item>
@@ -70,10 +74,14 @@
     @include md-register-theme("myTheme", (
 
     // The primary color of your brand
-    primary: #616161,
+    primary: #3e3e3e,
 
     // The secondary color of your brand
     accent: #616161
+    ));
+
+    @include md-register-theme("orange-btn", (
+            primary: md-get-palette-color(orange, 500)
     ));
 
     // Apply the theme
@@ -93,7 +101,16 @@
         padding: 0;
     }
 
+    /*.md-layout {*/
+        /*flex-direction: column;*/
+    /*}*/
+
     .text_template {
         padding: 10px 0;
+    }
+    .btn-accept {
+        position: absolute;
+        bottom: 0;
+        right: 0;
     }
 </style>

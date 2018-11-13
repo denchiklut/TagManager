@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TemplatesResource;
+use App\Models\Templates;
 use Illuminate\Http\Request;
 
 class TemplatesController extends Controller
@@ -9,11 +11,11 @@ class TemplatesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
     {
-        //
+        return TemplatesResource::collection(Templates::all());
     }
 
     /**

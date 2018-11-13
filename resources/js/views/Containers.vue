@@ -226,6 +226,7 @@
 
     // Apply the theme
     @import "../../../node_modules/vue-material/dist/theme/all";
+
     .md-card {
         max-width: 575px;
         margin: 4px;

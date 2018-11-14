@@ -118,6 +118,7 @@
         position: relative;
         height: 400px;
         border: 1px solid #ff5252;
+        box-shadow: -5px 0px 12px -3px #3e3e3e;
     }
 
     #score {

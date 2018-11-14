@@ -37,6 +37,13 @@
                         <router-link :to="{ name: 'templates' }" class="nav-link active">Templates</router-link>
                     </span>
                 </md-list-item>
+
+                <md-list-item>
+                    <md-icon>error</md-icon>
+                    <span class="md-list-item-text">
+                        <router-link :to="{ name: 'relax' }" class="nav-link active">Relax</router-link>
+                    </span>
+                </md-list-item>
             </md-list>
         </md-drawer>
 

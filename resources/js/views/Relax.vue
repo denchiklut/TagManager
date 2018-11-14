@@ -117,7 +117,7 @@
     #wrapper {
         position: relative;
         height: 400px;
-        border: 1px solid #ff5252;
+        border: 1px solid #ff0a0ad4;
         box-shadow: -5px 0px 12px -3px #3e3e3e;
     }
 
@@ -125,7 +125,7 @@
         position: absolute;
         bottom: 0;
         width: 100%;
-        background: #ff5252;
+        background: #ff0a0ad4;
     }
     .text {
         position: relative;

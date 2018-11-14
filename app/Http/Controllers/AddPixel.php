@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Triggers;
 use Illuminate\Http\Request;
 use App\Models\Companies;
 use App\Http\Resources\ComponyResource;
@@ -99,6 +100,10 @@ class AddPixel extends Controller
 
     public function destroy($id)
     {
+        $compaing = Companies::find($id);
+
+        Triggers::where('id_campaign', $compaing->id_campaign)->delete();
+
         Companies::destroy($id);
 
         return response()->json(['message' => 'Pixel deleted successfully']);

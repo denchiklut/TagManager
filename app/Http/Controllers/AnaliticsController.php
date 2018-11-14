@@ -13,7 +13,7 @@ class AnaliticsController extends Controller
      */
     public function index()
     {
-        $data = file_get_contents('https://api-metrika.yandex.ru/stat/v1/data.json?metrics=ym:s:visits,%20ym:s:users,%20ym:s:affinityIndexInterests,%20ym:s:bounceRate,%20ym:s:pageDepth,%20ym:s:avgVisitDurationSeconds&dimensions=ym:s:interest&date1=2015-01-01&date2=yesterday&limit=10000&offset=1&ids=2138128&oauth_token=05dd3dd84ff948fdae2bc4fb91f13e22bb1f289ceef0037');
+        $data = 'Егор надо api для аналитики продумать';
         return response()->json(['data' => $data]);
     }
 

@@ -20,15 +20,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'pixel'], function () {
 
     Route::get('/tags/{hash_advertisings}', 'AdvertisingCampaigns@index');
-
 });
 
 Route::group(['prefix' => 'add'], function () {
     Route::get('/pixel/{compaigns_url}', 'AddPixel@index');
 });
 
-Route::resource('companies', 'AddPixel');
 Route::resource('/', 'AnaliticsController');
+Route::resource('companies', 'AddPixel');
 Route::resource('containers', 'ContainersController');
 Route::resource('templates', 'TemplatesController');
 

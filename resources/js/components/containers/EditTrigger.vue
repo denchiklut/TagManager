@@ -82,7 +82,7 @@
                 this.sending = true;
                 axios.patch('/api/containers/' + this.form.id, this.form)
                     .then(response => {
-                        console.log(this.form);
+                        // console.log(this.form);
                         this.$emit('editTriggerE');
                         this.lastUser = `${this.form.trigger}`;
                         this.$emit('ShowLogEdit', {data: this.lastUser})

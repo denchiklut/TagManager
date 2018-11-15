@@ -158,6 +158,7 @@
                     .then(response => {
                         this.containers = response.data.data;
                         this.searched = this.containers;
+                        console.log(this.searched)
                     });
             },
             searchOnTable () {

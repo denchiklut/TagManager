@@ -98,7 +98,7 @@
                     .then(response => {
                         this.users = response.data.data;
                         this.searched = this.users;
-                        console.log(this.users)
+                        // console.log(this.users)
                     });
             },
             deleteItem(item) {

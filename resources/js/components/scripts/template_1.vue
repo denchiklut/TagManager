@@ -30,7 +30,7 @@
         name: "template_1",
         props:['new_campaign'],
         created() {
-            console.log(this.new_campaign)
+            // console.log(this.new_campaign)
         }
     }
 

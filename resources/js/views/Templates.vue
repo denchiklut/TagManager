@@ -59,14 +59,13 @@
                     .get('/api/templates')
                     .then(response => {
                         this.templates = response.data.data;
-                        console.log(response.data.data);
+                        // console.log(response.data.data);
 
-                        response.data.data.forEach((item) =>{
+                        response.data.data.forEach((item) => {
 
                             if (item.default == '1')
                             {
-                                this.activeIndex =response.data.data.indexOf(item);
-
+                                this.activeIndex = response.data.data.indexOf(item);
                             }
                         });
                     });
@@ -77,9 +76,7 @@
 
                 axios.patch('/api/templates/' + item.id, item)
                     .then(response => {
-                            console.log('----');
-                            console.log(item);
-                        console.log('----');
+
                     });
             }
         },

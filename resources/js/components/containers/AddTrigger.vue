@@ -96,7 +96,7 @@
                     .then(response => {
 
                         this.form = response.data.data;
-                        console.log(this.form);
+                        // console.log(this.form);
                         this.$emit('AddTrigger', {data: this.form});
                     });
 

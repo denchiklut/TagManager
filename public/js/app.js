@@ -65204,7 +65204,7 @@ var searchByName = function searchByName(items, term) {
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/companies').then(function (response) {
                 _this.users = response.data.data;
                 _this.searched = _this.users;
-                console.log(_this.users);
+                // console.log(this.users)
             });
         },
         deleteItem: function deleteItem(item) {
@@ -67591,6 +67591,7 @@ var searchByName = function searchByName(items, term) {
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/containers/' + this.id, this.id).then(function (response) {
                 _this.containers = response.data.data;
                 _this.searched = _this.containers;
+                console.log(_this.searched);
             });
         },
         searchOnTable: function searchOnTable() {
@@ -67838,7 +67839,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/containers', this.form).then(function (response) {
 
                 _this.form = response.data.data;
-                console.log(_this.form);
+                // console.log(this.form);
                 _this.$emit('AddTrigger', { data: _this.form });
             });
 
@@ -68238,7 +68239,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.sending = true;
             this.sending = true;
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/containers/' + this.form.id, this.form).then(function (response) {
-                console.log(_this.form);
+                // console.log(this.form);
                 _this.$emit('editTriggerE');
                 _this.lastUser = '' + _this.form.trigger;
                 _this.$emit('ShowLogEdit', { data: _this.lastUser });
@@ -68532,7 +68533,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     name: "template_1",
     props: ['new_campaign'],
     created: function created() {
-        console.log(this.new_campaign);
+        // console.log(this.new_campaign)
     }
 });
 
@@ -69364,11 +69365,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/templates').then(function (response) {
                 _this.templates = response.data.data;
+                // console.log(response.data.data);
 
                 response.data.data.forEach(function (item) {
 
                     if (item.default == '1') {
-                        _this.activeIndex = item.id - 1;
+                        _this.activeIndex = response.data.data.indexOf(item);
                     }
                 });
             });
@@ -69376,9 +69378,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         apply_template: function apply_template(item, idx) {
             this.activeIndex = idx;
 
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/templates/' + item.id, item).then(function (response) {
-                console.log(item);
-            });
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/templates/' + item.id, item).then(function (response) {});
         }
     },
     components: {

@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Analitics extends Model
 {
-    protected $table = 'companies';
+    protected $table = 'analitics';
     protected $guarded = ['id'];
 }

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Companies;
 use App\Models\Triggers;
-use App\Http\Controllers\AnaliticsController;
+
 
 class AdvertisingCampaigns extends Controller
 {
@@ -25,26 +25,21 @@ class AdvertisingCampaigns extends Controller
 
         $Analitics = new AnaliticsController();
 
-
-
         $data =[
           "url" => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER']: $_SERVER['REQUEST_URI'],
           "hach" => $hash_advertisings,
         ];
 
         $Analitics->store($data);
-        exit;
 
         //если есть тригер
         if($compains->trigger)
         {
-
             //выбираем все тригеры
             $triggers = Triggers::where('id_campaign', $compains->id_campaign)->get();
 
             foreach ($triggers as $trigger)
             {
-
                 if($trigger)
                 {
                     if ((strpos(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER']: $_SERVER['REQUEST_URI'], $trigger->trigger) !== false))
@@ -54,7 +49,6 @@ class AdvertisingCampaigns extends Controller
                     }
                 }
             }
-
         }
 
 

@@ -19,6 +19,7 @@ class TriggerResource extends Resource
             'id_campaign' => $this->id_campaign,
             'trigger' => $this->trigger,
             'new_campaign' => $this->new_campaign,
+            'templates_id' => $this->templates_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

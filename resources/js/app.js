@@ -20,6 +20,7 @@ import Analytics from './views/Analytics'
 import Companies from './views/Companies'
 import Containers from './views/Containers'
 import Templates from './views/Templates'
+import Relax from './views/Relax'
 
 
 const router = new VueRouter({
@@ -45,6 +46,11 @@ const router = new VueRouter({
             path: '/templates',
             name: 'templates',
             component: Templates,
+        },
+        {
+            path: '/relax',
+            name: 'relax',
+            component: Relax,
         },
     ],
 });

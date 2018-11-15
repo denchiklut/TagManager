@@ -21,7 +21,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'pixel'], function () {
 
     Route::get('/tags/{hash_advertisings}', 'AdvertisingCampaigns@index');
-
 });
 
 Route::group(['prefix' => 'add'], function () {

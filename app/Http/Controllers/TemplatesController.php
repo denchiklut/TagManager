@@ -70,7 +70,15 @@ class TemplatesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $templates = Templates::find($id);
+
+        Templates::where('default',1)->update(['default' => 0]);
+
+        $templates->update([
+            'default' => '1',
+        ]);
+
+        return response()->json(['message' => 'Template updated successful']);
     }
 
     /**

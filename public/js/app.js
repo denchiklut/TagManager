@@ -64404,7 +64404,7 @@ var content = __webpack_require__(172);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("f87cbf54", content, false, {});
+var update = __webpack_require__(4)("2dba2923", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -64912,7 +64912,7 @@ var content = __webpack_require__(178);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("41c1d61e", content, false, {});
+var update = __webpack_require__(4)("4a21e004", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -65059,7 +65059,7 @@ var content = __webpack_require__(183);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("04e56472", content, false, {});
+var update = __webpack_require__(4)("00b55f7f", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -65301,7 +65301,7 @@ var content = __webpack_require__(187);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("f6423e3c", content, false, {});
+var update = __webpack_require__(4)("35552a42", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -65670,7 +65670,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var withParams = Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).BUILD === 'web' ? __webpack_require__(192).withParams : __webpack_require__(141).withParams;
+var withParams = Object({"MIX_PUSHER_APP_KEY":"","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).BUILD === 'web' ? __webpack_require__(192).withParams : __webpack_require__(141).withParams;
 var _default = withParams;
 exports.default = _default;
 
@@ -66493,7 +66493,7 @@ var content = __webpack_require__(216);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("2ae9736e", content, false, {});
+var update = __webpack_require__(4)("48de28e9", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -67385,7 +67385,7 @@ var content = __webpack_require__(222);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("1a9e0828", content, false, {});
+var update = __webpack_require__(4)("ce65228a", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -67701,7 +67701,7 @@ var content = __webpack_require__(226);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("e2729d28", content, false, {});
+var update = __webpack_require__(4)("5d1a7b8c", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -68115,7 +68115,7 @@ var content = __webpack_require__(231);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("32099912", content, false, {});
+var update = __webpack_require__(4)("39bea552", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -68465,7 +68465,7 @@ var content = __webpack_require__(235);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("0a4730ea", content, false, {});
+var update = __webpack_require__(4)("5f9b949e", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -69263,7 +69263,7 @@ var content = __webpack_require__(241);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("c7b90c08", content, false, {});
+var update = __webpack_require__(4)("d01915ee", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -69340,6 +69340,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -69360,16 +69364,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/templates').then(function (response) {
                 _this.templates = response.data.data;
-                console.log(_this.templates);
+
+                response.data.data.forEach(function (item) {
+
+                    if (item.default == '1') {
+                        _this.activeIndex = item.id - 1;
+                    }
+                });
             });
         },
         apply_template: function apply_template(item, idx) {
             this.activeIndex = idx;
-            console.log(item);
+
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/templates/' + item.id, item).then(function (response) {
+                console.log(item);
+            });
         }
     },
     components: {
-        'script_1': __WEBPACK_IMPORTED_MODULE_1__components_scripts_template_1___default.a
+        'TXE_Standart': __WEBPACK_IMPORTED_MODULE_1__components_scripts_template_1___default.a
     },
     created: function created() {
         this.fetchData();
@@ -69448,7 +69461,7 @@ var render = function() {
                             ),
                             _vm._v(" "),
                             _c("span", { staticClass: "md-list-item-text" }, [
-                              _vm._v(_vm._s(item.name))
+                              _vm._v(" " + _vm._s(item.name))
                             ]),
                             _vm._v(" "),
                             _c(
@@ -69476,7 +69489,7 @@ var render = function() {
                                               "md-layout-item md-size-90"
                                           },
                                           [
-                                            _c("script_1", {
+                                            _c("TXE_Standart", {
                                               attrs: { new_campaign: 1 }
                                             })
                                           ],
@@ -69611,7 +69624,7 @@ var content = __webpack_require__(246);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(4)("394aec67", content, false, {});
+var update = __webpack_require__(4)("474475f4", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags

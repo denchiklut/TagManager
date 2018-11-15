@@ -13,17 +13,21 @@
                         <div v-for="(item, idx) in templates">
                             <md-list-item md-expand >
                                 <md-icon :class="{orng_icon: idx == activeIndex}">whatshot</md-icon>
-
-                                <span class="md-list-item-text">{{item.name}}</span>
+                                <span class="md-list-item-text"> {{item.name}}</span>
                                 <md-list slot="md-expand">
 
                                     <md-content class="md-primary text_template" md-theme="myTheme">
                                         <div class="md-layout md-gutter">
-                                            <div class="md-layout-item md-size-90"><script_1 :new_campaign="1"></script_1></div>
-                                            <div class="md-layout-item "><md-button class="md-dense md-raised md-primary btn-accept"
+                                            <div class="md-layout-item md-size-90">
+                                                <TXE_Standart :new_campaign="1"></TXE_Standart>
+                                            </div>
+                                            <div class="md-layout-item ">
+                                                <md-button class="md-dense md-raised md-primary btn-accept"
                                                     @click="apply_template(item, idx)"
                                                     :class="{applied: idx == activeIndex}"
-                                                    md-theme="orange-btn" >Применить</md-button></div>
+                                                    md-theme="orange-btn"
+                                                >Применить</md-button>
+                                            </div>
                                         </div>
                                     </md-content>
                                 </md-list>
@@ -55,16 +59,27 @@
                     .get('/api/templates')
                     .then(response => {
                         this.templates = response.data.data;
-                        console.log(this.templates)
+
+                        response.data.data.forEach((item) =>{
+
+                            if (item.default == '1') {
+                                this.activeIndex =item.id-1;
+                            }
+                        });
                     });
+
             },
             apply_template(item, idx) {
                 this.activeIndex = idx;
-                console.log(item);
+
+                axios.patch('/api/templates/' + item.id, item)
+                    .then(response => {
+                            console.log(item);
+                    });
             }
         },
         components: {
-            'script_1': template_1
+            'TXE_Standart': template_1
         },
         created() {
             this.fetchData();

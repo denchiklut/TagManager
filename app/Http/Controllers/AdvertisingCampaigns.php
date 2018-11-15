@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Campaigns;
-use App\Entities;
-use App\Trigers;
+
+use App\Models\Companies;
+use App\Models\Triggers;
+use App\Http\Controllers\AnaliticsController;
 
 class AdvertisingCampaigns extends Controller
 {
@@ -13,36 +14,51 @@ class AdvertisingCampaigns extends Controller
     {
     }
 
+    /**
+     * @param $hash_advertisings
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index($hash_advertisings)
     {
+        //информация по по рк.
+        $compains = Companies::where('sig', $hash_advertisings)->first();
+
+        $Analitics = new AnaliticsController();
 
 
-        $result = Campaigns::where('sig', $hash_advertisings)->first();
 
+        $data =[
+          "url" => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER']: $_SERVER['REQUEST_URI'],
+          "hach" => $hash_advertisings,
+        ];
 
+        $Analitics->store($data);
+        exit;
 
-
-        $result_ops = Entities::where('tm_id', $result->tm_id)->get();
-
-
-        foreach ($result_ops as $result_op)
+        //если есть тригер
+        if($compains->trigger)
         {
-            $url = Trigers::where('entity_id', $result_op->entity_id)->first();
 
-            if (isset($url->url))
+            //выбираем все тригеры
+            $triggers = Triggers::where('id_campaign', $compains->id_campaign)->get();
+
+            foreach ($triggers as $trigger)
             {
-                if (strpos($_SERVER['HTTP_REFERER'], $url->url) !== false )
+
+                if($trigger)
                 {
-                    return view('pixel.index', compact( 'result_op'));
+                    if ((strpos(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER']: $_SERVER['REQUEST_URI'], $trigger->trigger) !== false))
+                    {
+                        $script = templateCode($compains);
+                        return view('pixel.index', compact( 'script'));
+                    }
                 }
             }
+
         }
 
-        $result_op = $result_ops[0];
 
-        return view('pixel.index', compact( 'result_op'));
-
-
-
+        $script = templateCode($compains);
+        return view('pixel.index', compact( 'script'));
     }
 }

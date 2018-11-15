@@ -16,4 +16,11 @@ Route::group(['prefix' => 'pixel'], function () {
 });
 
 
-Route::get('/{any}', 'SpaController@index')->where('any', '.*');
+
+
+Auth::routes();
+
+
+Route::get('/{any}', 'SpaController@index')->where('any', '.*')->middleware('auth');
+
+

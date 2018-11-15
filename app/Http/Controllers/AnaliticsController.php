@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Analitics;
+use App\Http\Resources\AnaliticsResource;
+
 class AnaliticsController extends Controller
 {
     /**
@@ -24,7 +27,7 @@ class AnaliticsController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -33,9 +36,15 @@ class AnaliticsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store($data)
     {
-        //
+        $analitics = new Analitics();
+
+        $analitics->url = $data['url'];
+        $analitics->hach = $data['hach'];
+        $analitics->increment('call');
+
+        $analitics->save();
     }
 
     /**
@@ -46,7 +55,7 @@ class AnaliticsController extends Controller
      */
     public function show($id)
     {
-        //
+
     }
 
     /**
@@ -57,7 +66,7 @@ class AnaliticsController extends Controller
      */
     public function edit($id)
     {
-        //
+
     }
 
     /**
@@ -69,7 +78,7 @@ class AnaliticsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**
@@ -80,6 +89,6 @@ class AnaliticsController extends Controller
      */
     public function destroy($id)
     {
-        //
+
     }
 }

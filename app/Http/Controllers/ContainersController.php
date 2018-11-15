@@ -43,7 +43,6 @@ class ContainersController extends Controller
         $trigger->trigger = $request->trigger;
         $trigger->id_campaign = $request->id_campaign;
         $trigger->new_campaign = $request->new_campaign;
-
         $trigger->save();
 
         $compaing = Companies::where('id_campaign', $request->id_campaign);

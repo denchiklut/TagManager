@@ -14,8 +14,8 @@ class AddTemplateToCompaniesTable extends Migration
     public function up()
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->string('template')->nullable();;
-            $table->string('template_default')->nullable();;
+            $table->string('template')->nullable();
+            $table->string('template_default')->nullable();
         });
     }
 

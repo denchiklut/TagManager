@@ -59,3 +59,64 @@ function codeBody($id_campaign)
 
     return $body;
 }
+
+
+/**
+ * @param $compains
+ */
+function templateCode($compains)
+{
+    $id_compains = $compains->companies;
+
+    $script = array(
+        'TXE_Standart' => "var script = document.createElement('script');        
+	script.src = '//sonar.semantiqo.com/4e3ll/check.js';       
+	document.getElementsByTagName('head')[0].appendChild(script);
+	var script = document.createElement('script');        
+	script.src = '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign=".$id_compains."&password=htnfhutn&type=1&userData=$"."USERDATA"."';
+	document.getElementsByTagName('head')[0].appendChild(script);
+	var script = document.createElement('script');
+	script.src = '//leadslabpixels.net/Pixel/txe?idClient=16&idCampaign=".$id_compains."&password=htnfhutn';
+	document.getElementsByTagName('head')[0].appendChild(script);",
+
+        'EXT_Notpalevo' => "var script = document.createElement('script');
+    script.src = '//sonar.semantiqo.com/4e3ll/check.js';
+    document.getElementsByTagName('head')[0].appendChild(script);
+    var script = document.createElement('script');
+    script.src = '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign=".$id_compains."&password=htnfhutn&type=1&userData=$"."USERDATA"."';
+    document.getElementsByTagName('head')[0].appendChild(script);
+    var script = document.createElement('script');
+    script.src = '//leadslabpixels.net/Pixel/ext?idClient=16&idCampaign=".$id_compains."&password=htnfhutn';
+    document.getElementsByTagName('head')[0].appendChild(script);",
+
+        'GIB_bigcock' => "var script = document.createElement('script');        
+	script.src = '//sonar.semantiqo.com/4e3ll/check.js';       
+	document.getElementsByTagName('head')[0].appendChild(script) ;
+	var script = document.createElement('script');        
+	script.src = '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign=".$id_compains."&password=htnfhutn&type=1&userData=$"."USERDATA"."';        
+	document.getElementsByTagName('head')[0].appendChild(script) ;
+	var script = document.createElement('script');        
+	script.src = '//leadslabpixels.net/Pixel/gib?idClient=16&idCampaign=".$id_compains."&password=htnfhutn';        
+	document.getElementsByTagName('head')[0].appendChild(script) ; ",
+
+
+        'TXE_NONSONAR' => "	var script = document.createElement('script');        
+	script.src = '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign=".$id_compains."&password=htnfhutn&type=1&userData=$"."USERDATA"."';        
+	document.getElementsByTagName('head')[0].appendChild(script) ;
+	var script = document.createElement('script');        
+	script.src = '//leadslabpixels.net/Pixel/txe?idClient=16&idCampaign=".$id_compains."&password=htnfhutn';        
+	document.getElementsByTagName('head')[0].appendChild(script) ;",
+
+    );
+
+    if(isset($compains->template))
+    {
+        return $script[$compains->template];
+    }
+    else
+    {
+        return $script[$compains->template_default];
+    }
+
+
+}

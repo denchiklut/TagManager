@@ -62,7 +62,7 @@
                               <h3 class="md-title">Фильтр:</h3>
                           </div>
                           <div class="md-layout-item md-size-50 text-right">
-                              <md-chip v-if="item.templates_id" class="md-primary" md-theme="myBtnTheme" md-clickable>{{getName(item.templates_id)}}</md-chip>
+                              <md-chip v-if="item.templates_id" class="md-primary" md-theme="purpl" md-clickable>{{getName(item.templates_id)}}</md-chip>
                               <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{item.trigger}}</md-chip>
                           </div>
                       </md-toolbar>
@@ -233,7 +233,7 @@
             primary: #616161,
 
         // The secondary color of your brand
-            accent: #616161
+            accent: #616161,
     ));
 
     @include md-register-theme("myBtnTheme", (
@@ -242,7 +242,11 @@
             primary: #E53935,
 
         // The secondary color of your brand
-            accent: #616161
+            accent: #616161,
+    ));
+
+    @include md-register-theme("purpl", (
+            primary: #b335e5
     ));
 
     // Apply the theme

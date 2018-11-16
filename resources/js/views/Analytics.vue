@@ -22,11 +22,10 @@
                         </div>
                     </md-table-toolbar>
 
-                    <md-table-row slot="md-table-row" slot-scope="{ item }" :md-disabled="item.name.includes('Stave')" md-selectable="multiple" md-auto-select>
-                        <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
-                        <md-table-cell md-label="Email" md-sort-by="email">{{ item.email }}</md-table-cell>
-                        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.gender }}</md-table-cell>
-                        <md-table-cell md-label="Job Title" md-sort-by="title">{{ item.title }}</md-table-cell>
+                    <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
+                        <md-table-cell md-label="Name" md-sort-by="name">{{ item.url }}</md-table-cell>
+                        <md-table-cell md-label="Email" md-sort-by="email">{{ item.call }}</md-table-cell>
+                        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.created_at.date }}</md-table-cell>
                     </md-table-row>
                 </md-table>
 
@@ -50,35 +49,44 @@
             },
             people: [
                 {
-                    name: 'Shawna Dubbin',
-                    email: 'sdubbin0@geocities.com',
-                    gender: 'Male',
-                    title: 'Assistant Media Planner'
+                    url: 'denchklut.com',
+                    call: '10',
+                    created_at: {
+                        "date": "2018-11-13 00:00:00.000000",
+                        "timezone_type": 3,
+                        "timezone": "UTC"
+                    },
                 },
-                {
-                    name: 'Odette Demageard',
-                    email: 'odemageard1@spotify.com',
-                    gender: 'Female',
-                    title: 'Account Coordinator'
-                },
-                {
-                    name: 'Lonnie Izkovitz',
-                    email: 'lizkovitz3@youtu.be',
-                    gender: 'Female',
-                    title: 'Operator'
-                },
-                {
-                    name: 'Thatcher Stave',
-                    email: 'tstave4@reference.com',
-                    gender: 'Male',
-                    title: 'Software Test Engineer III'
-                },
-                {
-                    name: 'Clarinda Marieton',
-                    email: 'cmarietonh@theatlantic.com',
-                    gender: 'Female',
-                    title: 'Paralegal'
-                }
+                // {
+                //     name: 'Shawna Dubbin',
+                //     email: 'sdubbin0@geocities.com',
+                //     gender: 'Male',
+                //     title: 'Assistant Media Planner'
+                // },
+                // {
+                //     name: 'Odette Demageard',
+                //     email: 'odemageard1@spotify.com',
+                //     gender: 'Female',
+                //     title: 'Account Coordinator'
+                // },
+                // {
+                //     name: 'Lonnie Izkovitz',
+                //     email: 'lizkovitz3@youtu.be',
+                //     gender: 'Female',
+                //     title: 'Operator'
+                // },
+                // {
+                //     name: 'Thatcher Stave',
+                //     email: 'tstave4@reference.com',
+                //     gender: 'Male',
+                //     title: 'Software Test Engineer III'
+                // },
+                // {
+                //     name: 'Clarinda Marieton',
+                //     email: 'cmarietonh@theatlantic.com',
+                //     gender: 'Female',
+                //     title: 'Paralegal'
+                // }
             ],
             selected:[]
         }),

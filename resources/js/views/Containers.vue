@@ -62,6 +62,7 @@
                               <h3 class="md-title">Фильтр:</h3>
                           </div>
                           <div class="md-layout-item md-size-50 text-right">
+                              <md-chip v-if="item.templates_id" class="md-primary" md-theme="myBtnTheme" md-clickable>{{getName(item.templates_id)}}</md-chip>
                               <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{item.trigger}}</md-chip>
                           </div>
                       </md-toolbar>
@@ -143,6 +144,8 @@
                 userEdit:false,
                 lastUser:null,
                 defUrl: null,
+                defaults: [],
+                showT: false,
             }
         },
         components: {
@@ -159,6 +162,14 @@
                         this.containers = response.data.data;
                         this.searched = this.containers;
                         console.log(this.searched)
+                    });
+            },
+            fetchTemplates() {
+                axios
+                    .get('/api/defaults')
+                    .then(response => {
+                        this.defaults = response.data.data;
+                        console.log(this.defaults);
                     });
             },
             searchOnTable () {
@@ -196,9 +207,18 @@
                     this.userSaved = false;
                 }, 1500)
             },
+            getName (id) {
+                return (this.defaults.filter((item)=>{
+                    return item.id == id
+                         })[0]).name
+            }
         },
         created() {
             this.fetchData();
+            this.fetchTemplates();
+        },
+        filters: {
+
         }
     }
 </script>

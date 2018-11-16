@@ -67540,6 +67540,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
@@ -67574,7 +67575,9 @@ var searchByName = function searchByName(items, term) {
             userSaved: false,
             userEdit: false,
             lastUser: null,
-            defUrl: null
+            defUrl: null,
+            defaults: [],
+            showT: false
         };
     },
 
@@ -67594,6 +67597,14 @@ var searchByName = function searchByName(items, term) {
                 console.log(_this.searched);
             });
         },
+        fetchTemplates: function fetchTemplates() {
+            var _this2 = this;
+
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/defaults').then(function (response) {
+                _this2.defaults = response.data.data;
+                console.log(_this2.defaults);
+            });
+        },
         searchOnTable: function searchOnTable() {
             this.searched = searchByName(this.containers, this.search);
         },
@@ -67602,11 +67613,11 @@ var searchByName = function searchByName(items, term) {
             this.showEditDialog = true;
         },
         deleteFilter: function deleteFilter(item) {
-            var _this2 = this;
+            var _this3 = this;
 
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete('/api/containers/' + item.id).then(function (response) {
-                var index = _this2.containers.indexOf(item);
-                _this2.containers.splice(index, 1);
+                var index = _this3.containers.indexOf(item);
+                _this3.containers.splice(index, 1);
             });
         },
         closeDialog: function closeDialog() {
@@ -67615,29 +67626,37 @@ var searchByName = function searchByName(items, term) {
             this.fetchData();
         },
         showLog: function showLog(data) {
-            var _this3 = this;
+            var _this4 = this;
 
             this.lastUser = data.data.trigger;
             this.userSaved = true;
 
             window.setTimeout(function () {
-                _this3.userSaved = false;
+                _this4.userSaved = false;
             }, 1500);
         },
         showLogEdit: function showLogEdit(data) {
-            var _this4 = this;
+            var _this5 = this;
 
             this.lastUser = data.data;
             this.userEdit = true;
 
             window.setTimeout(function () {
-                _this4.userSaved = false;
+                _this5.userSaved = false;
             }, 1500);
+        },
+        getName: function getName(id) {
+            return this.defaults.filter(function (item) {
+                return item.id == id;
+            })[0].name;
         }
     },
     created: function created() {
         this.fetchData();
-    }
+        this.fetchTemplates();
+    },
+
+    filters: {}
 });
 
 /***/ }),
@@ -69145,6 +69164,24 @@ var render = function() {
                                   "md-layout-item md-size-50 text-right"
                               },
                               [
+                                item.templates_id
+                                  ? _c(
+                                      "md-chip",
+                                      {
+                                        staticClass: "md-primary",
+                                        attrs: {
+                                          "md-theme": "myBtnTheme",
+                                          "md-clickable": ""
+                                        }
+                                      },
+                                      [
+                                        _vm._v(
+                                          _vm._s(_vm.getName(item.templates_id))
+                                        )
+                                      ]
+                                    )
+                                  : _vm._e(),
+                                _vm._v(" "),
                                 _c(
                                   "md-chip",
                                   {

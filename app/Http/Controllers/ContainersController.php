@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Triggers;
 use App\Models\Companies;
+use App\Models\Templates;
 use App\Http\Resources\TriggerResource;
 
 class ContainersController extends Controller
@@ -16,7 +17,12 @@ class ContainersController extends Controller
      */
     public function index()
     {
-        return TriggerResource::collection(Triggers::orderBy('id', 'desc')->get());
+        return TriggerResource::collection(Triggers::join('templates', 'templates.id', '=', 'triggers.template_id'));
+    }
+
+    public function defaults()
+    {
+        return response()->json(['data' => Templates::all()]);
     }
 
     /**
@@ -43,6 +49,7 @@ class ContainersController extends Controller
         $trigger->trigger = $request->trigger;
         $trigger->id_campaign = $request->id_campaign;
         $trigger->new_campaign = $request->new_campaign;
+        $trigger->templates_id = $request->templates_id;
         $trigger->save();
 
         $compaing = Companies::where('id_campaign', $request->id_campaign);
@@ -87,6 +94,7 @@ class ContainersController extends Controller
         $trigger->update([
             'trigger' => $request->input('trigger'),
             'new_campaign' => $request->input('new_campaign'),
+            'templates_id' => $request->input('templates_id'),
         ]);
 
         return response()->json(['message' => 'trigger updated successful']);

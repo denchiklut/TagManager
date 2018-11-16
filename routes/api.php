@@ -29,6 +29,7 @@ Route::group(['prefix' => 'add'], function () {
 
 Route::resource('/', 'AnaliticsController');
 Route::resource('companies', 'AddPixel');
+Route::get('/defaults', 'ContainersController@defaults');
 Route::resource('containers', 'ContainersController');
 Route::resource('templates', 'TemplatesController');
 

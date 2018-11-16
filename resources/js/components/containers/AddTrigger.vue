@@ -26,6 +26,21 @@
                             </md-field>
                         </div>
                     </div>
+
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-100">
+                            <md-field>
+                                <label for="def">Шаблон</label>
+                                <md-select name="templates_id" id="def" v-model="form.templates_id" md-dense :disabled="sending">
+                                    <div v-for="d in defaults">
+                                        <md-option  v-bind:value="d.id">{{d.name}}</md-option>
+                                    </div>
+
+
+                                </md-select>
+                            </md-field>
+                        </div>
+                    </div>
                 </md-card-content>
 
                 <md-progress-bar md-mode="indeterminate" v-if="sending" />
@@ -56,7 +71,9 @@
                 new_campaign: null,
                 trigger: null,
                 id_campaign: null,
+                templates_id: null,
             },
+            defaults: [],
             userSaved: false,
             sending: false,
         }),
@@ -106,6 +123,15 @@
                     this.clearForm()
                 }, 1500)
             },
+            fetchTemplates() {
+                axios
+                    .get('/api/defaults')
+                    .then(response => {
+                         this.defaults = response.data.data;
+                         console.log(this.defaults);
+                    });
+            },
+
             validateUser () {
 
                 this.$v.$touch();
@@ -118,6 +144,9 @@
             close() {
                 this.$emit('CloseTriggerDialog')
             },
+        },
+        created() {
+            this.fetchTemplates();
         }
     }
 </script>

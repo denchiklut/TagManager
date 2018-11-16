@@ -26,6 +26,21 @@
                             </md-field>
                         </div>
                     </div>
+
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-100">
+                            <md-field>
+                                <label for="def">Шаблон</label>
+                                <md-select name="templates_id" id="def" v-model="form.templates_id" md-dense :disabled="sending">
+                                    <div v-for="d in defaults">
+                                        <md-option  v-bind:value="d.id">{{d.name}}</md-option>
+                                    </div>
+
+
+                                </md-select>
+                            </md-field>
+                        </div>
+                    </div>
                 </md-card-content>
 
                 <md-progress-bar md-mode="indeterminate" v-if="sending" />
@@ -55,6 +70,7 @@
             userSaved: false,
             lastUser: null,
             sending: false,
+            defaults: [],
         }),
         validations: {
             form: {
@@ -67,6 +83,15 @@
             }
         },
         methods: {
+            fetchTemplates() {
+                axios
+                    .get('/api/defaults')
+                    .then(response => {
+                        this.defaults = response.data.data;
+                        console.log(this.defaults);
+                    });
+            },
+
             getValidationClass (fieldName) {
                 const field = this.$v.form[fieldName];
 
@@ -105,6 +130,9 @@
             close() {
                 this.$emit('editTriggerE')
             },
+        },
+        created() {
+            this.fetchTemplates();
         }
     }
 </script>

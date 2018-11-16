@@ -67784,6 +67784,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -67797,8 +67812,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             form: {
                 new_campaign: null,
                 trigger: null,
-                id_campaign: null
+                id_campaign: null,
+                templates_id: null
             },
+            defaults: [],
             userSaved: false,
             sending: false
         };
@@ -67849,6 +67866,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.clearForm();
             }, 1500);
         },
+        fetchTemplates: function fetchTemplates() {
+            var _this2 = this;
+
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/defaults').then(function (response) {
+                _this2.defaults = response.data.data;
+                console.log(_this2.defaults);
+            });
+        },
         validateUser: function validateUser() {
 
             this.$v.$touch();
@@ -67861,6 +67886,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         close: function close() {
             this.$emit('CloseTriggerDialog');
         }
+    },
+    created: function created() {
+        this.fetchTemplates();
     }
 });
 
@@ -67995,6 +68023,55 @@ var render = function() {
                                 _vm._v("Invalid new_campaign")
                               ])
                             : _vm._e()
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "md-layout md-gutter" }, [
+                _c(
+                  "div",
+                  { staticClass: "md-layout-item md-small-size-100" },
+                  [
+                    _c(
+                      "md-field",
+                      [
+                        _c("label", { attrs: { for: "def" } }, [
+                          _vm._v("Шаблон")
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "md-select",
+                          {
+                            attrs: {
+                              name: "templates_id",
+                              id: "def",
+                              "md-dense": "",
+                              disabled: _vm.sending
+                            },
+                            model: {
+                              value: _vm.form.templates_id,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "templates_id", $$v)
+                              },
+                              expression: "form.templates_id"
+                            }
+                          },
+                          _vm._l(_vm.defaults, function(d) {
+                            return _c(
+                              "div",
+                              [
+                                _c("md-option", { attrs: { value: d.id } }, [
+                                  _vm._v(_vm._s(d.name))
+                                ])
+                              ],
+                              1
+                            )
+                          })
+                        )
                       ],
                       1
                     )
@@ -68198,6 +68275,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -68210,7 +68302,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             userSaved: false,
             lastUser: null,
-            sending: false
+            sending: false,
+            defaults: []
         };
     },
     validations: {
@@ -68224,6 +68317,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     methods: {
+        fetchTemplates: function fetchTemplates() {
+            var _this = this;
+
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/defaults').then(function (response) {
+                _this.defaults = response.data.data;
+                console.log(_this.defaults);
+            });
+        },
         getValidationClass: function getValidationClass(fieldName) {
             var field = this.$v.form[fieldName];
 
@@ -68234,20 +68335,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         savePixel: function savePixel() {
-            var _this = this;
+            var _this2 = this;
 
             this.sending = true;
             this.sending = true;
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/containers/' + this.form.id, this.form).then(function (response) {
                 // console.log(this.form);
-                _this.$emit('editTriggerE');
-                _this.lastUser = '' + _this.form.trigger;
-                _this.$emit('ShowLogEdit', { data: _this.lastUser });
+                _this2.$emit('editTriggerE');
+                _this2.lastUser = '' + _this2.form.trigger;
+                _this2.$emit('ShowLogEdit', { data: _this2.lastUser });
             });
 
             window.setTimeout(function () {
-                _this.sending = false;
-                _this.close();
+                _this2.sending = false;
+                _this2.close();
             }, 1500);
         },
         validateUser: function validateUser() {
@@ -68262,6 +68363,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         close: function close() {
             this.$emit('editTriggerE');
         }
+    },
+    created: function created() {
+        this.fetchTemplates();
     }
 });
 
@@ -68396,6 +68500,55 @@ var render = function() {
                                 _vm._v("Invalid new_campaign")
                               ])
                             : _vm._e()
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "md-layout md-gutter" }, [
+                _c(
+                  "div",
+                  { staticClass: "md-layout-item md-small-size-100" },
+                  [
+                    _c(
+                      "md-field",
+                      [
+                        _c("label", { attrs: { for: "def" } }, [
+                          _vm._v("Шаблон")
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "md-select",
+                          {
+                            attrs: {
+                              name: "templates_id",
+                              id: "def",
+                              "md-dense": "",
+                              disabled: _vm.sending
+                            },
+                            model: {
+                              value: _vm.form.templates_id,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "templates_id", $$v)
+                              },
+                              expression: "form.templates_id"
+                            }
+                          },
+                          _vm._l(_vm.defaults, function(d) {
+                            return _c(
+                              "div",
+                              [
+                                _c("md-option", { attrs: { value: d.id } }, [
+                                  _vm._v(_vm._s(d.name))
+                                ])
+                              ],
+                              1
+                            )
+                          })
+                        )
                       ],
                       1
                     )

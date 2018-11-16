@@ -17,7 +17,7 @@ class AnaliticsResource extends Resource
         return [
             'id' => $this->id,
             'url' => $this->url,
-            'hach' => $this->hach,
+            'hash' => $this->hash,
             'call' => $this->call,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AnaliticsResource;
 use Illuminate\Http\Request;
 
 use App\Models\Analitics;
@@ -11,12 +12,11 @@ class AnaliticsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
     {
-        $data = 'Егор надо api для аналитики продумать';
-        return response()->json(['data' => $data]);
+        return AnaliticsResource::collection(Analitics::all());
     }
 
     /**

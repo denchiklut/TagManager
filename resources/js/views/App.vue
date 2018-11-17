@@ -7,7 +7,7 @@
             <span class="md-title">TAG Manager</span>
 
             <div class="md-toolbar-section-end">
-                <span v-if="currentUser">{{currentUser.name}}</span>
+                <h3 v-if="currentUser">{{currentUser.name}}</h3>
                 <md-menu md-size="big">
                     <md-button class="md-icon-button" md-menu-trigger>
                         <md-icon>more_vert</md-icon>

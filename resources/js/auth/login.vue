@@ -1,10 +1,10 @@
 <template>
-    <div class="dark">
+    <div>
         <form novalidate class="md-layout" @submit.prevent="validateUser">
             <md-card class="md-layout-item md-size-50 md-small-size-100 myForm">
-                <md-card-header>
-                    <div class="md-title">Войти</div>
-                </md-card-header>
+                <md-toolbar class="md-accent">
+                    <h3 class="md-title">Войти</h3>
+                </md-toolbar>
 
                 <md-card-content>
 
@@ -26,7 +26,7 @@
                 </md-card-content>
 
                 <md-card-actions>
-                    <md-button type="submit" class="md-primary">login</md-button>
+                    <md-button type="submit" class="md-accent">login</md-button>
                 </md-card-actions>
             </md-card>
 
@@ -120,20 +120,11 @@
 </script>
 
 <style lang="scss"  scoped>
-    .md-progress-bar {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
+    .md-card-content, .md-card-actions {
+        background: antiquewhite;
     }
     .myForm {
         margin: 60px auto;
-    }
-    .dark {
-        margin: -16px;
-    }
-    form div {
-        background: #fffffff2;
     }
 
 </style>

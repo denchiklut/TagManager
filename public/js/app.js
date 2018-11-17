@@ -69819,7 +69819,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "dark" }, [
+  return _c("div", [
     _c(
       "form",
       {
@@ -69837,8 +69837,8 @@ var render = function() {
           "md-card",
           { staticClass: "md-layout-item md-size-50 md-small-size-100 myForm" },
           [
-            _c("md-card-header", [
-              _c("div", { staticClass: "md-title" }, [_vm._v("Войти")])
+            _c("md-toolbar", { staticClass: "md-accent" }, [
+              _c("h3", { staticClass: "md-title" }, [_vm._v("Войти")])
             ]),
             _vm._v(" "),
             _c(
@@ -69934,7 +69934,7 @@ var render = function() {
               [
                 _c(
                   "md-button",
-                  { staticClass: "md-primary", attrs: { type: "submit" } },
+                  { staticClass: "md-accent", attrs: { type: "submit" } },
                   [_vm._v("login")]
                 )
               ],
@@ -86526,7 +86526,7 @@ var render = function() {
             { staticClass: "md-toolbar-section-end" },
             [
               _vm.currentUser
-                ? _c("span", [_vm._v(_vm._s(_vm.currentUser.name))])
+                ? _c("h3", [_vm._v(_vm._s(_vm.currentUser.name))])
                 : _vm._e(),
               _vm._v(" "),
               _c(
@@ -86798,7 +86798,7 @@ exports = module.exports = __webpack_require__(5)(false);
 
 
 // module
-exports.push([module.i, "\n.md-progress-bar[data-v-74bbc780] {\n  position: absolute;\n  top: 0;\n  right: 0;\n  left: 0;\n}\n.myForm[data-v-74bbc780] {\n  margin: 60px auto;\n}\n.dark[data-v-74bbc780] {\n  margin: -16px;\n}\nform div[data-v-74bbc780] {\n  background: #fffffff2;\n}\n", ""]);
+exports.push([module.i, "\n.md-card-content[data-v-74bbc780], .md-card-actions[data-v-74bbc780] {\n  background: antiquewhite;\n}\n.myForm[data-v-74bbc780] {\n  margin: 60px auto;\n}\n", ""]);
 
 // exports
 

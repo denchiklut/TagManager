@@ -33,9 +33,6 @@ class AddPixel extends Controller
         /* выборка id из таблиц */
         $resultCampaigns = Companies::orderby('id','id_campaign')->first();//из таблицы Campaigns выбираем последний id
 
-
-        var_dump($resultCampaigns);
-        exit;
         /* выборка id из таблиц */
 
 

@@ -69603,7 +69603,7 @@ var routes = [{
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(190)
+  __webpack_require__(338)
 }
 var normalizeComponent = __webpack_require__(7)
 /* script */
@@ -69648,46 +69648,8 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 190 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(191);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(6)("1d90e50a", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-74bbc780\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./login.vue", function() {
-     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-74bbc780\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./login.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 191 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(5)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
-
-// exports
-
-
-/***/ }),
+/* 190 */,
+/* 191 */,
 /* 192 */
 /***/ (function(module, exports) {
 
@@ -69727,6 +69689,10 @@ module.exports = function listToStyles (parentId, list) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helpers_auth__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
 //
 //
 //
@@ -69739,32 +69705,102 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "login",
+    mixins: [__WEBPACK_IMPORTED_MODULE_1_vuelidate__["validationMixin"]],
     data: function data() {
         return {
             form: {
                 email: '',
                 password: ''
             },
-            error: null
+            error: null,
+            userSaved: false
         };
     },
 
+    validations: {
+        form: {
+            password: {
+                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"],
+                minLength: Object(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["minLength"])(6)
+            },
+            email: {
+                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"],
+                email: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["email"]
+            }
+        }
+    },
     methods: {
-        authanticate: function authanticate() {
+        getValidationClass: function getValidationClass(fieldName) {
+            var field = this.$v.form[fieldName];
+
+            if (field) {
+                return {
+                    'md-invalid': field.$invalid && field.$dirty
+                };
+            }
+        },
+        clearForm: function clearForm() {
+            this.$v.$reset();
+            this.form.password = null;
+            this.form.email = null;
+        },
+        saveUser: function saveUser() {
             var _this = this;
+
+            this.authanticate();
+
+            window.setTimeout(function () {
+                _this.clearForm();
+            }, 1500);
+        },
+        validateUser: function validateUser() {
+            this.$v.$touch();
+
+            if (!this.$v.$invalid) {
+                this.saveUser();
+            }
+        },
+        authanticate: function authanticate() {
+            var _this2 = this;
 
             this.$store.dispatch('login');
 
             Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["b" /* login */])(this.$data.form).then(function (res) {
-                _this.$store.commit("loginSuccess", res);
-                _this.$router.push({ path: '/' });
+                _this2.$store.commit("loginSuccess", res);
+                _this2.$router.push({ path: '/' });
             }).catch(function (error) {
-                _this.$store.commit("loginFailed", { error: error });
+                _this2.$store.commit("loginFailed", { error: error });
             });
         }
     },
@@ -69783,69 +69819,134 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "form",
-    {
-      attrs: { action: "" },
-      on: {
-        submit: function($event) {
-          $event.preventDefault()
-          return _vm.authanticate($event)
-        }
-      }
-    },
-    [
-      _c("label", { attrs: { for: "email" } }, [_vm._v("email")]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.form.email,
-            expression: "form.email"
-          }
-        ],
-        attrs: { type: "email", id: "email", placeholder: "email" },
-        domProps: { value: _vm.form.email },
+  return _c("div", { staticClass: "dark" }, [
+    _c(
+      "form",
+      {
+        staticClass: "md-layout",
+        attrs: { novalidate: "" },
         on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.$set(_vm.form, "email", $event.target.value)
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.validateUser($event)
           }
         }
-      }),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "password" } }, [_vm._v("password")]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.form.password,
-            expression: "form.password"
-          }
-        ],
-        attrs: { type: "password", id: "password", placeholder: "password" },
-        domProps: { value: _vm.form.password },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.$set(_vm.form, "password", $event.target.value)
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("input", { attrs: { type: "submit", value: "login" } }),
-      _vm._v(" "),
-      _vm.authError ? _c("p", [_vm._v(_vm._s(_vm.authError))]) : _vm._e()
-    ]
-  )
+      },
+      [
+        _c(
+          "md-card",
+          { staticClass: "md-layout-item md-size-50 md-small-size-100 myForm" },
+          [
+            _c("md-card-header", [
+              _c("div", { staticClass: "md-title" }, [_vm._v("Войти")])
+            ]),
+            _vm._v(" "),
+            _c(
+              "md-card-content",
+              [
+                _c(
+                  "md-field",
+                  { class: _vm.getValidationClass("email") },
+                  [
+                    _c("label", { attrs: { for: "email" } }, [_vm._v("Email")]),
+                    _vm._v(" "),
+                    _c("md-input", {
+                      attrs: {
+                        type: "email",
+                        name: "email",
+                        id: "email",
+                        autocomplete: "email"
+                      },
+                      model: {
+                        value: _vm.form.email,
+                        callback: function($$v) {
+                          _vm.$set(_vm.form, "email", $$v)
+                        },
+                        expression: "form.email"
+                      }
+                    }),
+                    _vm._v(" "),
+                    !_vm.$v.form.email.required
+                      ? _c("span", { staticClass: "md-error" }, [
+                          _vm._v("The email is required")
+                        ])
+                      : !_vm.$v.form.email.email
+                        ? _c("span", { staticClass: "md-error" }, [
+                            _vm._v("Invalid email")
+                          ])
+                        : _vm._e()
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "md-field",
+                  { class: _vm.getValidationClass("password") },
+                  [
+                    _c("label", { attrs: { for: "password" } }, [
+                      _vm._v("password")
+                    ]),
+                    _vm._v(" "),
+                    _c("md-input", {
+                      attrs: {
+                        type: "password",
+                        name: "password",
+                        id: "password",
+                        autocomplete: "password"
+                      },
+                      model: {
+                        value: _vm.form.password,
+                        callback: function($$v) {
+                          _vm.$set(_vm.form, "password", $$v)
+                        },
+                        expression: "form.password"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _vm.authError
+                      ? _c("span", { staticClass: "md-error" }, [
+                          _vm._v(_vm._s(_vm.authError))
+                        ])
+                      : !_vm.$v.form.email.required
+                        ? _c("span", { staticClass: "md-error" }, [
+                            _vm._v("The email is required")
+                          ])
+                        : !_vm.$v.form.password.email
+                          ? _c("span", { staticClass: "md-error" }, [
+                              _vm._v("Invalid email")
+                            ])
+                          : _vm._e()
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _vm.authError
+                  ? _c("span", { staticClass: "md-error" }, [
+                      _vm._v(_vm._s(_vm.authError))
+                    ])
+                  : _vm._e()
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "md-card-actions",
+              [
+                _c(
+                  "md-button",
+                  { staticClass: "md-primary", attrs: { type: "submit" } },
+                  [_vm._v("login")]
+                )
+              ],
+              1
+            )
+          ],
+          1
+        )
+      ],
+      1
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -86645,6 +86746,62 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 322 */,
+/* 323 */,
+/* 324 */,
+/* 325 */,
+/* 326 */,
+/* 327 */,
+/* 328 */,
+/* 329 */,
+/* 330 */,
+/* 331 */,
+/* 332 */,
+/* 333 */,
+/* 334 */,
+/* 335 */,
+/* 336 */,
+/* 337 */,
+/* 338 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(339);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(6)("09a9ebb5", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-74bbc780\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/sass-loader/lib/loader.js!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./login.vue", function() {
+     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-74bbc780\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/sass-loader/lib/loader.js!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./login.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 339 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.md-progress-bar[data-v-74bbc780] {\n  position: absolute;\n  top: 0;\n  right: 0;\n  left: 0;\n}\n.myForm[data-v-74bbc780] {\n  margin: 60px auto;\n}\n.dark[data-v-74bbc780] {\n  margin: -16px;\n}\nform div[data-v-74bbc780] {\n  background: #fffffff2;\n}\n", ""]);
+
+// exports
+
 
 /***/ })
 /******/ ]);

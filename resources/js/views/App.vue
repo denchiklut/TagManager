@@ -7,7 +7,30 @@
             <span class="md-title">TAG Manager</span>
 
             <div class="md-toolbar-section-end">
-                <md-button @click="showSidepanel = true">Favorites</md-button>
+                <span v-if="currentUser">{{currentUser.name}}</span>
+                <md-menu md-size="big">
+                    <md-button class="md-icon-button" md-menu-trigger>
+                        <md-icon>more_vert</md-icon>
+                    </md-button>
+
+                    <md-menu-content>
+                       <div v-if="!currentUser">
+                           <md-menu-item>
+                               <router-link to="/login">login</router-link>
+                           </md-menu-item>
+                           <md-menu-item>
+                               <router-link to="/register">Register</router-link>
+                           </md-menu-item>
+                       </div>
+
+                        <div v-else>
+                            <md-menu-item>
+                                <a href="#!" @click.prevent="logout">Log out</a>
+                            </md-menu-item>
+                        </div>
+
+                    </md-menu-content>
+                </md-menu>
             </div>
         </md-toolbar>
 
@@ -47,40 +70,8 @@
             </md-list>
         </md-drawer>
 
-        <md-drawer class="md-right" :md-active.sync="showSidepanel">
-            <md-toolbar class="md-transparent" md-elevation="0">
-                <span class="md-title">Favorites</span>
-            </md-toolbar>
-
-            <md-list>
-                <md-list-item>
-                    <span class="md-list-item-text">Abbey Christansen</span>
-
-                    <md-button class="md-icon-button md-list-action">
-                        <md-icon class="md-primary">chat_bubble</md-icon>
-                    </md-button>
-                </md-list-item>
-
-                <md-list-item>
-                    <span class="md-list-item-text">Alex Nelson</span>
-
-                    <md-button class="md-icon-button md-list-action">
-                        <md-icon class="md-primary">chat_bubble</md-icon>
-                    </md-button>
-                </md-list-item>
-
-                <md-list-item>
-                    <span class="md-list-item-text">Mary Johnson</span>
-
-                    <md-button class="md-icon-button md-list-action">
-                        <md-icon>chat_bubble</md-icon>
-                    </md-button>
-                </md-list-item>
-            </md-list>
-        </md-drawer>
-
         <md-content>
-            <div class="container-fluid">
+            <div>
                 <router-view></router-view>
             </div>
         </md-content>
@@ -92,7 +83,18 @@
         data: () => ({
             showNavigation: false,
             showSidepanel: false
-        })
+        }),
+        methods: {
+            logout() {
+                this.$store.commit("logout");
+                this.$router.push("/login");
+            }
+        },
+        computed: {
+            currentUser() {
+               return this.$store.getters.currentUser;
+            }
+        }
     }
 </script>
 

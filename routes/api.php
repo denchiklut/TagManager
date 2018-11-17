@@ -14,9 +14,9 @@ use Illuminate\Http\Request;
 */
 
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
 
 Route::group(['prefix' => 'pixel'], function () {
 
@@ -25,6 +25,16 @@ Route::group(['prefix' => 'pixel'], function () {
 
 Route::group(['prefix' => 'add'], function () {
     Route::get('/pixel/{compaigns_url}', 'AddPixel@index');
+});
+
+
+Route::group(['prefix' => 'auth' ], function ($router) {
+
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+
 });
 
 Route::resource('/', 'AnaliticsController');

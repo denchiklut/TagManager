@@ -25,7 +25,7 @@
                     <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
                         <md-table-cell md-label="Name" md-sort-by="name">{{ item.url }}</md-table-cell>
                         <md-table-cell md-label="Email" md-sort-by="email">{{ item.call }}</md-table-cell>
-                        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.created_at.date }}</md-table-cell>
+                        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.created_at.date | formatDate}}</md-table-cell>
                     </md-table-row>
                 </md-table>
 
@@ -33,7 +33,7 @@
                 {{ selected }}
             </div>
         </div>
-        <div class="md-layout-item"> <pre>{{this.data}}</pre></div>
+        <div class="md-layout-item"> <pre>{{storeTest}}</pre></div>
     </div>
 </template>
 
@@ -57,36 +57,6 @@
                         "timezone": "UTC"
                     },
                 },
-                // {
-                //     name: 'Shawna Dubbin',
-                //     email: 'sdubbin0@geocities.com',
-                //     gender: 'Male',
-                //     title: 'Assistant Media Planner'
-                // },
-                // {
-                //     name: 'Odette Demageard',
-                //     email: 'odemageard1@spotify.com',
-                //     gender: 'Female',
-                //     title: 'Account Coordinator'
-                // },
-                // {
-                //     name: 'Lonnie Izkovitz',
-                //     email: 'lizkovitz3@youtu.be',
-                //     gender: 'Female',
-                //     title: 'Operator'
-                // },
-                // {
-                //     name: 'Thatcher Stave',
-                //     email: 'tstave4@reference.com',
-                //     gender: 'Male',
-                //     title: 'Software Test Engineer III'
-                // },
-                // {
-                //     name: 'Clarinda Marieton',
-                //     email: 'cmarietonh@theatlantic.com',
-                //     gender: 'Female',
-                //     title: 'Paralegal'
-                // }
             ],
             selected:[]
         }),
@@ -148,9 +118,11 @@
             this.fetchData();
             this.fillData();
         },
-        mounted () {
-            this.renderChart(this.datacollection, this.options)
-        },
+        computed: {
+            storeTest() {
+                return this.$store.getters.test;
+            }
+        }
     }
 </script>
 

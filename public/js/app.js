@@ -69480,7 +69480,7 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         isLoggedIn: !!user,
         loading: false,
         auth_error: null,
-        customers: []
+        analiticData: []
     },
     getters: {
         test: function test(state) {
@@ -69498,8 +69498,8 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         authError: function authError(state) {
             return state.auth_error;
         },
-        customers: function customers(state) {
-            return state.customers;
+        analiticData: function analiticData(state) {
+            return state.analiticData;
         }
     },
     mutations: {
@@ -69523,11 +69523,23 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
             localStorage.removeItem("user");
             state.isLoggedIn = false;
             state.currentUser = null;
+        },
+        updateAnaliticData: function updateAnaliticData(state, payload) {
+            state.analiticData = payload;
         }
     },
     actions: {
         login: function login(context) {
             context.commit("login");
+        },
+        getAnaliticData: function getAnaliticData(context) {
+            axios.get('/api', {
+                headers: {
+                    "Authorization": "Bearer " + context.state.currentUser.token
+                }
+            }).then(function (responce) {
+                context.commit('updateAnaliticData', responce.data.data);
+            });
         }
     }
 });
@@ -70831,9 +70843,7 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_charts_LineChart_js__ = __webpack_require__(223);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_charts_LineChart_js__ = __webpack_require__(223);
 //
 //
 //
@@ -70872,14 +70882,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
-            data: null,
             datacollection: null,
             options: {
                 responsive: true
@@ -70897,16 +70904,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     components: {
-        LineChart: __WEBPACK_IMPORTED_MODULE_1__components_charts_LineChart_js__["a" /* default */]
+        LineChart: __WEBPACK_IMPORTED_MODULE_0__components_charts_LineChart_js__["a" /* default */]
     },
     methods: {
-        fetchData: function fetchData() {
-            var _this = this;
-
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api').then(function (responce) {
-                _this.data = responce.data.data;
-            });
-        },
         fillData: function fillData() {
             this.datacollection = {
                 labels: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
@@ -70947,13 +70947,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     created: function created() {
-        this.fetchData();
         this.fillData();
     },
+    mounted: function mounted() {
+        this.$store.dispatch('getAnaliticData');
+    },
+
 
     computed: {
-        storeTest: function storeTest() {
-            return this.$store.getters.test;
+        analiticData: function analiticData() {
+            return this.$store.getters.analiticData;
         }
     }
 });
@@ -81787,7 +81790,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "md-layout md-gutter" }, [
     _c("div", { staticClass: "md-layout-item" }, [
-      _c("pre", [_vm._v(_vm._s(this.data))])
+      _c("pre", [_vm._v(_vm._s(this.analiticData))])
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "md-layout-item" }, [
@@ -81927,10 +81930,6 @@ var render = function() {
         ],
         1
       )
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "md-layout-item" }, [
-      _c("pre", [_vm._v(_vm._s(_vm.storeTest))])
     ])
   ])
 }

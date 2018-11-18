@@ -1,6 +1,6 @@
 <template>
     <div class="md-layout md-gutter">
-        <div class="md-layout-item"> <pre>{{this.data}}</pre></div>
+        <div class="md-layout-item"> <pre>{{this.analiticData}}</pre></div>
         <div class="md-layout-item">
             <div class="small">
                 <button @click="fillData()">Randomize</button>
@@ -33,16 +33,13 @@
                 {{ selected }}
             </div>
         </div>
-        <div class="md-layout-item"> <pre>{{storeTest}}</pre></div>
     </div>
 </template>
 
 <script>
-    import axios from 'axios'
     import LineChart from '../components/charts/LineChart.js'
     export default {
         data: () => ({
-            data: null,
             datacollection: null,
             options: {
                 responsive: true,
@@ -64,13 +61,6 @@
             LineChart
         },
         methods: {
-            fetchData() {
-                axios
-                    .get('/api')
-                    .then(responce => {
-                        this.data = responce.data.data;
-                    })
-            },
             fillData () {
                 this.datacollection = {
                     labels: ['пн', 'вт','ср','чт','пт','сб','вс'],
@@ -100,12 +90,12 @@
                 return Math.floor(Math.random() * (50 - 5 + 1)) + 5
             },
             onSelect (items) {
-                this.selected = items
-                console.log('select event')
+                this.selected = items;
+                console.log('select event');
                 console.log(items)
             },
             getAlternateLabel (count) {
-                let plural = ''
+                let plural = '';
 
                 if (count > 1) {
                     plural = 's'
@@ -115,13 +105,16 @@
             }
         },
         created() {
-            this.fetchData();
             this.fillData();
         },
+        mounted() {
+            this.$store.dispatch('getAnaliticData');
+        },
+
         computed: {
-            storeTest() {
-                return this.$store.getters.test;
-            }
+            analiticData() {
+                return this.$store.getters.analiticData;
+            },
         }
     }
 </script>

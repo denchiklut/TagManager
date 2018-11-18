@@ -37,7 +37,11 @@ Route::group(['prefix' => 'auth' ], function ($router) {
 
 });
 
-Route::resource('/', 'AnaliticsController');
+
+Route::group(['middleware' => 'jwt.auth' ], function ($router) {
+    Route::resource('/', 'AnaliticsController');
+});
+
 Route::resource('companies', 'AddPixel');
 Route::get('/defaults', 'ContainersController@defaults');
 Route::resource('containers', 'ContainersController');

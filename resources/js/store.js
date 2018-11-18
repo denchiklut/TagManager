@@ -9,7 +9,7 @@ export default {
         isLoggedIn: !!user,
         loading: false,
         auth_error: null,
-        customers: [],
+        analiticData: [],
     },
     getters: {
         test(state) {
@@ -27,8 +27,8 @@ export default {
         authError(state) {
             return state.auth_error;
         },
-        customers(state) {
-            return state.customers;
+        analiticData(state) {
+            return state.analiticData;
         },
     },
     mutations: {
@@ -52,11 +52,25 @@ export default {
             localStorage.removeItem("user");
             state.isLoggedIn = false;
             state.currentUser = null;
+        },
+        updateAnaliticData(state, payload) {
+            state.analiticData =  payload;
         }
     },
     actions: {
         login(context) {
             context.commit("login");
+        },
+        getAnaliticData(context) {
+                axios
+                    .get('/api', {
+                        headers: {
+                            "Authorization": `Bearer ${context.state.currentUser.token}`
+                        }
+                    })
+                    .then((responce) => {
+                        context.commit('updateAnaliticData', responce.data.data);
+                    })
         }
     },
 }

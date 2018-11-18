@@ -81800,8 +81800,9 @@ var render = function() {
         { staticClass: "small" },
         [
           _c(
-            "button",
+            "md-button",
             {
+              staticClass: "md-dense md-raised md-primary",
               on: {
                 click: function($event) {
                   _vm.fillData()
@@ -86418,7 +86419,7 @@ exports = module.exports = __webpack_require__(5)(false);
 
 
 // module
-exports.push([module.i, "\n.page-container[data-v-91ac6b5c] {\n  min-height: 100vh;\n  overflow: hidden;\n  position: relative;\n  border: 1px solid rgba(0, 0, 0, 0.12);\n}\n.md-drawer[data-v-91ac6b5c] {\n  width: 230px;\n  max-width: calc(100vw - 125px);\n}\n.md-content[data-v-91ac6b5c] {\n  padding: 16px;\n}\n.md-list-item a[data-v-91ac6b5c] {\n  color: #757575;\n}\n.md-list-item a[data-v-91ac6b5c]:hover {\n  color: #757575;\n  text-decoration: none;\n}\n.router-link-active[data-v-91ac6b5c] {\n  background: #757575;\n  color: #fff !important;\n  padding: 10px 5px;\n  min-width: 88px;\n  height: 36px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  font-size: 14px;\n  font-weight: 500;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;\n          box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;\n}\n.router-link-active[data-v-91ac6b5c]:hover {\n  text-decoration: none !important;\n}\n.md-list-item-text[data-v-91ac6b5c] {\n  overflow: initial !important;\n}\n", ""]);
+exports.push([module.i, "\n.page-container[data-v-91ac6b5c] {\n  min-height: 100vh;\n  overflow: hidden;\n  position: relative;\n  border: 1px solid rgba(0, 0, 0, 0.12);\n}\n.md-drawer[data-v-91ac6b5c] {\n  width: 230px;\n  max-width: calc(100vw - 125px);\n}\n.md-content[data-v-91ac6b5c] {\n  padding: 16px;\n}\n.md-list-item a[data-v-91ac6b5c] {\n  color: #757575;\n}\n.md-list-item a[data-v-91ac6b5c]:hover {\n  color: #757575;\n  text-decoration: none;\n}\n.router-link-active[data-v-91ac6b5c] {\n  background: #757575;\n  color: #fff !important;\n  padding: 10px 5px;\n  height: 36px;\n  font-weight: 500;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;\n          box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;\n}\n.router-link-active[data-v-91ac6b5c]:hover {\n  text-decoration: none !important;\n}\n.md-list-item-text[data-v-91ac6b5c] {\n  overflow: initial !important;\n}\n", ""]);
 
 // exports
 

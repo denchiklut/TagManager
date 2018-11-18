@@ -3,7 +3,7 @@
         <div class="md-layout-item"> <pre>{{this.analiticData}}</pre></div>
         <div class="md-layout-item">
             <div class="small">
-                <button @click="fillData()">Randomize</button>
+                <md-button class="md-dense md-raised md-primary" @click="fillData()">Randomize</md-button>
                 <line-chart :chart-data="datacollection" :height="120" :options="{responsive: true, maintainAspectRatio: true}" ></line-chart>
             </div>
             <div>

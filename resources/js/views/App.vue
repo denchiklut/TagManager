@@ -43,28 +43,28 @@
                 <md-list-item>
                     <md-icon>move_to_inbox</md-icon>
                     <span class="md-list-item-text">
-                        <router-link :to="{ name: 'analytics' }" class="nav-link active">Analytics</router-link>
+                        <router-link :to="{ name: 'analytics' }" exact>Analytics</router-link>
                     </span>
                 </md-list-item>
 
                 <md-list-item>
                     <md-icon>send</md-icon>
                     <span class="md-list-item-text">
-                        <router-link :to="{ name: 'companies' }" class="nav-link active">Companies</router-link>
+                        <router-link :to="{ name: 'companies' }" exact>Companies</router-link>
                     </span>
                 </md-list-item>
 
                 <md-list-item>
                     <md-icon>error</md-icon>
                     <span class="md-list-item-text">
-                        <router-link :to="{ name: 'templates' }" class="nav-link active">Templates</router-link>
+                        <router-link :to="{ name: 'templates' }" exact>Templates</router-link>
                     </span>
                 </md-list-item>
 
                 <md-list-item>
                     <md-icon>error</md-icon>
                     <span class="md-list-item-text">
-                        <router-link :to="{ name: 'relax' }" class="nav-link active">Relax</router-link>
+                        <router-link :to="{ name: 'relax' }" exact>Relax</router-link>
                     </span>
                 </md-list-item>
             </md-list>
@@ -114,5 +114,35 @@
 
     .md-content {
         padding: 16px;
+    }
+
+    .md-list-item a{
+        color: #757575;
+    }
+    .md-list-item a:hover{
+        color: #757575;
+        text-decoration: none;
+    }
+
+    .router-link-active {
+        background: #757575;
+        color: #fff !important;
+        padding: 10px 5px;
+        min-width: 88px;
+        height: 36px;
+        user-select: none;
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        border-radius: 2px;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+    }
+
+    .router-link-active:hover {
+        text-decoration: none!important;
+    }
+
+    .md-list-item-text {
+        overflow: initial!important;
     }
 </style>

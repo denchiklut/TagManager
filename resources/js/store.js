@@ -10,6 +10,7 @@ export default {
         loading: false,
         auth_error: null,
         analiticData: [],
+        companies: [],
     },
     getters: {
         test(state) {
@@ -29,6 +30,9 @@ export default {
         },
         analiticData(state) {
             return state.analiticData;
+        },
+        companies(state) {
+            return state.companies;
         },
     },
     mutations: {
@@ -55,6 +59,9 @@ export default {
         },
         updateAnaliticData(state, payload) {
             state.analiticData =  payload;
+        },
+        updateCompanies(state, payload) {
+            state.companies =  payload;
         }
     },
     actions: {
@@ -63,14 +70,17 @@ export default {
         },
         getAnaliticData(context) {
                 axios
-                    .get('/api', {
-                        headers: {
-                            "Authorization": `Bearer ${context.state.currentUser.token}`
-                        }
-                    })
+                    .get('/api')
                     .then((responce) => {
                         context.commit('updateAnaliticData', responce.data.data);
                     })
+        },
+        getCompanies(context) {
+            axios
+                .get('/api/companies')
+                .then((responce) => {
+                    context.commit('updateCompanies', responce.data.data);
+                })
         }
     },
 }

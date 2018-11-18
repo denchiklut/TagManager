@@ -127,6 +127,7 @@
         background: #757575;
         color: #fff !important;
         padding: 10px 5px;
+        width: 100%;
         height: 36px;
         font-weight: 500;
         text-transform: uppercase;

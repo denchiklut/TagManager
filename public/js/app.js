@@ -39125,6 +39125,7 @@ var index_esm = {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = initialize;
+/* unused harmony export setAuthorization */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 
@@ -39146,12 +39147,21 @@ function initialize(store, router) {
     });
 
     __WEBPACK_IMPORTED_MODULE_0_axios___default.a.interceptors.response.use(null, function (error) {
-        if (error.response.status == '401') {
+        if (error.resposne.status == 401) {
             store.commit('logout');
             router.push('/login');
         }
+
         return Promise.reject(error);
     });
+
+    if (store.getters.currentUser) {
+        setAuthorization(store.getters.currentUser.token);
+    }
+}
+
+function setAuthorization(token) {
+    __WEBPACK_IMPORTED_MODULE_0_axios___default.a.defaults.headers.common["Authorization"] = 'Bearer ' + token;
 }
 
 /***/ }),
@@ -69481,7 +69491,8 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         isLoggedIn: !!user,
         loading: false,
         auth_error: null,
-        analiticData: []
+        analiticData: [],
+        companies: []
     },
     getters: {
         test: function test(state) {
@@ -69501,6 +69512,9 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         },
         analiticData: function analiticData(state) {
             return state.analiticData;
+        },
+        companies: function companies(state) {
+            return state.companies;
         }
     },
     mutations: {
@@ -69527,6 +69541,9 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         },
         updateAnaliticData: function updateAnaliticData(state, payload) {
             state.analiticData = payload;
+        },
+        updateCompanies: function updateCompanies(state, payload) {
+            state.companies = payload;
         }
     },
     actions: {
@@ -69534,12 +69551,13 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
             context.commit("login");
         },
         getAnaliticData: function getAnaliticData(context) {
-            axios.get('/api', {
-                headers: {
-                    "Authorization": "Bearer " + context.state.currentUser.token
-                }
-            }).then(function (responce) {
+            axios.get('/api').then(function (responce) {
                 context.commit('updateAnaliticData', responce.data.data);
+            });
+        },
+        getCompanies: function getCompanies(context) {
+            axios.get('/api/companies').then(function (responce) {
+                context.commit('updateCompanies', responce.data.data);
             });
         }
     }
@@ -82130,8 +82148,6 @@ var searchByName = function searchByName(items, term) {
     data: function data() {
         return {
             search: null,
-            searched: [],
-            users: [],
             showDialog: false,
             editCompain: null,
             userSaved: false,
@@ -82143,29 +82159,19 @@ var searchByName = function searchByName(items, term) {
         'edit': __WEBPACK_IMPORTED_MODULE_2__components_compaing_EditCompany___default.a
     },
     methods: {
-        searchOnTable: function searchOnTable() {
-            this.searched = searchByName(this.users, this.search);
-        },
         fetchData: function fetchData() {
-            var _this = this;
-
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/companies').then(function (response) {
-                _this.users = response.data.data;
-                _this.searched = _this.users;
-                // console.log(this.users)
-            });
+            this.$store.dispatch('getCompanies');
         },
         deleteItem: function deleteItem(item) {
-            var _this2 = this;
+            var _this = this;
 
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete('/api/companies/' + item.id).then(function (response) {
-                var index = _this2.searched.indexOf(item);
-                _this2.searched.splice(index, 1);
+                var index = _this.searched.indexOf(item);
+                _this.searched.splice(index, 1);
                 //console.log(response.data)
             });
         },
         closeDialog: function closeDialog() {
-            this.fetchData();
             this.showDialog = false;
         },
         showEditForm: function showEditForm(compaing) {
@@ -82173,17 +82179,27 @@ var searchByName = function searchByName(items, term) {
             this.showDialog = true;
         },
         LogSave: function LogSave(data) {
-            var _this3 = this;
+            var _this2 = this;
 
             this.lastUser = data.data;
             this.userSaved = true;
             window.setTimeout(function () {
-                _this3.userSaved = false;
+                _this2.userSaved = false;
             }, 1500);
         }
     },
-    created: function created() {
-        this.fetchData();
+    mounted: function mounted() {
+        this.$store.dispatch('getCompanies');
+    },
+
+
+    computed: {
+        searched: function searched() {
+            return searchByName(this.$store.getters.companies, this.search);
+        },
+        currentUser: function currentUser() {
+            return this.$store.getters.currentUser;
+        }
     }
 });
 
@@ -83283,7 +83299,6 @@ var render = function() {
                     [
                       _c("md-input", {
                         attrs: { placeholder: "Search by name..." },
-                        on: { input: _vm.searchOnTable },
                         model: {
                           value: _vm.search,
                           callback: function($$v) {
@@ -83496,11 +83511,7 @@ var render = function() {
         [
           _c("edit", {
             attrs: { form: _vm.editCompain },
-            on: {
-              CloseDialog: _vm.closeDialog,
-              ShowLogSave: _vm.LogSave,
-              editCompanyE: _vm.fetchData
-            }
+            on: { CloseDialog: _vm.closeDialog, ShowLogSave: _vm.LogSave }
           }),
           _vm._v(" "),
           _c(
@@ -86419,7 +86430,7 @@ exports = module.exports = __webpack_require__(5)(false);
 
 
 // module
-exports.push([module.i, "\n.page-container[data-v-91ac6b5c] {\n  min-height: 100vh;\n  overflow: hidden;\n  position: relative;\n  border: 1px solid rgba(0, 0, 0, 0.12);\n}\n.md-drawer[data-v-91ac6b5c] {\n  width: 230px;\n  max-width: calc(100vw - 125px);\n}\n.md-content[data-v-91ac6b5c] {\n  padding: 16px;\n}\n.md-list-item a[data-v-91ac6b5c] {\n  color: #757575;\n}\n.md-list-item a[data-v-91ac6b5c]:hover {\n  color: #757575;\n  text-decoration: none;\n}\n.router-link-active[data-v-91ac6b5c] {\n  background: #757575;\n  color: #fff !important;\n  padding: 10px 5px;\n  height: 36px;\n  font-weight: 500;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;\n          box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;\n}\n.router-link-active[data-v-91ac6b5c]:hover {\n  text-decoration: none !important;\n}\n.md-list-item-text[data-v-91ac6b5c] {\n  overflow: initial !important;\n}\n", ""]);
+exports.push([module.i, "\n.page-container[data-v-91ac6b5c] {\n  min-height: 100vh;\n  overflow: hidden;\n  position: relative;\n  border: 1px solid rgba(0, 0, 0, 0.12);\n}\n.md-drawer[data-v-91ac6b5c] {\n  width: 230px;\n  max-width: calc(100vw - 125px);\n}\n.md-content[data-v-91ac6b5c] {\n  padding: 16px;\n}\n.md-list-item a[data-v-91ac6b5c] {\n  color: #757575;\n}\n.md-list-item a[data-v-91ac6b5c]:hover {\n  color: #757575;\n  text-decoration: none;\n}\n.router-link-active[data-v-91ac6b5c] {\n  background: #757575;\n  color: #fff !important;\n  padding: 10px 5px;\n  width: 100%;\n  height: 36px;\n  font-weight: 500;\n  text-transform: uppercase;\n  border-radius: 2px;\n  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;\n          box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;\n}\n.router-link-active[data-v-91ac6b5c]:hover {\n  text-decoration: none !important;\n}\n.md-list-item-text[data-v-91ac6b5c] {\n  overflow: initial !important;\n}\n", ""]);
 
 // exports
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <form novalidate class="md-layout" @submit.prevent="validateUser">
-            <md-card class="md-layout-item md-size-50 md-small-size-100 myForm">
+            <md-card class="md-layout-item md-size-50 md-small-size-100 myForm" md-with-hover>
                 <md-toolbar class="md-accent">
                     <h3 class="md-title">Войти</h3>
                 </md-toolbar>

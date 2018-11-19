@@ -24,7 +24,7 @@ Route::group(['prefix' => 'pixel'], function () {
 });
 
 Route::group(['prefix' => 'add'], function () {
-    Route::get('/pixel/{compaigns_url}', 'AddPixel@index');
+    Route::get('/pixel/{url}', 'AddPixel@store');
 });
 
 Route::resource('/', 'AnaliticsController');

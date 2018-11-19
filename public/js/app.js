@@ -82191,9 +82191,6 @@ var searchByName = function searchByName(items, term) {
         }
     },
     mounted: function mounted() {
-        if (this.searched.length) {
-            return;
-        }
         this.$store.dispatch('getCompanies');
     },
 

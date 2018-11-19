@@ -100,9 +100,6 @@
             },
         },
         mounted() {
-            if (this.searched.length) {
-                return
-            }
             this.$store.dispatch('getCompanies');
         },
 

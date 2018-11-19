@@ -62,25 +62,35 @@ export default {
         },
         updateCompanies(state, payload) {
             state.companies =  payload;
+        },
+        deleteCompony(state, payload) {
+            let index = state.companies.indexOf(payload);
+            state.companies.splice(index, 1);
         }
     },
     actions: {
         login(context) {
             context.commit("login");
         },
-        getAnaliticData(context) {
+        getAnaliticData: context => {
                 axios
                     .get('/api')
                     .then((responce) => {
                         context.commit('updateAnaliticData', responce.data.data);
                     })
         },
-        getCompanies(context) {
+        getCompanies: context => {
             axios
                 .get('/api/companies')
                 .then((responce) => {
                     context.commit('updateCompanies', responce.data.data);
                 })
+        },
+        deleteCompony: (context, item) => {
+            axios.delete('/api/companies/' + item.id)
+                .then(response => {
+                    context.commit('deleteCompony', item);
+                });
         }
     },
 }

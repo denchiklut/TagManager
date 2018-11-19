@@ -57,7 +57,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import AddCompany from '../components/compaing/AddCompany'
     import EditCompany from '../components/compaing/EditCompany'
 
@@ -91,12 +90,7 @@
                 this.$store.dispatch('getCompanies');
             },
             deleteItem(item) {
-                axios.delete('/api/companies/' + item.id)
-                    .then(response => {
-                        let index = this.searched.indexOf(item);
-                        this.searched.splice(index, 1);
-                        //console.log(response.data)
-                    });
+                this.$store.dispatch('deleteCompony', item);
             },
             closeDialog() {
                 this.showDialog = false;

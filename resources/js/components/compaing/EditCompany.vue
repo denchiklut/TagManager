@@ -55,8 +55,8 @@
 
                         <div class="md-layout-item md-small-size-100">
                             <md-field :class="getValidationClass('url')" md-theme="myTheme">
-                                <label for="url">url_pixel</label>
-                                <md-input name="url" id="url" autocomplete="url" v-model="form.url" :disabled="sending" />
+                                <label for="urlM">url_pixel</label>
+                                <md-input name="url" id="urlM" autocomplete="url" v-model="form.url" :disabled="sending" />
                                 <span class="md-error" v-if="!$v.form.url.required">The url is required</span>
                                 <span class="md-error" v-else-if="!$v.form.url.minlength">Invalid url</span>
                             </md-field>

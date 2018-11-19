@@ -92,6 +92,12 @@ export default {
                     context.dispatch('getCompanies');
                 });
         },
+        editCompony: (context, form) => {
+            axios.patch('/api/companies/' + form.id, form)
+                .then(response => {
+                    context.dispatch('getCompanies');
+                });
+        },
         deleteCompony: (context, item) => {
             axios.delete('/api/companies/' + item.id)
                 .then(response => {

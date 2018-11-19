@@ -69571,6 +69571,11 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
                 context.dispatch('getCompanies');
             });
         },
+        editCompony: function editCompony(context, form) {
+            axios.patch('/api/companies/' + form.id, form).then(function (response) {
+                context.dispatch('getCompanies');
+            });
+        },
         deleteCompony: function deleteCompony(context, item) {
             axios.delete('/api/companies/' + item.id).then(function (response) {
                 context.commit('deleteCompony', item);
@@ -82137,7 +82142,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 
 
@@ -82184,18 +82188,12 @@ var searchByName = function searchByName(items, term) {
         showEditForm: function showEditForm(compaing) {
             this.editCompain = compaing;
             this.showDialog = true;
-        },
-        LogSave: function LogSave(data) {
-            var _this = this;
-
-            this.lastUser = data.data;
-            this.userSaved = true;
-            window.setTimeout(function () {
-                _this.userSaved = false;
-            }, 1500);
         }
     },
     mounted: function mounted() {
+        if (this.searched.length) {
+            return;
+        }
         this.$store.dispatch('getCompanies');
     },
 
@@ -82751,12 +82749,10 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vuelidate__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__);
 //
 //
 //
@@ -82843,12 +82839,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-
 
 
 
@@ -82856,34 +82846,35 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['form'],
     name: 'FormValidation',
-    mixins: [__WEBPACK_IMPORTED_MODULE_1_vuelidate__["validationMixin"]],
+    mixins: [__WEBPACK_IMPORTED_MODULE_0_vuelidate__["validationMixin"]],
     data: function data() {
         return {
             sending: false,
-            lastUser: null
+            lastUser: null,
+            userSaved: false
         };
     },
     validations: {
         form: {
             id_client: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             },
             id_campaign: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             },
             password: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"],
-                minLength: Object(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["minLength"])(6)
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"],
+                minLength: Object(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["minLength"])(6)
             },
             signature: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             },
             sig: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             },
             url: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"],
-                url: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["url"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"],
+                url: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["url"]
             }
             // trigger: {
             //     required
@@ -82904,14 +82895,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.sending = true;
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/companies/' + this.form.id, this.form).then(function (response) {
-                console.log(response.data);
-                _this.$emit('editCompanyE');
-                _this.lastUser = '' + _this.form.url;
-                _this.$emit('ShowLogSave', { data: _this.lastUser });
-            });
+            this.userSaved = true;
+            this.lastUser = '' + this.form.url;
+            this.$store.dispatch('editCompony', this.form);
 
             window.setTimeout(function () {
+                _this.userSaved = false;
                 _this.sending = false;
                 _this.close();
             }, 1500);
@@ -82937,318 +82926,299 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "form",
-      {
-        staticClass: "md-layout",
-        attrs: { novalidate: "" },
-        on: {
-          submit: function($event) {
-            $event.preventDefault()
-            return _vm.validateUser($event)
+  return _c(
+    "div",
+    [
+      _c(
+        "form",
+        {
+          staticClass: "md-layout",
+          attrs: { novalidate: "" },
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.validateUser($event)
+            }
           }
-        }
-      },
-      [
-        _c(
-          "md-card",
-          {
-            staticClass: "md-layout-item md-small-size-100",
-            attrs: { "md-with-hover": "" }
-          },
-          [
-            _c(
-              "md-toolbar",
-              {
-                staticClass: "md-primary",
-                attrs: { "md-theme": "myTheme", "md-aligment": "space-between" }
-              },
-              [
-                _c("div", { staticClass: "md-title" }, [
-                  _vm._v("Редактировать Pixel")
+        },
+        [
+          _c(
+            "md-card",
+            {
+              staticClass: "md-layout-item md-small-size-100",
+              attrs: { "md-with-hover": "" }
+            },
+            [
+              _c(
+                "md-toolbar",
+                {
+                  staticClass: "md-primary",
+                  attrs: {
+                    "md-theme": "myTheme",
+                    "md-aligment": "space-between"
+                  }
+                },
+                [
+                  _c("div", { staticClass: "md-title" }, [
+                    _vm._v("Редактировать Pixel")
+                  ])
+                ]
+              ),
+              _vm._v(" "),
+              _c("md-card-content", [
+                _c("div", { staticClass: "md-layout md-gutter" }, [
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        {
+                          class: _vm.getValidationClass("id_client"),
+                          attrs: { "md-theme": "myTheme" }
+                        },
+                        [
+                          _c("label", { attrs: { for: "id_client" } }, [
+                            _vm._v("id_client")
+                          ]),
+                          _vm._v(" "),
+                          _c("md-input", {
+                            attrs: {
+                              type: "number",
+                              id: "id_client",
+                              name: "id_client",
+                              autocomplete: "id_client",
+                              disabled: _vm.sending
+                            },
+                            model: {
+                              value: _vm.form.id_client,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "id_client", $$v)
+                              },
+                              expression: "form.id_client"
+                            }
+                          }),
+                          _vm._v(" "),
+                          !_vm.$v.form.id_client.required
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("The age is required")
+                              ])
+                            : !_vm.$v.form.id_client.maxlength
+                              ? _c("span", { staticClass: "md-error" }, [
+                                  _vm._v("Invalid age")
+                                ])
+                              : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        {
+                          class: _vm.getValidationClass("password"),
+                          attrs: { "md-theme": "myTheme" }
+                        },
+                        [
+                          _c("label", { attrs: { for: "password" } }, [
+                            _vm._v("password Name")
+                          ]),
+                          _vm._v(" "),
+                          _c("md-input", {
+                            attrs: {
+                              type: "password",
+                              name: "password",
+                              id: "password",
+                              autocomplete: "password",
+                              disabled: _vm.sending
+                            },
+                            model: {
+                              value: _vm.form.password,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "password", $$v)
+                              },
+                              expression: "form.password"
+                            }
+                          }),
+                          _vm._v(" "),
+                          !_vm.$v.form.password.required
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("The password is required")
+                              ])
+                            : !_vm.$v.form.password.minlength
+                              ? _c("span", { staticClass: "md-error" }, [
+                                  _vm._v("Invalid password")
+                                ])
+                              : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        {
+                          class: _vm.getValidationClass("signature"),
+                          attrs: { "md-theme": "myTheme" }
+                        },
+                        [
+                          _c("label", { attrs: { for: "signature" } }, [
+                            _vm._v("signature")
+                          ]),
+                          _vm._v(" "),
+                          _c("md-input", {
+                            attrs: {
+                              name: "signature",
+                              id: "signature",
+                              autocomplete: "signature",
+                              disabled: _vm.sending
+                            },
+                            model: {
+                              value: _vm.form.signature,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "signature", $$v)
+                              },
+                              expression: "form.signature"
+                            }
+                          }),
+                          _vm._v(" "),
+                          !_vm.$v.form.signature.required
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("The password is required")
+                              ])
+                            : !_vm.$v.form.signature.minlength
+                              ? _c("span", { staticClass: "md-error" }, [
+                                  _vm._v("Invalid password")
+                                ])
+                              : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        {
+                          class: _vm.getValidationClass("url"),
+                          attrs: { "md-theme": "myTheme" }
+                        },
+                        [
+                          _c("label", { attrs: { for: "url" } }, [
+                            _vm._v("url_pixel")
+                          ]),
+                          _vm._v(" "),
+                          _c("md-input", {
+                            attrs: {
+                              name: "url",
+                              id: "url",
+                              autocomplete: "url",
+                              disabled: _vm.sending
+                            },
+                            model: {
+                              value: _vm.form.url,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "url", $$v)
+                              },
+                              expression: "form.url"
+                            }
+                          }),
+                          _vm._v(" "),
+                          !_vm.$v.form.url.required
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("The url is required")
+                              ])
+                            : !_vm.$v.form.url.minlength
+                              ? _c("span", { staticClass: "md-error" }, [
+                                  _vm._v("Invalid url")
+                                ])
+                              : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
                 ])
-              ]
-            ),
-            _vm._v(" "),
-            _c("md-card-content", [
-              _c("div", { staticClass: "md-layout md-gutter" }, [
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("id_client"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "id_client" } }, [
-                          _vm._v("id_client")
-                        ]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            type: "number",
-                            id: "id_client",
-                            name: "id_client",
-                            autocomplete: "id_client",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.id_client,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "id_client", $$v)
-                            },
-                            expression: "form.id_client"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.id_client.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The age is required")
-                            ])
-                          : !_vm.$v.form.id_client.maxlength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid age")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("password"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "password" } }, [
-                          _vm._v("password Name")
-                        ]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            type: "password",
-                            name: "password",
-                            id: "password",
-                            autocomplete: "password",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.password,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "password", $$v)
-                            },
-                            expression: "form.password"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.password.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The password is required")
-                            ])
-                          : !_vm.$v.form.password.minlength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid password")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("signature"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "signature" } }, [
-                          _vm._v("signature")
-                        ]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            name: "signature",
-                            id: "signature",
-                            autocomplete: "signature",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.signature,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "signature", $$v)
-                            },
-                            expression: "form.signature"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.signature.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The password is required")
-                            ])
-                          : !_vm.$v.form.signature.minlength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid password")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("sig"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "sig" } }, [_vm._v("sig")]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            name: "sig",
-                            id: "sig",
-                            autocomplete: "sig",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.sig,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "sig", $$v)
-                            },
-                            expression: "form.sig"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.sig.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The sig is required")
-                            ])
-                          : !_vm.$v.form.sig.minlength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid sig")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("url"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "url" } }, [
-                          _vm._v("url_pixel")
-                        ]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            name: "url",
-                            id: "url",
-                            autocomplete: "url",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.url,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "url", $$v)
-                            },
-                            expression: "form.url"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.url.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The url is required")
-                            ])
-                          : !_vm.$v.form.url.minlength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid url")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                )
-              ])
-            ]),
-            _vm._v(" "),
-            _vm.sending
-              ? _c("md-progress-bar", { attrs: { "md-mode": "indeterminate" } })
-              : _vm._e(),
-            _vm._v(" "),
-            _c(
-              "md-card-actions",
-              [
-                _c(
-                  "md-button",
-                  {
-                    staticClass: "md-primary",
-                    attrs: { "md-theme": "myTheme" },
-                    on: { click: _vm.close }
-                  },
-                  [_vm._v("Отмена")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "md-button",
-                  {
-                    staticClass: "md-primary",
-                    attrs: {
-                      type: "submit",
-                      "md-theme": "myTheme",
-                      disabled: _vm.sending
-                    }
-                  },
-                  [_vm._v("Сохранить")]
-                )
-              ],
-              1
-            )
-          ],
-          1
-        )
-      ],
-      1
-    )
-  ])
+              ]),
+              _vm._v(" "),
+              _vm.sending
+                ? _c("md-progress-bar", {
+                    attrs: { "md-mode": "indeterminate" }
+                  })
+                : _vm._e(),
+              _vm._v(" "),
+              _c(
+                "md-card-actions",
+                [
+                  _c(
+                    "md-button",
+                    {
+                      staticClass: "md-primary",
+                      attrs: { "md-theme": "myTheme" },
+                      on: { click: _vm.close }
+                    },
+                    [_vm._v("Отмена")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "md-button",
+                    {
+                      staticClass: "md-primary",
+                      attrs: {
+                        type: "submit",
+                        "md-theme": "myTheme",
+                        disabled: _vm.sending
+                      }
+                    },
+                    [_vm._v("Сохранить")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "md-snackbar",
+        {
+          attrs: { "md-active": _vm.userSaved },
+          on: {
+            "update:mdActive": function($event) {
+              _vm.userSaved = $event
+            }
+          }
+        },
+        [
+          _vm._v(
+            "Pixel " + _vm._s("" + this.lastUser) + " был изменен успешно!"
+          )
+        ]
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -83506,25 +83476,8 @@ var render = function() {
         [
           _c("edit", {
             attrs: { form: _vm.editCompain },
-            on: { CloseDialog: _vm.closeDialog, ShowLogSave: _vm.LogSave }
-          }),
-          _vm._v(" "),
-          _c(
-            "md-snackbar",
-            {
-              attrs: { "md-active": _vm.userSaved },
-              on: {
-                "update:mdActive": function($event) {
-                  _vm.userSaved = $event
-                }
-              }
-            },
-            [
-              _vm._v(
-                "Pixel " + _vm._s("" + this.lastUser) + " был изменен успешно!"
-              )
-            ]
-          )
+            on: { CloseDialog: _vm.closeDialog }
+          })
         ],
         1
       )

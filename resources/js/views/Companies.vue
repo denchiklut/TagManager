@@ -50,8 +50,7 @@
 
         <!--Edit Dialog-->
         <md-dialog :md-active.sync="showDialog">
-            <edit @CloseDialog="closeDialog" @ShowLogSave="LogSave" :form="editCompain"></edit>
-            <md-snackbar :md-active.sync="userSaved">Pixel {{`${this.lastUser}`}} был изменен успешно!</md-snackbar>
+            <edit @CloseDialog="closeDialog" :form="editCompain"></edit>
         </md-dialog>
     </div>
 </template>
@@ -99,15 +98,11 @@
                 this.editCompain = compaing;
                 this.showDialog = true;
             },
-            LogSave(data) {
-                this.lastUser = data.data;
-                this.userSaved = true;
-                window.setTimeout(() => {
-                    this.userSaved = false;
-                }, 1500)
-            }
         },
         mounted() {
+            if (this.searched.length) {
+                return
+            }
             this.$store.dispatch('getCompanies');
         },
 

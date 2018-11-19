@@ -95,6 +95,7 @@
     import {
         required,
         minLength,
+        url
 
     } from 'vuelidate/lib/validators'
 
@@ -125,7 +126,8 @@
                     required
                 },
                 url: {
-                    required
+                    required,
+                    url
                 },
                 // trigger: {
                 //     required

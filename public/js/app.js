@@ -69566,6 +69566,11 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
                 context.commit('updateCompanies', responce.data.data);
             });
         },
+        addCompony: function addCompony(context, form) {
+            axios.post('/api/companies', form).then(function (response) {
+                context.dispatch('getCompanies');
+            });
+        },
         deleteCompony: function deleteCompony(context, item) {
             axios.delete('/api/companies/' + item.id).then(function (response) {
                 context.commit('deleteCompony', item);
@@ -82302,12 +82307,10 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vuelidate__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__);
 //
 //
 //
@@ -82361,20 +82364,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'FormValidation',
-    mixins: [__WEBPACK_IMPORTED_MODULE_1_vuelidate__["validationMixin"]],
+    mixins: [__WEBPACK_IMPORTED_MODULE_0_vuelidate__["validationMixin"]],
     data: function data() {
         return {
             form: {
@@ -82393,9 +82389,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     validations: {
         form: {
-
             url: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"],
+                maxLength: Object(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["maxLength"])(2083),
+                url: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["url"]
             }
         }
     },
@@ -82424,19 +82421,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.sending = true;
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/companies', this.form).then(function (response) {
+            this.$store.dispatch('addCompony', this.form);
+            this.lastUser = '' + this.form.url;
 
-                _this.form = response.data.data;
-
-                _this.$emit('AddCompaing', { data: _this.form });
-            });
-
-            window.setTimeout(function () {
-                _this.lastUser = _this.form.signature + ' ' + _this.form.password;
+            setTimeout(function () {
                 _this.userSaved = true;
                 _this.sending = false;
                 _this.clearForm();
-            }, 1500);
+            }, 1000);
         },
         validateUser: function validateUser() {
             this.$v.$touch();
@@ -82578,7 +82570,7 @@ var render = function() {
                                     ? _c("span", { staticClass: "md-error" }, [
                                         _vm._v("The url is required")
                                       ])
-                                    : !_vm.$v.form.url.minlength
+                                    : !_vm.$v.form.url.maxLength
                                       ? _c(
                                           "span",
                                           { staticClass: "md-error" },
@@ -82890,7 +82882,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
             },
             url: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"],
+                url: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["url"]
             }
             // trigger: {
             //     required
@@ -83278,7 +83271,7 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("div", [_c("add", { on: { AddCompaing: _vm.fetchData } })], 1),
+      _c("div", [_c("add")], 1),
       _vm._v(" "),
       _c(
         "md-card",

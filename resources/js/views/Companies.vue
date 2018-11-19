@@ -2,7 +2,7 @@
     <div>
         <!--Add Form-->
         <div>
-            <add @AddCompaing="fetchData"></add>
+            <add />
         </div>
 
         <!--Data Table-->

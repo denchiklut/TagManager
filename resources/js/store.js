@@ -86,11 +86,17 @@ export default {
                     context.commit('updateCompanies', responce.data.data);
                 })
         },
+        addCompony: (context, form) => {
+            axios.post('/api/companies', form)
+                .then(response => {
+                    context.dispatch('getCompanies');
+                });
+        },
         deleteCompony: (context, item) => {
             axios.delete('/api/companies/' + item.id)
                 .then(response => {
                     context.commit('deleteCompony', item);
                 });
-        }
+        },
     },
 }

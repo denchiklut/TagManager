@@ -18,27 +18,21 @@
                             </md-card-expand-trigger>
                         </div>
                         </div>
-
-
                     </md-toolbar>
 
                     <md-card-expand-content>
                         <div>
                             <md-card-content>
                                 <div class="md-layout md-gutter">
-
                                     <div class="md-layout-item md-small-size-100">
                                         <md-field :class="getValidationClass('url')" md-theme="myTheme">
                                             <label for="url">url</label>
                                             <md-input name="url" id="url" autocomplete="url" v-model="form.url" :disabled="sending" />
                                             <span class="md-error" v-if="!$v.form.url.required">The url is required</span>
-                                            <span class="md-error" v-else-if="!$v.form.url.minlength">Invalid url</span>
+                                            <span class="md-error" v-else-if="!$v.form.url.maxLength">Invalid url</span>
                                         </md-field>
                                     </div>
-
                                 </div>
-
-
                             </md-card-content>
 
                             <md-progress-bar md-mode="indeterminate" v-if="sending" />
@@ -58,11 +52,11 @@
 </template>
 
 <script>
-    import axios from 'axios'
     import { validationMixin } from 'vuelidate'
     import {
         required,
-        minLength,
+        maxLength,
+        url
 
     } from 'vuelidate/lib/validators'
 
@@ -85,9 +79,10 @@
         }),
         validations: {
             form: {
-
                 url: {
-                    required
+                    required,
+                    maxLength: maxLength(2083),
+                    url,
                 },
             }
         },
@@ -114,20 +109,14 @@
             },
             savePixel () {
                 this.sending = true;
-                axios.post('/api/companies', this.form)
-                    .then(response => {
+                this.$store.dispatch('addCompony', this.form);
+                this.lastUser = `${this.form.url}`;
 
-                        this.form = response.data.data;
-
-                        this.$emit('AddCompaing', {data: this.form})
-                    });
-
-                window.setTimeout(() => {
-                    this.lastUser = `${this.form.signature} ${this.form.password}`;
+                setTimeout(() => {
                     this.userSaved = true;
                     this.sending = false;
                     this.clearForm()
-                }, 1500)
+                }, 1000)
             },
             validateUser () {
                 this.$v.$touch();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Triggers;
 use Illuminate\Http\Request;
 use App\Models\Companies;
+use App\Models\Templates;
 use App\Http\Resources\ComponyResource;
 use DB;
 
@@ -25,6 +26,7 @@ class AddPixel extends Controller
     public function store(Request $request)
     {
 
+
         $url  = $request->url ? $request->url: exit;    //сохраняем url
 
         $campaing = new Companies();
@@ -32,10 +34,6 @@ class AddPixel extends Controller
 
         /* выборка id из таблиц */
         $resultCampaigns = Companies::orderby('id','id_campaign')->first();//из таблицы Campaigns выбираем последний id
-
-
-        var_dump($resultCampaigns);
-        exit;
         /* выборка id из таблиц */
 
 
@@ -55,14 +53,20 @@ class AddPixel extends Controller
        // $RedirectUrl = "https://rpt.reffection.com/?idClient=$"."IDCLIENT&idCampaign=$"."IDCAMPAIGN&number=$"."NUMBER&userData=$"."USERDATA";
         /* статичные данные */
 
+        $TemplatesDefaulr  = Templates::where('default',1)->first();
+
+
+
+
 
         /* запись в таблицы компании */
-         $campaing->id_client = '15';
+         $campaing->id_client = '16';
          $campaing->id_campaign = $id_campaign;
          $campaing->password = $password;
          $campaing->signature = $signature;
          $campaing->sig = hash('sha1',$id_campaign.$signature.$password.$url);
          $campaing->url = $url;
+         $campaing->template_default = $TemplatesDefaulr->name;
 
          $campaing->save();
 

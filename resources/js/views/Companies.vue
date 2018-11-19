@@ -121,6 +121,7 @@
             searched() {
                 return searchByName(this.$store.getters.companies, this.search);
             },
+
             currentUser() {
                 return this.$store.getters.currentUser;
             }

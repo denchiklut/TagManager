@@ -7,7 +7,30 @@
             <span class="md-title">TAG Manager</span>
 
             <div class="md-toolbar-section-end">
-                <md-button @click="showSidepanel = true">Favorites</md-button>
+                <h3 v-if="currentUser">{{currentUser.name}}</h3>
+                <md-menu md-size="big">
+                    <md-button class="md-icon-button" md-menu-trigger>
+                        <md-icon>more_vert</md-icon>
+                    </md-button>
+
+                    <md-menu-content>
+                       <div v-if="!currentUser">
+                           <md-menu-item>
+                               <router-link to="/login">login</router-link>
+                           </md-menu-item>
+                           <md-menu-item>
+                               <router-link to="/register">Register</router-link>
+                           </md-menu-item>
+                       </div>
+
+                        <div v-else>
+                            <md-menu-item>
+                                <a href="#!" @click.prevent="logout">Log out</a>
+                            </md-menu-item>
+                        </div>
+
+                    </md-menu-content>
+                </md-menu>
             </div>
         </md-toolbar>
 
@@ -20,67 +43,35 @@
                 <md-list-item>
                     <md-icon>move_to_inbox</md-icon>
                     <span class="md-list-item-text">
-                        <router-link :to="{ name: 'analytics' }" class="nav-link active">Analytics</router-link>
+                        <router-link :to="{ name: 'analytics' }" exact>Analytics</router-link>
                     </span>
                 </md-list-item>
 
                 <md-list-item>
                     <md-icon>send</md-icon>
                     <span class="md-list-item-text">
-                        <router-link :to="{ name: 'companies' }" class="nav-link active">Companies</router-link>
+                        <router-link :to="{ name: 'companies' }" exact>Companies</router-link>
                     </span>
                 </md-list-item>
 
                 <md-list-item>
                     <md-icon>error</md-icon>
                     <span class="md-list-item-text">
-                        <router-link :to="{ name: 'templates' }" class="nav-link active">Templates</router-link>
+                        <router-link :to="{ name: 'templates' }" exact>Templates</router-link>
                     </span>
                 </md-list-item>
 
                 <md-list-item>
                     <md-icon>error</md-icon>
                     <span class="md-list-item-text">
-                        <router-link :to="{ name: 'relax' }" class="nav-link active">Relax</router-link>
+                        <router-link :to="{ name: 'relax' }" exact>Relax</router-link>
                     </span>
-                </md-list-item>
-            </md-list>
-        </md-drawer>
-
-        <md-drawer class="md-right" :md-active.sync="showSidepanel">
-            <md-toolbar class="md-transparent" md-elevation="0">
-                <span class="md-title">Favorites</span>
-            </md-toolbar>
-
-            <md-list>
-                <md-list-item>
-                    <span class="md-list-item-text">Abbey Christansen</span>
-
-                    <md-button class="md-icon-button md-list-action">
-                        <md-icon class="md-primary">chat_bubble</md-icon>
-                    </md-button>
-                </md-list-item>
-
-                <md-list-item>
-                    <span class="md-list-item-text">Alex Nelson</span>
-
-                    <md-button class="md-icon-button md-list-action">
-                        <md-icon class="md-primary">chat_bubble</md-icon>
-                    </md-button>
-                </md-list-item>
-
-                <md-list-item>
-                    <span class="md-list-item-text">Mary Johnson</span>
-
-                    <md-button class="md-icon-button md-list-action">
-                        <md-icon>chat_bubble</md-icon>
-                    </md-button>
                 </md-list-item>
             </md-list>
         </md-drawer>
 
         <md-content>
-            <div class="container-fluid">
+            <div>
                 <router-view></router-view>
             </div>
         </md-content>
@@ -92,7 +83,18 @@
         data: () => ({
             showNavigation: false,
             showSidepanel: false
-        })
+        }),
+        methods: {
+            logout() {
+                this.$store.commit("logout");
+                this.$router.push("/login");
+            }
+        },
+        computed: {
+            currentUser() {
+               return this.$store.getters.currentUser;
+            }
+        }
     }
 </script>
 
@@ -104,7 +106,6 @@
         border: 1px solid rgba(#000, .12);
     }
 
-    // Demo purposes only
     .md-drawer {
         width: 230px;
         max-width: calc(100vw - 125px);
@@ -112,5 +113,33 @@
 
     .md-content {
         padding: 16px;
+    }
+
+    .md-list-item a{
+        color: #757575;
+    }
+    .md-list-item a:hover{
+        color: #757575;
+        text-decoration: none;
+    }
+
+    .router-link-active {
+        background: #757575;
+        color: #fff !important;
+        padding: 10px 5px;
+        width: 100%;
+        height: 36px;
+        font-weight: 500;
+        text-transform: uppercase;
+        border-radius: 2px;
+        box-shadow: rgba(0, 0, 0, 0.2) 0 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+    }
+
+    .router-link-active:hover {
+        text-decoration: none!important;
+    }
+
+    .md-list-item-text {
+        overflow: initial!important;
     }
 </style>

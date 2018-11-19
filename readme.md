@@ -31,6 +31,9 @@ Laravel is accessible, yet powerful, providing tools needed for large, robust ap
 - Создаем SPA с помощью Vue и Laravel [Часть 1](https://laravelnews.ru/sozdaem-spa-s-pomoshchyu-vue-i-laravel-chast-1)
 - Создаем SPA с помощью Vue и Laravel [Часть 1](https://laravelnews.ru/sozdaem-spa-s-pomoshchyu-vue-i-laravel-chast-1)
 - Создаем SPA с помощью Vue и Laravel [Часть 3](https://laravelnews.ru/sozdaem-spa-s-pomoshchyu-vue-i-laravel-chast-3)
+- Авторизация в SPA via JWT-auth [подробнее](https://jwt-auth.readthedocs.io/en/develop/laravel-installation/)
+- Управляем состоянием приложения с помощью [Vuex](https://habr.com/post/322354/)
+- [Vue Material](https://vuematerial.io/)
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

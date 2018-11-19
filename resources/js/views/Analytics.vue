@@ -1,9 +1,9 @@
 <template>
     <div class="md-layout md-gutter">
-        <div class="md-layout-item"> <pre>{{this.data}}</pre></div>
+        <div class="md-layout-item"> <pre>{{this.analiticData}}</pre></div>
         <div class="md-layout-item">
             <div class="small">
-                <button @click="fillData()">Randomize</button>
+                <md-button class="md-dense md-raised md-primary" @click="fillData()">Randomize</md-button>
                 <line-chart :chart-data="datacollection" :height="120" :options="{responsive: true, maintainAspectRatio: true}" ></line-chart>
             </div>
             <div>
@@ -22,11 +22,10 @@
                         </div>
                     </md-table-toolbar>
 
-                    <md-table-row slot="md-table-row" slot-scope="{ item }" :md-disabled="item.name.includes('Stave')" md-selectable="multiple" md-auto-select>
-                        <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
-                        <md-table-cell md-label="Email" md-sort-by="email">{{ item.email }}</md-table-cell>
-                        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.gender }}</md-table-cell>
-                        <md-table-cell md-label="Job Title" md-sort-by="title">{{ item.title }}</md-table-cell>
+                    <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
+                        <md-table-cell md-label="Name" md-sort-by="name">{{ item.url }}</md-table-cell>
+                        <md-table-cell md-label="Email" md-sort-by="email">{{ item.call }}</md-table-cell>
+                        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.created_at.date | formatDate}}</md-table-cell>
                     </md-table-row>
                 </md-table>
 
@@ -34,51 +33,27 @@
                 {{ selected }}
             </div>
         </div>
-        <div class="md-layout-item"> <pre>{{this.data}}</pre></div>
     </div>
 </template>
 
 <script>
-    import axios from 'axios'
     import LineChart from '../components/charts/LineChart.js'
     export default {
         data: () => ({
-            data: null,
             datacollection: null,
             options: {
                 responsive: true,
             },
             people: [
                 {
-                    name: 'Shawna Dubbin',
-                    email: 'sdubbin0@geocities.com',
-                    gender: 'Male',
-                    title: 'Assistant Media Planner'
+                    url: 'denchklut.com',
+                    call: '10',
+                    created_at: {
+                        "date": "2018-11-13 00:00:00.000000",
+                        "timezone_type": 3,
+                        "timezone": "UTC"
+                    },
                 },
-                {
-                    name: 'Odette Demageard',
-                    email: 'odemageard1@spotify.com',
-                    gender: 'Female',
-                    title: 'Account Coordinator'
-                },
-                {
-                    name: 'Lonnie Izkovitz',
-                    email: 'lizkovitz3@youtu.be',
-                    gender: 'Female',
-                    title: 'Operator'
-                },
-                {
-                    name: 'Thatcher Stave',
-                    email: 'tstave4@reference.com',
-                    gender: 'Male',
-                    title: 'Software Test Engineer III'
-                },
-                {
-                    name: 'Clarinda Marieton',
-                    email: 'cmarietonh@theatlantic.com',
-                    gender: 'Female',
-                    title: 'Paralegal'
-                }
             ],
             selected:[]
         }),
@@ -86,13 +61,6 @@
             LineChart
         },
         methods: {
-            fetchData() {
-                axios
-                    .get('/api')
-                    .then(responce => {
-                        this.data = responce.data.data;
-                    })
-            },
             fillData () {
                 this.datacollection = {
                     labels: ['пн', 'вт','ср','чт','пт','сб','вс'],
@@ -122,12 +90,12 @@
                 return Math.floor(Math.random() * (50 - 5 + 1)) + 5
             },
             onSelect (items) {
-                this.selected = items
-                console.log('select event')
+                this.selected = items;
+                console.log('select event');
                 console.log(items)
             },
             getAlternateLabel (count) {
-                let plural = ''
+                let plural = '';
 
                 if (count > 1) {
                     plural = 's'
@@ -137,12 +105,17 @@
             }
         },
         created() {
-            this.fetchData();
             this.fillData();
         },
-        mounted () {
-            this.renderChart(this.datacollection, this.options)
+        mounted() {
+            this.$store.dispatch('getAnaliticData');
         },
+
+        computed: {
+            analiticData() {
+                return this.$store.getters.analiticData;
+            },
+        }
     }
 </script>
 

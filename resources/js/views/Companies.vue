@@ -15,7 +15,7 @@
                     </div>
 
                     <md-field md-clearable>
-                        <md-input placeholder="Search by name..." v-model="search" @input="searchOnTable" />
+                        <md-input placeholder="Search by name..." v-model="search" />
                     </md-field>
                 </md-toolbar>
             </md-ripple>
@@ -50,7 +50,7 @@
 
         <!--Edit Dialog-->
         <md-dialog :md-active.sync="showDialog">
-            <edit @CloseDialog="closeDialog" @ShowLogSave="LogSave" @editCompanyE="fetchData" :form="editCompain"></edit>
+            <edit @CloseDialog="closeDialog" @ShowLogSave="LogSave" :form="editCompain"></edit>
             <md-snackbar :md-active.sync="userSaved">Pixel {{`${this.lastUser}`}} был изменен успешно!</md-snackbar>
         </md-dialog>
     </div>
@@ -77,8 +77,6 @@
         name: 'TableSearch',
         data: () => ({
             search: null,
-            searched: [],
-            users: [],
             showDialog: false,
             editCompain: null,
             userSaved: false,
@@ -89,17 +87,8 @@
             'edit': EditCompany,
         },
         methods: {
-            searchOnTable () {
-                this.searched = searchByName(this.users, this.search)
-            },
-            fetchData() {
-                axios
-                    .get('/api/companies')
-                    .then(response => {
-                        this.users = response.data.data;
-                        this.searched = this.users;
-                        // console.log(this.users)
-                    });
+            fetchData(){
+                this.$store.dispatch('getCompanies');
             },
             deleteItem(item) {
                 axios.delete('/api/companies/' + item.id)
@@ -110,7 +99,6 @@
                     });
             },
             closeDialog() {
-                this.fetchData();
                 this.showDialog = false;
             },
             showEditForm(compaing) {
@@ -125,9 +113,18 @@
                 }, 1500)
             }
         },
-        created () {
-            this.fetchData();
+        mounted() {
+            this.$store.dispatch('getCompanies');
         },
+
+        computed: {
+            searched() {
+                return searchByName(this.$store.getters.companies, this.search);
+            },
+            currentUser() {
+                return this.$store.getters.currentUser;
+            }
+        }
     }
 </script>
 

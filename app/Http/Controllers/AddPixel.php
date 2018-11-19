@@ -34,6 +34,10 @@ class AddPixel extends Controller
 
         /* выборка id из таблиц */
         $resultCampaigns = Companies::orderby('id','id_campaign')->first();//из таблицы Campaigns выбираем последний id
+
+
+        var_dump($resultCampaigns);
+        exit;
         /* выборка id из таблиц */
 
 
@@ -66,7 +70,6 @@ class AddPixel extends Controller
          $campaing->signature = $signature;
          $campaing->sig = hash('sha1',$id_campaign.$signature.$password.$url);
          $campaing->url = $url;
-         $campaing->template_default = $TemplatesDefaulr->name;
 
          $campaing->save();
 

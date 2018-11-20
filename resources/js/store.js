@@ -11,6 +11,8 @@ export default {
         auth_error: null,
         analiticData: [],
         companies: [],
+        triggers: [],
+        templates: []
     },
     getters: {
         test(state) {
@@ -33,6 +35,12 @@ export default {
         },
         companies(state) {
             return state.companies;
+        },
+        triggers(state) {
+            return state.triggers;
+        },
+        templates(state) {
+            return state.templates;
         },
     },
     mutations: {
@@ -66,7 +74,17 @@ export default {
         deleteCompony(state, payload) {
             let index = state.companies.indexOf(payload);
             state.companies.splice(index, 1);
-        }
+        },
+        updateTriggers(state, payload) {
+            state.triggers =  payload;
+        },
+        deleteTriggers(state, payload) {
+            let index = state.triggers.indexOf(payload);
+            state.triggers.splice(index, 1);
+        },
+        updateTemplates(state, payload) {
+            state.templates =  payload;
+        },
     },
     actions: {
         login(context) {
@@ -102,6 +120,29 @@ export default {
             axios.delete('/api/companies/' + item.id)
                 .then(response => {
                     context.commit('deleteCompony', item);
+                });
+        },
+        getTrigger: (context, id) => {
+            axios
+                .get('/api/containers/' + id, id)
+                .then(response => {
+                    context.commit('updateTriggers', response.data.data);
+
+                });
+        },
+        deleteTrigger: (context, item) => {
+            axios.delete('/api/containers/' + item.id)
+                .then(response => {
+                    context.commit('deleteTriggers', item);
+
+                });
+        },
+        getTemplates: context => {
+            axios
+                .get('/api/defaults')
+                .then(response => {
+                    context.commit('updateTemplates', response.data.data);
+
                 });
         },
     },

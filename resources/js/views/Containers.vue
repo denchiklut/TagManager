@@ -112,7 +112,6 @@
 </template>
 
 <script>
-    import axios from 'axios'
     import AddTrigeger from '../components/containers/AddTrigger'
     import EditTrigger from '../components/containers/EditTrigger'
     import template_1 from '../components/scripts/template_1'
@@ -135,8 +134,6 @@
         data () {
             return {
                 search: null,
-                searched: [],
-                containers: [],
                 showAddDialog: false,
                 showEditDialog: false,
                 editTrigger: null,
@@ -144,7 +141,6 @@
                 userEdit:false,
                 lastUser:null,
                 defUrl: null,
-                defaults: [],
                 showT: false,
             }
         },
@@ -155,23 +151,6 @@
         },
 
         methods: {
-            fetchData() {
-                axios
-                    .get('/api/containers/' + this.id, this.id)
-                    .then(response => {
-                        this.containers = response.data.data;
-                        this.searched = this.containers;
-                        console.log(this.searched)
-                    });
-            },
-            fetchTemplates() {
-                axios
-                    .get('/api/defaults')
-                    .then(response => {
-                        this.defaults = response.data.data;
-                        console.log(this.defaults);
-                    });
-            },
             searchOnTable () {
                 this.searched = searchByName(this.containers, this.search)
             },
@@ -180,16 +159,11 @@
                 this.showEditDialog = true;
             },
             deleteFilter(item) {
-                axios.delete('/api/containers/' + item.id)
-                    .then(response => {
-                        let index = this.containers.indexOf(item);
-                        this.containers.splice(index, 1);
-                    });
+                this.$store.dispatch('deleteTrigger', item);
             },
             closeDialog() {
                 this.showAddDialog = false;
                 this.showEditDialog = false;
-                this.fetchData();
             },
             showLog(data) {
                 this.lastUser = data.data.trigger;
@@ -205,7 +179,7 @@
 
                 window.setTimeout(() => {
                     this.userSaved = false;
-                }, 1500)
+                }, 1000)
             },
             getName (id) {
                 return (this.defaults.filter((item)=>{
@@ -213,12 +187,17 @@
                          })[0]).name
             }
         },
-        created() {
-            this.fetchData();
-            this.fetchTemplates();
+        mounted() {
+            this.$store.dispatch('getTrigger', this.id);
+            this.$store.dispatch('getTemplates');
         },
-        filters: {
-
+        computed: {
+            searched() {
+                return searchByName(this.$store.getters.triggers, this.search);
+            },
+            defaults() {
+                return this.$store.getters.templates;
+            }
         }
     }
 </script>

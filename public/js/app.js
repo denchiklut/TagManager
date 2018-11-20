@@ -5543,12 +5543,6 @@ module.exports = Element;
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(164);
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
 "use strict";
 
 
@@ -5596,7 +5590,7 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5608,6 +5602,12 @@ module.exports.Line = __webpack_require__(238);
 module.exports.Point = __webpack_require__(239);
 module.exports.Rectangle = __webpack_require__(240);
 
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(164);
 
 /***/ }),
 /* 12 */
@@ -19836,7 +19836,7 @@ module.exports = Vue;
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = initialize;
 /* harmony export (immutable) */ __webpack_exports__["b"] = setAuthorization;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 
 
@@ -34441,7 +34441,7 @@ try {
     // require('bootstrap');
 } catch (e) {}
 
-window.axios = __webpack_require__(9);
+window.axios = __webpack_require__(11);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -69493,7 +69493,9 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         loading: false,
         auth_error: null,
         analiticData: [],
-        companies: []
+        companies: [],
+        triggers: [],
+        templates: []
     },
     getters: {
         test: function test(state) {
@@ -69516,6 +69518,12 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         },
         companies: function companies(state) {
             return state.companies;
+        },
+        triggers: function triggers(state) {
+            return state.triggers;
+        },
+        templates: function templates(state) {
+            return state.templates;
         }
     },
     mutations: {
@@ -69549,6 +69557,16 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         deleteCompony: function deleteCompony(state, payload) {
             var index = state.companies.indexOf(payload);
             state.companies.splice(index, 1);
+        },
+        updateTriggers: function updateTriggers(state, payload) {
+            state.triggers = payload;
+        },
+        deleteTriggers: function deleteTriggers(state, payload) {
+            var index = state.triggers.indexOf(payload);
+            state.triggers.splice(index, 1);
+        },
+        updateTemplates: function updateTemplates(state, payload) {
+            state.templates = payload;
         }
     },
     actions: {
@@ -69579,6 +69597,21 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         deleteCompony: function deleteCompony(context, item) {
             axios.delete('/api/companies/' + item.id).then(function (response) {
                 context.commit('deleteCompony', item);
+            });
+        },
+        getTrigger: function getTrigger(context, id) {
+            axios.get('/api/containers/' + id, id).then(function (response) {
+                context.commit('updateTriggers', response.data.data);
+            });
+        },
+        deleteTrigger: function deleteTrigger(context, item) {
+            axios.delete('/api/containers/' + item.id).then(function (response) {
+                context.commit('deleteTriggers', item);
+            });
+        },
+        getTemplates: function getTemplates(context) {
+            axios.get('/api/defaults').then(function (response) {
+                context.commit('updateTemplates', response.data.data);
             });
         }
     }
@@ -69710,7 +69743,7 @@ var content = __webpack_require__(191);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("09a9ebb5", content, false, {});
+var update = __webpack_require__(6)("843dc57c", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -70089,7 +70122,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var withParams = Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).BUILD === 'web' ? __webpack_require__(197).withParams : __webpack_require__(29).withParams;
+var withParams = Object({"MIX_PUSHER_APP_KEY":"","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).BUILD === 'web' ? __webpack_require__(197).withParams : __webpack_require__(29).withParams;
 var _default = withParams;
 exports.default = _default;
 
@@ -70848,7 +70881,7 @@ var content = __webpack_require__(221);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("41c1d61e", content, false, {});
+var update = __webpack_require__(6)("4a21e004", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -71293,13 +71326,13 @@ Chart.Animation = __webpack_require__(31);
 Chart.animationService = __webpack_require__(32);
 Chart.defaults = __webpack_require__(2);
 Chart.Element = __webpack_require__(8);
-Chart.elements = __webpack_require__(11);
+Chart.elements = __webpack_require__(10);
 Chart.Interaction = __webpack_require__(33);
 Chart.layouts = __webpack_require__(14);
 Chart.platform = __webpack_require__(34);
 Chart.plugins = __webpack_require__(35);
 Chart.Scale = __webpack_require__(15);
-Chart.scaleService = __webpack_require__(10);
+Chart.scaleService = __webpack_require__(9);
 Chart.Ticks = __webpack_require__(16);
 Chart.Tooltip = __webpack_require__(36);
 
@@ -72048,7 +72081,7 @@ module.exports = {
 var color = __webpack_require__(30);
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var scaleService = __webpack_require__(10);
+var scaleService = __webpack_require__(9);
 
 module.exports = function() {
 
@@ -74896,7 +74929,7 @@ var Interaction = __webpack_require__(33);
 var layouts = __webpack_require__(14);
 var platform = __webpack_require__(34);
 var plugins = __webpack_require__(35);
-var scaleService = __webpack_require__(10);
+var scaleService = __webpack_require__(9);
 var Tooltip = __webpack_require__(36);
 
 module.exports = function(Chart) {
@@ -76396,7 +76429,7 @@ module.exports = function(Chart) {
 
 
 var Scale = __webpack_require__(15);
-var scaleService = __webpack_require__(10);
+var scaleService = __webpack_require__(9);
 
 module.exports = function() {
 
@@ -76539,7 +76572,7 @@ module.exports = function() {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var scaleService = __webpack_require__(10);
+var scaleService = __webpack_require__(9);
 var Ticks = __webpack_require__(16);
 
 module.exports = function(Chart) {
@@ -76738,7 +76771,7 @@ module.exports = function(Chart) {
 
 var helpers = __webpack_require__(1);
 var Scale = __webpack_require__(15);
-var scaleService = __webpack_require__(10);
+var scaleService = __webpack_require__(9);
 var Ticks = __webpack_require__(16);
 
 /**
@@ -77094,7 +77127,7 @@ module.exports = function(Chart) {
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var scaleService = __webpack_require__(10);
+var scaleService = __webpack_require__(9);
 var Ticks = __webpack_require__(16);
 
 module.exports = function(Chart) {
@@ -77636,7 +77669,7 @@ moment = typeof moment === 'function' ? moment : window.moment;
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
 var Scale = __webpack_require__(15);
-var scaleService = __webpack_require__(10);
+var scaleService = __webpack_require__(9);
 
 // Integer constants are from the ES6 spec.
 var MIN_INTEGER = Number.MIN_SAFE_INTEGER || -9007199254740991;
@@ -78718,7 +78751,7 @@ webpackContext.id = 252;
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(11);
+var elements = __webpack_require__(10);
 var helpers = __webpack_require__(1);
 
 defaults._set('bar', {
@@ -79206,7 +79239,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(11);
+var elements = __webpack_require__(10);
 var helpers = __webpack_require__(1);
 
 defaults._set('bubble', {
@@ -79386,7 +79419,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(11);
+var elements = __webpack_require__(10);
 var helpers = __webpack_require__(1);
 
 defaults._set('doughnut', {
@@ -79694,7 +79727,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(11);
+var elements = __webpack_require__(10);
 var helpers = __webpack_require__(1);
 
 defaults._set('line', {
@@ -80045,7 +80078,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(11);
+var elements = __webpack_require__(10);
 var helpers = __webpack_require__(1);
 
 defaults._set('polarArea', {
@@ -80307,7 +80340,7 @@ module.exports = function(Chart) {
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(11);
+var elements = __webpack_require__(10);
 var helpers = __webpack_require__(1);
 
 defaults._set('radar', {
@@ -80667,7 +80700,7 @@ module.exports.title = __webpack_require__(270);
 
 
 var defaults = __webpack_require__(2);
-var elements = __webpack_require__(11);
+var elements = __webpack_require__(10);
 var helpers = __webpack_require__(1);
 
 defaults._set('global', {
@@ -82046,7 +82079,7 @@ var content = __webpack_require__(274);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("04e56472", content, false, {});
+var update = __webpack_require__(6)("00b55f7f", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -82267,7 +82300,7 @@ var content = __webpack_require__(278);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("f6423e3c", content, false, {});
+var update = __webpack_require__(6)("35552a42", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -82711,7 +82744,7 @@ var content = __webpack_require__(283);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("2ae9736e", content, false, {});
+var update = __webpack_require__(6)("48de28e9", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -83554,7 +83587,7 @@ var content = __webpack_require__(289);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("1a9e0828", content, false, {});
+var update = __webpack_require__(6)("ce65228a", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -83589,14 +83622,12 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_containers_AddTrigger__ = __webpack_require__(291);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_containers_AddTrigger___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_containers_AddTrigger__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_containers_EditTrigger__ = __webpack_require__(296);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_containers_EditTrigger___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_containers_EditTrigger__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_scripts_template_1__ = __webpack_require__(160);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_scripts_template_1___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_scripts_template_1__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_containers_AddTrigger__ = __webpack_require__(291);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_containers_AddTrigger___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__components_containers_AddTrigger__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_containers_EditTrigger__ = __webpack_require__(296);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_containers_EditTrigger___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_containers_EditTrigger__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_scripts_template_1__ = __webpack_require__(160);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_scripts_template_1___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_scripts_template_1__);
 //
 //
 //
@@ -83710,7 +83741,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-
 
 
 
@@ -83736,8 +83766,6 @@ var searchByName = function searchByName(items, term) {
     data: function data() {
         return {
             search: null,
-            searched: [],
-            containers: [],
             showAddDialog: false,
             showEditDialog: false,
             editTrigger: null,
@@ -83745,35 +83773,17 @@ var searchByName = function searchByName(items, term) {
             userEdit: false,
             lastUser: null,
             defUrl: null,
-            defaults: [],
             showT: false
         };
     },
 
     components: {
-        'add': __WEBPACK_IMPORTED_MODULE_1__components_containers_AddTrigger___default.a,
-        'edit': __WEBPACK_IMPORTED_MODULE_2__components_containers_EditTrigger___default.a,
-        'script_t': __WEBPACK_IMPORTED_MODULE_3__components_scripts_template_1___default.a
+        'add': __WEBPACK_IMPORTED_MODULE_0__components_containers_AddTrigger___default.a,
+        'edit': __WEBPACK_IMPORTED_MODULE_1__components_containers_EditTrigger___default.a,
+        'script_t': __WEBPACK_IMPORTED_MODULE_2__components_scripts_template_1___default.a
     },
 
     methods: {
-        fetchData: function fetchData() {
-            var _this = this;
-
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/containers/' + this.id, this.id).then(function (response) {
-                _this.containers = response.data.data;
-                _this.searched = _this.containers;
-                console.log(_this.searched);
-            });
-        },
-        fetchTemplates: function fetchTemplates() {
-            var _this2 = this;
-
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/defaults').then(function (response) {
-                _this2.defaults = response.data.data;
-                console.log(_this2.defaults);
-            });
-        },
         searchOnTable: function searchOnTable() {
             this.searched = searchByName(this.containers, this.search);
         },
@@ -83782,37 +83792,31 @@ var searchByName = function searchByName(items, term) {
             this.showEditDialog = true;
         },
         deleteFilter: function deleteFilter(item) {
-            var _this3 = this;
-
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete('/api/containers/' + item.id).then(function (response) {
-                var index = _this3.containers.indexOf(item);
-                _this3.containers.splice(index, 1);
-            });
+            this.$store.dispatch('deleteTrigger', item);
         },
         closeDialog: function closeDialog() {
             this.showAddDialog = false;
             this.showEditDialog = false;
-            this.fetchData();
         },
         showLog: function showLog(data) {
-            var _this4 = this;
+            var _this = this;
 
             this.lastUser = data.data.trigger;
             this.userSaved = true;
 
             window.setTimeout(function () {
-                _this4.userSaved = false;
+                _this.userSaved = false;
             }, 1500);
         },
         showLogEdit: function showLogEdit(data) {
-            var _this5 = this;
+            var _this2 = this;
 
             this.lastUser = data.data;
             this.userEdit = true;
 
             window.setTimeout(function () {
-                _this5.userSaved = false;
-            }, 1500);
+                _this2.userSaved = false;
+            }, 1000);
         },
         getName: function getName(id) {
             return this.defaults.filter(function (item) {
@@ -83820,12 +83824,19 @@ var searchByName = function searchByName(items, term) {
             })[0].name;
         }
     },
-    created: function created() {
-        this.fetchData();
-        this.fetchTemplates();
+    mounted: function mounted() {
+        this.$store.dispatch('getTrigger', this.id);
+        this.$store.dispatch('getTemplates');
     },
 
-    filters: {}
+    computed: {
+        searched: function searched() {
+            return searchByName(this.$store.getters.triggers, this.search);
+        },
+        defaults: function defaults() {
+            return this.$store.getters.templates;
+        }
+    }
 });
 
 /***/ }),
@@ -83890,7 +83901,7 @@ var content = __webpack_require__(293);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("e2729d28", content, false, {});
+var update = __webpack_require__(6)("5d1a7b8c", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -83925,7 +83936,7 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
@@ -84381,7 +84392,7 @@ var content = __webpack_require__(298);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("32099912", content, false, {});
+var update = __webpack_require__(6)("39bea552", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -84416,7 +84427,7 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
@@ -84807,7 +84818,7 @@ var content = __webpack_require__(302);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("0a4730ea", content, false, {});
+var update = __webpack_require__(6)("5f9b949e", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -85623,7 +85634,7 @@ var content = __webpack_require__(308);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("c7b90c08", content, false, {});
+var update = __webpack_require__(6)("d01915ee", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -85658,7 +85669,7 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_scripts_template_1__ = __webpack_require__(160);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_scripts_template_1___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_scripts_template_1__);
@@ -85983,7 +85994,7 @@ var content = __webpack_require__(313);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("394aec67", content, false, {});
+var update = __webpack_require__(6)("474475f4", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -86351,7 +86362,7 @@ var content = __webpack_require__(318);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(6)("f87cbf54", content, false, {});
+var update = __webpack_require__(6)("2dba2923", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags

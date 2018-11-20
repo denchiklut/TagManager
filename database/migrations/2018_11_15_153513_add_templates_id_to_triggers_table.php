@@ -14,7 +14,7 @@ class AddTemplatesIdToTriggersTable extends Migration
     public function up()
     {
         Schema::table('triggers', function (Blueprint $table) {
-            $table->string('templates_id')->nullable();
+            $table->string('templates')->nullable();
         });
     }
 

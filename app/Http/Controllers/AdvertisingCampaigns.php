@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Companies;
 use App\Models\Triggers;
+use App\Models\Templates;
 
 
 class AdvertisingCampaigns extends Controller
@@ -20,8 +21,14 @@ class AdvertisingCampaigns extends Controller
      */
     public function index($hash_advertisings)
     {
+
+
         //информация по по рк.
-        $compains = Companies::where('sig', $hash_advertisings)->first();
+        $compains = Companies::where('sig', $hash_advertisings)
+            ->crossJoin('templates')->where('default',1)
+            ->first();
+
+
 
         $Analitics = new AnaliticsController();
 
@@ -31,6 +38,8 @@ class AdvertisingCampaigns extends Controller
         ];
 
         $Analitics->store($data);
+
+
 
         //если есть тригер
         if($compains->trigger)
@@ -44,7 +53,8 @@ class AdvertisingCampaigns extends Controller
                 {
                     if ((strpos(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER']: $_SERVER['REQUEST_URI'], $trigger->trigger) !== false))
                     {
-                        $script = templateCode($compains);
+                        $script = templateCode($triggers->new_campaign, $triggers->templates );
+
                         return view('pixel.index', compact( 'script'));
                     }
                 }
@@ -52,7 +62,8 @@ class AdvertisingCampaigns extends Controller
         }
 
 
-        $script = templateCode($compains);
+        $script = templateCode($compains->id_campaign, $compains->name);
+
         return view('pixel.index', compact( 'script'));
     }
 }

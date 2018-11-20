@@ -103,10 +103,8 @@
       </md-dialog>
 
       <md-dialog :md-active.sync="showEditDialog">
-          <edit @ShowLogEdit="showLogEdit" @editTriggerE="closeDialog" :form="editTrigger"></edit>
+          <edit @editTriggerE="closeDialog" :form="editTrigger"></edit>
       </md-dialog>
-
-      <md-snackbar :md-active.sync="userEdit">Trigger {{ lastUser }} изменен успешно!</md-snackbar>
   </div>
 </template>
 
@@ -163,14 +161,6 @@
             closeDialog() {
                 this.showAddDialog = false;
                 this.showEditDialog = false;
-            },
-            showLogEdit(data) {
-                this.lastUser = data.data;
-                this.userEdit = true;
-
-                window.setTimeout(() => {
-                    this.userSaved = false;
-                }, 1000)
             },
             getName (id) {
                 return (this.defaults.filter((item)=>{

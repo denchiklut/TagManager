@@ -56,7 +56,6 @@
     import {
         required,
         maxLength,
-        url
 
     } from 'vuelidate/lib/validators'
 
@@ -82,7 +81,6 @@
                 url: {
                     required,
                     maxLength: maxLength(2083),
-                    url,
                 },
             }
         },

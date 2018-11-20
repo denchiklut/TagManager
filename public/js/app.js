@@ -69558,9 +69558,10 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
             var index = state.companies.indexOf(payload);
             state.companies.splice(index, 1);
         },
-        addTriggers: function addTriggers(state, payload) {
-            state.triggers.push(payload);
-        },
+
+        // addTriggers(state, payload) {
+        //     state.triggers.push(payload);
+        // },
         updateTriggers: function updateTriggers(state, payload) {
             state.triggers = payload;
         },
@@ -69611,6 +69612,12 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
             axios.post('/api/containers', form).then(function (response) {
                 context.dispatch('getTrigger', form.id_campaign);
                 // context.commit('addTriggers', form);
+            });
+        },
+        editTrigger: function editTrigger(context, form) {
+            axios.patch('/api/containers/' + form.id, form).then(function (response) {
+                context.dispatch('getTrigger', form.id_campaign);
+                // console.log(this.form);
             });
         },
         deleteTrigger: function deleteTrigger(context, item) {
@@ -82428,8 +82435,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         form: {
             url: {
                 required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"],
-                maxLength: Object(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["maxLength"])(2083),
-                url: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["url"]
+                maxLength: Object(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["maxLength"])(2083)
             }
         }
     },
@@ -82912,8 +82918,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             },
             url: {
-                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"],
-                url: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["url"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             }
             // trigger: {
             //     required
@@ -83747,8 +83752,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 
 
@@ -83805,16 +83808,6 @@ var searchByName = function searchByName(items, term) {
         closeDialog: function closeDialog() {
             this.showAddDialog = false;
             this.showEditDialog = false;
-        },
-        showLogEdit: function showLogEdit(data) {
-            var _this = this;
-
-            this.lastUser = data.data;
-            this.userEdit = true;
-
-            window.setTimeout(function () {
-                _this.userSaved = false;
-            }, 1000);
         },
         getName: function getName(id) {
             return this.defaults.filter(function (item) {
@@ -84438,12 +84431,11 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vuelidate__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__);
+//
 //
 //
 //
@@ -84507,34 +84499,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['form'],
-    mixins: [__WEBPACK_IMPORTED_MODULE_1_vuelidate__["validationMixin"]],
+    mixins: [__WEBPACK_IMPORTED_MODULE_0_vuelidate__["validationMixin"]],
     data: function data() {
         return {
             userSaved: false,
             lastUser: null,
-            sending: false,
-            defaults: []
+            sending: false
         };
     },
     validations: {
         form: {
             trigger: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             },
             new_campaign: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             }
         }
     },
     methods: {
-        fetchTemplates: function fetchTemplates() {
-            var _this = this;
-
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/defaults').then(function (response) {
-                _this.defaults = response.data.data;
-                console.log(_this.defaults);
-            });
-        },
         getValidationClass: function getValidationClass(fieldName) {
             var field = this.$v.form[fieldName];
 
@@ -84545,20 +84528,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         savePixel: function savePixel() {
-            var _this2 = this;
+            var _this = this;
 
             this.sending = true;
-            this.sending = true;
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/containers/' + this.form.id, this.form).then(function (response) {
-                // console.log(this.form);
-                _this2.$emit('editTriggerE');
-                _this2.lastUser = '' + _this2.form.trigger;
-                _this2.$emit('ShowLogEdit', { data: _this2.lastUser });
-            });
+            this.lastUser = '' + this.form.trigger;
+            this.$store.dispatch('editTrigger', this.form);
 
             window.setTimeout(function () {
-                _this2.sending = false;
-                _this2.close();
+                _this.userSaved = true;
+                _this.sending = false;
+                _this.close();
             }, 1500);
         },
         validateUser: function validateUser() {
@@ -84574,8 +84553,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.$emit('editTriggerE');
         }
     },
-    created: function created() {
-        this.fetchTemplates();
+
+    computed: {
+        defaults: function defaults() {
+            return this.$store.getters.templates;
+        }
     }
 });
 
@@ -84587,226 +84569,248 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "form",
-      {
-        staticClass: "md-layout",
-        attrs: { novalidate: "" },
-        on: {
-          submit: function($event) {
-            $event.preventDefault()
-            return _vm.validateUser($event)
+  return _c(
+    "div",
+    [
+      _c(
+        "form",
+        {
+          staticClass: "md-layout",
+          attrs: { novalidate: "" },
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.validateUser($event)
+            }
           }
-        }
-      },
-      [
-        _c(
-          "md-card",
-          {
-            staticClass: "md-layout-item md-small-size-100",
-            attrs: { "md-with-hover": "" }
-          },
-          [
-            _c(
-              "md-toolbar",
-              {
-                staticClass: "md-primary",
-                attrs: { "md-theme": "myTheme", "md-aligment": "space-between" }
-              },
-              [
-                _c("div", { staticClass: "md-title" }, [
-                  _vm._v("Редактировать Фильтр")
-                ])
-              ]
-            ),
-            _vm._v(" "),
-            _c("md-card-content", [
-              _c("div", { staticClass: "md-layout md-gutter" }, [
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("trigger"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "trigger" } }, [
-                          _vm._v("trigger")
-                        ]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            name: "trigger",
-                            id: "trigger",
-                            autocomplete: "trigger",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.trigger,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "trigger", $$v)
-                            },
-                            expression: "form.trigger"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.trigger.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The trigger is required")
-                            ])
-                          : !_vm.$v.form.trigger.minLength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid trigger")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("id_campaign"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "new_campaign" } }, [
-                          _vm._v("new_campaign")
-                        ]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            name: "new_campaign",
-                            id: "new_campaign",
-                            autocomplete: "new_campaign",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.new_campaign,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "new_campaign", $$v)
-                            },
-                            expression: "form.new_campaign"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.new_campaign.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The new_campaign is required")
-                            ])
-                          : !_vm.$v.form.new_campaign.minLength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid new_campaign")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                )
-              ]),
+        },
+        [
+          _c(
+            "md-card",
+            {
+              staticClass: "md-layout-item md-small-size-100",
+              attrs: { "md-with-hover": "" }
+            },
+            [
+              _c(
+                "md-toolbar",
+                {
+                  staticClass: "md-primary",
+                  attrs: {
+                    "md-theme": "myTheme",
+                    "md-aligment": "space-between"
+                  }
+                },
+                [
+                  _c("div", { staticClass: "md-title" }, [
+                    _vm._v("Редактировать Фильтр")
+                  ])
+                ]
+              ),
               _vm._v(" "),
-              _c("div", { staticClass: "md-layout md-gutter" }, [
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      [
-                        _c("label", { attrs: { for: "def" } }, [
-                          _vm._v("Шаблон")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "md-select",
-                          {
+              _c("md-card-content", [
+                _c("div", { staticClass: "md-layout md-gutter" }, [
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        {
+                          class: _vm.getValidationClass("trigger"),
+                          attrs: { "md-theme": "myTheme" }
+                        },
+                        [
+                          _c("label", { attrs: { for: "trigger" } }, [
+                            _vm._v("trigger")
+                          ]),
+                          _vm._v(" "),
+                          _c("md-input", {
                             attrs: {
-                              name: "templates_id",
-                              id: "def",
-                              "md-dense": "",
+                              name: "trigger",
+                              id: "trigger",
+                              autocomplete: "trigger",
                               disabled: _vm.sending
                             },
                             model: {
-                              value: _vm.form.templates_id,
+                              value: _vm.form.trigger,
                               callback: function($$v) {
-                                _vm.$set(_vm.form, "templates_id", $$v)
+                                _vm.$set(_vm.form, "trigger", $$v)
                               },
-                              expression: "form.templates_id"
+                              expression: "form.trigger"
                             }
-                          },
-                          _vm._l(_vm.defaults, function(d) {
-                            return _c(
-                              "div",
-                              [
-                                _c("md-option", { attrs: { value: d.id } }, [
-                                  _vm._v(_vm._s(d.name))
+                          }),
+                          _vm._v(" "),
+                          !_vm.$v.form.trigger.required
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("The trigger is required")
+                              ])
+                            : !_vm.$v.form.trigger.minLength
+                              ? _c("span", { staticClass: "md-error" }, [
+                                  _vm._v("Invalid trigger")
                                 ])
-                              ],
-                              1
-                            )
-                          })
-                        )
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                )
-              ])
-            ]),
-            _vm._v(" "),
-            _vm.sending
-              ? _c("md-progress-bar", { attrs: { "md-mode": "indeterminate" } })
-              : _vm._e(),
-            _vm._v(" "),
-            _c(
-              "md-card-actions",
-              [
-                _c(
-                  "md-button",
-                  {
-                    staticClass: "md-primary",
-                    attrs: { "md-theme": "myTheme" },
-                    on: { click: _vm.close }
-                  },
-                  [_vm._v("Отмена")]
-                ),
+                              : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        {
+                          class: _vm.getValidationClass("id_campaign"),
+                          attrs: { "md-theme": "myTheme" }
+                        },
+                        [
+                          _c("label", { attrs: { for: "new_campaign" } }, [
+                            _vm._v("new_campaign")
+                          ]),
+                          _vm._v(" "),
+                          _c("md-input", {
+                            attrs: {
+                              name: "new_campaign",
+                              id: "new_campaign",
+                              autocomplete: "new_campaign",
+                              disabled: _vm.sending
+                            },
+                            model: {
+                              value: _vm.form.new_campaign,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "new_campaign", $$v)
+                              },
+                              expression: "form.new_campaign"
+                            }
+                          }),
+                          _vm._v(" "),
+                          !_vm.$v.form.new_campaign.required
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("The new_campaign is required")
+                              ])
+                            : !_vm.$v.form.new_campaign.minLength
+                              ? _c("span", { staticClass: "md-error" }, [
+                                  _vm._v("Invalid new_campaign")
+                                ])
+                              : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ]),
                 _vm._v(" "),
-                _c(
-                  "md-button",
-                  {
-                    staticClass: "md-primary",
-                    attrs: {
-                      type: "submit",
-                      "md-theme": "myTheme",
-                      disabled: _vm.sending
-                    }
-                  },
-                  [_vm._v("Сохранить")]
-                )
-              ],
-              1
-            )
-          ],
-          1
-        )
-      ],
-      1
-    )
-  ])
+                _c("div", { staticClass: "md-layout md-gutter" }, [
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        [
+                          _c("label", { attrs: { for: "def" } }, [
+                            _vm._v("Шаблон")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "md-select",
+                            {
+                              attrs: {
+                                name: "templates_id",
+                                id: "def",
+                                "md-dense": "",
+                                disabled: _vm.sending
+                              },
+                              model: {
+                                value: _vm.form.templates_id,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.form, "templates_id", $$v)
+                                },
+                                expression: "form.templates_id"
+                              }
+                            },
+                            _vm._l(_vm.defaults, function(d) {
+                              return _c(
+                                "div",
+                                [
+                                  _c("md-option", { attrs: { value: d.id } }, [
+                                    _vm._v(_vm._s(d.name))
+                                  ])
+                                ],
+                                1
+                              )
+                            })
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _vm.sending
+                ? _c("md-progress-bar", {
+                    attrs: { "md-mode": "indeterminate" }
+                  })
+                : _vm._e(),
+              _vm._v(" "),
+              _c(
+                "md-card-actions",
+                [
+                  _c(
+                    "md-button",
+                    {
+                      staticClass: "md-primary",
+                      attrs: { "md-theme": "myTheme" },
+                      on: { click: _vm.close }
+                    },
+                    [_vm._v("Отмена")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "md-button",
+                    {
+                      staticClass: "md-primary",
+                      attrs: {
+                        type: "submit",
+                        "md-theme": "myTheme",
+                        disabled: _vm.sending
+                      }
+                    },
+                    [_vm._v("Сохранить")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "md-snackbar",
+        {
+          attrs: { "md-active": _vm.userSaved },
+          on: {
+            "update:mdActive": function($event) {
+              _vm.userSaved = $event
+            }
+          }
+        },
+        [_vm._v("Trigger " + _vm._s(_vm.lastUser) + " изменен успешно!")]
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -85538,23 +85542,10 @@ var render = function() {
         [
           _c("edit", {
             attrs: { form: _vm.editTrigger },
-            on: { ShowLogEdit: _vm.showLogEdit, editTriggerE: _vm.closeDialog }
+            on: { editTriggerE: _vm.closeDialog }
           })
         ],
         1
-      ),
-      _vm._v(" "),
-      _c(
-        "md-snackbar",
-        {
-          attrs: { "md-active": _vm.userEdit },
-          on: {
-            "update:mdActive": function($event) {
-              _vm.userEdit = $event
-            }
-          }
-        },
-        [_vm._v("Trigger " + _vm._s(_vm.lastUser) + " изменен успешно!")]
       )
     ],
     1

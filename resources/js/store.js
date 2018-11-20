@@ -75,9 +75,9 @@ export default {
             let index = state.companies.indexOf(payload);
             state.companies.splice(index, 1);
         },
-        addTriggers(state, payload) {
-            state.triggers.push(payload);
-        },
+        // addTriggers(state, payload) {
+        //     state.triggers.push(payload);
+        // },
         updateTriggers(state, payload) {
             state.triggers =  payload;
         },
@@ -137,6 +137,15 @@ export default {
                 .then(response => {
                     context.dispatch('getTrigger', form.id_campaign);
                     // context.commit('addTriggers', form);
+                });
+
+        },
+        editTrigger: (context, form) => {
+            axios.patch('/api/containers/' + form.id, form)
+                .then(response => {
+                    context.dispatch('getTrigger', form.id_campaign);
+                    // console.log(this.form);
+
                 });
 
         },

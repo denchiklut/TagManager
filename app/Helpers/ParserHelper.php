@@ -64,9 +64,8 @@ function codeBody($id_campaign)
 /**
  * @param $compains
  */
-function templateCode($compains)
+function templateCode($id_compains,$template)
 {
-    $id_compains = $compains->companies;
 
     $script = array(
         'TXE_Standart' => "var script = document.createElement('script');        
@@ -109,14 +108,7 @@ function templateCode($compains)
 
     );
 
-    if(isset($compains->template))
-    {
-        return $script[$compains->template];
-    }
-    else
-    {
-        return $script[$compains->template_default];
-    }
 
+    return $script[$template];
 
 }

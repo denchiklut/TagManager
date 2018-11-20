@@ -46,10 +46,17 @@ class ContainersController extends Controller
 
         $trigger = new Triggers();
 
+        $TemplatesDefaulr  = Templates::where('default',1)->first();
+
+
+
+
+        isset($request->templates_id) ?  $trigger->templates_id = $request->templates_id : $trigger->templates_id = $TemplatesDefaulr->name;
+
         $trigger->trigger = $request->trigger;
         $trigger->id_campaign = $request->id_campaign;
         $trigger->new_campaign = $request->new_campaign;
-        $trigger->templates_id = $request->templates_id;
+
         $trigger->save();
 
         $compaing = Companies::where('id_campaign', $request->id_campaign);

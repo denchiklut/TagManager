@@ -75,6 +75,9 @@ export default {
             let index = state.companies.indexOf(payload);
             state.companies.splice(index, 1);
         },
+        addTriggers(state, payload) {
+            state.triggers.push(payload);
+        },
         updateTriggers(state, payload) {
             state.triggers =  payload;
         },
@@ -107,7 +110,7 @@ export default {
         addCompony: (context, form) => {
             axios.post('/api/companies', form)
                 .then(response => {
-                    context.dispatch('getCompanies');
+                    context.commit('addTriggers', form);
                 });
         },
         editCompony: (context, form) => {
@@ -127,14 +130,20 @@ export default {
                 .get('/api/containers/' + id, id)
                 .then(response => {
                     context.commit('updateTriggers', response.data.data);
-
                 });
+        },
+        addTrigger: (context, form) => {
+            axios.post('/api/containers', form)
+                .then(response => {
+                    context.dispatch('getTrigger', form.id_campaign);
+                    // context.commit('addTriggers', form);
+                });
+
         },
         deleteTrigger: (context, item) => {
             axios.delete('/api/containers/' + item.id)
                 .then(response => {
                     context.commit('deleteTriggers', item);
-
                 });
         },
         getTemplates: context => {
@@ -142,7 +151,6 @@ export default {
                 .get('/api/defaults')
                 .then(response => {
                     context.commit('updateTemplates', response.data.data);
-
                 });
         },
     },

@@ -99,14 +99,13 @@
       </div>
 
       <md-dialog :md-active.sync="showAddDialog">
-          <add @AddTrigger="showLog" @CloseTriggerDialog="closeDialog" :old_comaing="id"></add>
+          <add  @CloseTriggerDialog="closeDialog" :old_comaing="id"></add>
       </md-dialog>
 
       <md-dialog :md-active.sync="showEditDialog">
           <edit @ShowLogEdit="showLogEdit" @editTriggerE="closeDialog" :form="editTrigger"></edit>
       </md-dialog>
 
-      <md-snackbar :md-active.sync="userSaved">Trigger {{ lastUser }} был добавлен успешно!</md-snackbar>
       <md-snackbar :md-active.sync="userEdit">Trigger {{ lastUser }} изменен успешно!</md-snackbar>
   </div>
 </template>
@@ -164,14 +163,6 @@
             closeDialog() {
                 this.showAddDialog = false;
                 this.showEditDialog = false;
-            },
-            showLog(data) {
-                this.lastUser = data.data.trigger;
-                this.userSaved = true;
-
-                window.setTimeout(() => {
-                    this.userSaved = false;
-                }, 1500)
             },
             showLogEdit(data) {
                 this.lastUser = data.data;

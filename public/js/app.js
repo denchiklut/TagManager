@@ -5548,7 +5548,7 @@ module.exports = Element;
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var layouts = __webpack_require__(14);
+var layouts = __webpack_require__(13);
 
 module.exports = {
 	// Scale registration object. Extensions can register new scale types (such as log or DB scales) and then
@@ -5605,12 +5605,6 @@ module.exports.Rectangle = __webpack_require__(240);
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(164);
-
-/***/ }),
-/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6291,7 +6285,7 @@ var _default = Vuelidate;
 exports.default = _default;
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6479,7 +6473,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6905,7 +6899,7 @@ module.exports = {
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6914,7 +6908,7 @@ module.exports = {
 var defaults = __webpack_require__(2);
 var Element = __webpack_require__(8);
 var helpers = __webpack_require__(1);
-var Ticks = __webpack_require__(16);
+var Ticks = __webpack_require__(15);
 
 defaults._set('scale', {
 	display: true,
@@ -7846,7 +7840,7 @@ module.exports = Element.extend({
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7927,6 +7921,12 @@ module.exports = {
 	}
 };
 
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(164);
 
 /***/ }),
 /* 17 */
@@ -19836,7 +19836,7 @@ module.exports = Vue;
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = initialize;
 /* harmony export (immutable) */ __webpack_exports__["b"] = setAuthorization;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 
 
@@ -34441,7 +34441,7 @@ try {
     // require('bootstrap');
 } catch (e) {}
 
-window.axios = __webpack_require__(11);
+window.axios = __webpack_require__(16);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -69558,6 +69558,9 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
             var index = state.companies.indexOf(payload);
             state.companies.splice(index, 1);
         },
+        addTriggers: function addTriggers(state, payload) {
+            state.triggers.push(payload);
+        },
         updateTriggers: function updateTriggers(state, payload) {
             state.triggers = payload;
         },
@@ -69586,7 +69589,7 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         },
         addCompony: function addCompony(context, form) {
             axios.post('/api/companies', form).then(function (response) {
-                context.dispatch('getCompanies');
+                context.commit('addTriggers', form);
             });
         },
         editCompony: function editCompony(context, form) {
@@ -69602,6 +69605,12 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         getTrigger: function getTrigger(context, id) {
             axios.get('/api/containers/' + id, id).then(function (response) {
                 context.commit('updateTriggers', response.data.data);
+            });
+        },
+        addTrigger: function addTrigger(context, form) {
+            axios.post('/api/containers', form).then(function (response) {
+                context.dispatch('getTrigger', form.id_campaign);
+                // context.commit('addTriggers', form);
             });
         },
         deleteTrigger: function deleteTrigger(context, item) {
@@ -69812,9 +69821,9 @@ module.exports = function listToStyles (parentId, list) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helpers_auth__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
 //
 //
@@ -71328,12 +71337,12 @@ Chart.defaults = __webpack_require__(2);
 Chart.Element = __webpack_require__(8);
 Chart.elements = __webpack_require__(10);
 Chart.Interaction = __webpack_require__(33);
-Chart.layouts = __webpack_require__(14);
+Chart.layouts = __webpack_require__(13);
 Chart.platform = __webpack_require__(34);
 Chart.plugins = __webpack_require__(35);
-Chart.Scale = __webpack_require__(15);
+Chart.Scale = __webpack_require__(14);
 Chart.scaleService = __webpack_require__(9);
-Chart.Ticks = __webpack_require__(16);
+Chart.Ticks = __webpack_require__(15);
 Chart.Tooltip = __webpack_require__(36);
 
 __webpack_require__(243)(Chart);
@@ -74926,7 +74935,7 @@ var animations = __webpack_require__(32);
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
 var Interaction = __webpack_require__(33);
-var layouts = __webpack_require__(14);
+var layouts = __webpack_require__(13);
 var platform = __webpack_require__(34);
 var plugins = __webpack_require__(35);
 var scaleService = __webpack_require__(9);
@@ -76225,7 +76234,7 @@ module.exports = function(Chart) {
 
 
 var helpers = __webpack_require__(1);
-var Scale = __webpack_require__(15);
+var Scale = __webpack_require__(14);
 
 /**
  * Generate a set of linear ticks
@@ -76428,7 +76437,7 @@ module.exports = function(Chart) {
 "use strict";
 
 
-var Scale = __webpack_require__(15);
+var Scale = __webpack_require__(14);
 var scaleService = __webpack_require__(9);
 
 module.exports = function() {
@@ -76573,7 +76582,7 @@ module.exports = function() {
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
 var scaleService = __webpack_require__(9);
-var Ticks = __webpack_require__(16);
+var Ticks = __webpack_require__(15);
 
 module.exports = function(Chart) {
 
@@ -76770,9 +76779,9 @@ module.exports = function(Chart) {
 
 
 var helpers = __webpack_require__(1);
-var Scale = __webpack_require__(15);
+var Scale = __webpack_require__(14);
 var scaleService = __webpack_require__(9);
-var Ticks = __webpack_require__(16);
+var Ticks = __webpack_require__(15);
 
 /**
  * Generate a set of logarithmic ticks
@@ -77128,7 +77137,7 @@ module.exports = function(Chart) {
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
 var scaleService = __webpack_require__(9);
-var Ticks = __webpack_require__(16);
+var Ticks = __webpack_require__(15);
 
 module.exports = function(Chart) {
 
@@ -77668,7 +77677,7 @@ moment = typeof moment === 'function' ? moment : window.moment;
 
 var defaults = __webpack_require__(2);
 var helpers = __webpack_require__(1);
-var Scale = __webpack_require__(15);
+var Scale = __webpack_require__(14);
 var scaleService = __webpack_require__(9);
 
 // Integer constants are from the ES6 spec.
@@ -81021,7 +81030,7 @@ module.exports = {
 var defaults = __webpack_require__(2);
 var Element = __webpack_require__(8);
 var helpers = __webpack_require__(1);
-var layouts = __webpack_require__(14);
+var layouts = __webpack_require__(13);
 
 var noop = helpers.noop;
 
@@ -81604,7 +81613,7 @@ module.exports = {
 var defaults = __webpack_require__(2);
 var Element = __webpack_require__(8);
 var helpers = __webpack_require__(1);
-var layouts = __webpack_require__(14);
+var layouts = __webpack_require__(13);
 
 var noop = helpers.noop;
 
@@ -82335,9 +82344,9 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__);
 //
 //
@@ -82779,9 +82788,9 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__);
 //
 //
@@ -83740,7 +83749,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 
 
@@ -83798,24 +83806,14 @@ var searchByName = function searchByName(items, term) {
             this.showAddDialog = false;
             this.showEditDialog = false;
         },
-        showLog: function showLog(data) {
-            var _this = this;
-
-            this.lastUser = data.data.trigger;
-            this.userSaved = true;
-
-            window.setTimeout(function () {
-                _this.userSaved = false;
-            }, 1500);
-        },
         showLogEdit: function showLogEdit(data) {
-            var _this2 = this;
+            var _this = this;
 
             this.lastUser = data.data;
             this.userEdit = true;
 
             window.setTimeout(function () {
-                _this2.userSaved = false;
+                _this.userSaved = false;
             }, 1000);
         },
         getName: function getName(id) {
@@ -83936,12 +83934,10 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vuelidate__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__);
 //
 //
 //
@@ -83998,14 +83994,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['old_comaing'],
-    mixins: [__WEBPACK_IMPORTED_MODULE_1_vuelidate__["validationMixin"]],
+    mixins: [__WEBPACK_IMPORTED_MODULE_0_vuelidate__["validationMixin"]],
     data: function data() {
         return {
             form: {
@@ -84014,19 +84009,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 id_campaign: null,
                 templates_id: null
             },
-            defaults: [],
+            lastUser: null,
             userSaved: false,
             sending: false
         };
     },
     validations: {
         form: {
-
             trigger: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             },
             new_campaign: {
-                required: __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__["required"]
+                required: __WEBPACK_IMPORTED_MODULE_1_vuelidate_lib_validators__["required"]
             }
         }
     },
@@ -84042,7 +84036,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         clearForm: function clearForm() {
             this.$v.$reset();
-
             this.form.id_campaign = null;
             this.form.new_campaign = null;
             this.form.trigger = null;
@@ -84052,26 +84045,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.sending = true;
             this.form.id_campaign = this.old_comaing;
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/containers', this.form).then(function (response) {
 
-                _this.form = response.data.data;
-                // console.log(this.form);
-                _this.$emit('AddTrigger', { data: _this.form });
-            });
+            this.$store.dispatch('addTrigger', this.form);
+            this.lastUser = '' + this.form.url;
 
-            window.setTimeout(function () {
+            setTimeout(function () {
+                _this.userSaved = true;
                 _this.sending = false;
                 _this.close();
                 _this.clearForm();
-            }, 1500);
-        },
-        fetchTemplates: function fetchTemplates() {
-            var _this2 = this;
-
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/defaults').then(function (response) {
-                _this2.defaults = response.data.data;
-                console.log(_this2.defaults);
-            });
+            }, 1000);
         },
         validateUser: function validateUser() {
 
@@ -84086,8 +84069,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.$emit('CloseTriggerDialog');
         }
     },
-    created: function created() {
-        this.fetchTemplates();
+    mounted: function mounted() {
+        this.$store.dispatch('getTemplates');
+    },
+
+    computed: {
+        defaults: function defaults() {
+            return this.$store.getters.templates;
+        }
     }
 });
 
@@ -84099,226 +84088,248 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "form",
-      {
-        staticClass: "md-layout",
-        attrs: { novalidate: "" },
-        on: {
-          submit: function($event) {
-            $event.preventDefault()
-            return _vm.validateUser($event)
+  return _c(
+    "div",
+    [
+      _c(
+        "form",
+        {
+          staticClass: "md-layout",
+          attrs: { novalidate: "" },
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.validateUser($event)
+            }
           }
-        }
-      },
-      [
-        _c(
-          "md-card",
-          {
-            staticClass: "md-layout-item md-small-size-100",
-            attrs: { "md-with-hover": "" }
-          },
-          [
-            _c(
-              "md-toolbar",
-              {
-                staticClass: "md-primary",
-                attrs: { "md-theme": "myTheme", "md-aligment": "space-between" }
-              },
-              [
-                _c("div", { staticClass: "md-title" }, [
-                  _vm._v("Создать Фильтр")
-                ])
-              ]
-            ),
-            _vm._v(" "),
-            _c("md-card-content", [
-              _c("div", { staticClass: "md-layout md-gutter" }, [
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("trigger"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "trigger" } }, [
-                          _vm._v("trigger")
-                        ]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            name: "trigger",
-                            id: "trigger",
-                            autocomplete: "trigger",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.trigger,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "trigger", $$v)
-                            },
-                            expression: "form.trigger"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.trigger.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The trigger is required")
-                            ])
-                          : !_vm.$v.form.trigger.minLength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid trigger")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      {
-                        class: _vm.getValidationClass("id_campaign"),
-                        attrs: { "md-theme": "myTheme" }
-                      },
-                      [
-                        _c("label", { attrs: { for: "new_campaign" } }, [
-                          _vm._v("new_campaign")
-                        ]),
-                        _vm._v(" "),
-                        _c("md-input", {
-                          attrs: {
-                            name: "new_campaign",
-                            id: "new_campaign",
-                            autocomplete: "new_campaign",
-                            disabled: _vm.sending
-                          },
-                          model: {
-                            value: _vm.form.new_campaign,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "new_campaign", $$v)
-                            },
-                            expression: "form.new_campaign"
-                          }
-                        }),
-                        _vm._v(" "),
-                        !_vm.$v.form.new_campaign.required
-                          ? _c("span", { staticClass: "md-error" }, [
-                              _vm._v("The new_campaign is required")
-                            ])
-                          : !_vm.$v.form.new_campaign.minLength
-                            ? _c("span", { staticClass: "md-error" }, [
-                                _vm._v("Invalid new_campaign")
-                              ])
-                            : _vm._e()
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                )
-              ]),
+        },
+        [
+          _c(
+            "md-card",
+            {
+              staticClass: "md-layout-item md-small-size-100",
+              attrs: { "md-with-hover": "" }
+            },
+            [
+              _c(
+                "md-toolbar",
+                {
+                  staticClass: "md-primary",
+                  attrs: {
+                    "md-theme": "myTheme",
+                    "md-aligment": "space-between"
+                  }
+                },
+                [
+                  _c("div", { staticClass: "md-title" }, [
+                    _vm._v("Создать Фильтр")
+                  ])
+                ]
+              ),
               _vm._v(" "),
-              _c("div", { staticClass: "md-layout md-gutter" }, [
-                _c(
-                  "div",
-                  { staticClass: "md-layout-item md-small-size-100" },
-                  [
-                    _c(
-                      "md-field",
-                      [
-                        _c("label", { attrs: { for: "def" } }, [
-                          _vm._v("Шаблон")
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "md-select",
-                          {
+              _c("md-card-content", [
+                _c("div", { staticClass: "md-layout md-gutter" }, [
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        {
+                          class: _vm.getValidationClass("trigger"),
+                          attrs: { "md-theme": "myTheme" }
+                        },
+                        [
+                          _c("label", { attrs: { for: "trigger" } }, [
+                            _vm._v("trigger")
+                          ]),
+                          _vm._v(" "),
+                          _c("md-input", {
                             attrs: {
-                              name: "templates_id",
-                              id: "def",
-                              "md-dense": "",
+                              name: "trigger",
+                              id: "trigger",
+                              autocomplete: "trigger",
                               disabled: _vm.sending
                             },
                             model: {
-                              value: _vm.form.templates_id,
+                              value: _vm.form.trigger,
                               callback: function($$v) {
-                                _vm.$set(_vm.form, "templates_id", $$v)
+                                _vm.$set(_vm.form, "trigger", $$v)
                               },
-                              expression: "form.templates_id"
+                              expression: "form.trigger"
                             }
-                          },
-                          _vm._l(_vm.defaults, function(d) {
-                            return _c(
-                              "div",
-                              [
-                                _c("md-option", { attrs: { value: d.id } }, [
-                                  _vm._v(_vm._s(d.name))
+                          }),
+                          _vm._v(" "),
+                          !_vm.$v.form.trigger.required
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("The trigger is required")
+                              ])
+                            : !_vm.$v.form.trigger.minLength
+                              ? _c("span", { staticClass: "md-error" }, [
+                                  _vm._v("Invalid trigger")
                                 ])
-                              ],
-                              1
-                            )
-                          })
-                        )
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                )
-              ])
-            ]),
-            _vm._v(" "),
-            _vm.sending
-              ? _c("md-progress-bar", { attrs: { "md-mode": "indeterminate" } })
-              : _vm._e(),
-            _vm._v(" "),
-            _c(
-              "md-card-actions",
-              [
-                _c(
-                  "md-button",
-                  {
-                    staticClass: "md-primary",
-                    attrs: { "md-theme": "myTheme" },
-                    on: { click: _vm.close }
-                  },
-                  [_vm._v("Отмена")]
-                ),
+                              : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        {
+                          class: _vm.getValidationClass("id_campaign"),
+                          attrs: { "md-theme": "myTheme" }
+                        },
+                        [
+                          _c("label", { attrs: { for: "new_campaign" } }, [
+                            _vm._v("new_campaign")
+                          ]),
+                          _vm._v(" "),
+                          _c("md-input", {
+                            attrs: {
+                              name: "new_campaign",
+                              id: "new_campaign",
+                              autocomplete: "new_campaign",
+                              disabled: _vm.sending
+                            },
+                            model: {
+                              value: _vm.form.new_campaign,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "new_campaign", $$v)
+                              },
+                              expression: "form.new_campaign"
+                            }
+                          }),
+                          _vm._v(" "),
+                          !_vm.$v.form.new_campaign.required
+                            ? _c("span", { staticClass: "md-error" }, [
+                                _vm._v("The new_campaign is required")
+                              ])
+                            : !_vm.$v.form.new_campaign.minLength
+                              ? _c("span", { staticClass: "md-error" }, [
+                                  _vm._v("Invalid new_campaign")
+                                ])
+                              : _vm._e()
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ]),
                 _vm._v(" "),
-                _c(
-                  "md-button",
-                  {
-                    staticClass: "md-primary",
-                    attrs: {
-                      type: "submit",
-                      "md-theme": "myTheme",
-                      disabled: _vm.sending
-                    }
-                  },
-                  [_vm._v("Сохранить")]
-                )
-              ],
-              1
-            )
-          ],
-          1
-        )
-      ],
-      1
-    )
-  ])
+                _c("div", { staticClass: "md-layout md-gutter" }, [
+                  _c(
+                    "div",
+                    { staticClass: "md-layout-item md-small-size-100" },
+                    [
+                      _c(
+                        "md-field",
+                        [
+                          _c("label", { attrs: { for: "def" } }, [
+                            _vm._v("Шаблон")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "md-select",
+                            {
+                              attrs: {
+                                name: "templates_id",
+                                id: "def",
+                                "md-dense": "",
+                                disabled: _vm.sending
+                              },
+                              model: {
+                                value: _vm.form.templates_id,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.form, "templates_id", $$v)
+                                },
+                                expression: "form.templates_id"
+                              }
+                            },
+                            _vm._l(_vm.defaults, function(d) {
+                              return _c(
+                                "div",
+                                [
+                                  _c("md-option", { attrs: { value: d.id } }, [
+                                    _vm._v(_vm._s(d.name))
+                                  ])
+                                ],
+                                1
+                              )
+                            })
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _vm.sending
+                ? _c("md-progress-bar", {
+                    attrs: { "md-mode": "indeterminate" }
+                  })
+                : _vm._e(),
+              _vm._v(" "),
+              _c(
+                "md-card-actions",
+                [
+                  _c(
+                    "md-button",
+                    {
+                      staticClass: "md-primary",
+                      attrs: { "md-theme": "myTheme" },
+                      on: { click: _vm.close }
+                    },
+                    [_vm._v("Отмена")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "md-button",
+                    {
+                      staticClass: "md-primary",
+                      attrs: {
+                        type: "submit",
+                        "md-theme": "myTheme",
+                        disabled: _vm.sending
+                      }
+                    },
+                    [_vm._v("Сохранить")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "md-snackbar",
+        {
+          attrs: { "md-active": _vm.userSaved },
+          on: {
+            "update:mdActive": function($event) {
+              _vm.userSaved = $event
+            }
+          }
+        },
+        [_vm._v("Trigger " + _vm._s(_vm.lastUser) + " был добавлен успешно!")]
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -84427,11 +84438,11 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuelidate___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuelidate__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_vuelidate_lib_validators__);
 //
 //
@@ -85508,7 +85519,7 @@ var render = function() {
         [
           _c("add", {
             attrs: { old_comaing: _vm.id },
-            on: { AddTrigger: _vm.showLog, CloseTriggerDialog: _vm.closeDialog }
+            on: { CloseTriggerDialog: _vm.closeDialog }
           })
         ],
         1
@@ -85531,19 +85542,6 @@ var render = function() {
           })
         ],
         1
-      ),
-      _vm._v(" "),
-      _c(
-        "md-snackbar",
-        {
-          attrs: { "md-active": _vm.userSaved },
-          on: {
-            "update:mdActive": function($event) {
-              _vm.userSaved = $event
-            }
-          }
-        },
-        [_vm._v("Trigger " + _vm._s(_vm.lastUser) + " был добавлен успешно!")]
       ),
       _vm._v(" "),
       _c(
@@ -85669,7 +85667,7 @@ exports.push([module.i, "\n@charset \"UTF-8\";\n/**\n * The complete material pa
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_scripts_template_1__ = __webpack_require__(160);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_scripts_template_1___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_scripts_template_1__);

@@ -111,7 +111,7 @@
 <script>
     import AddTrigeger from '../components/containers/AddTrigger'
     import EditTrigger from '../components/containers/EditTrigger'
-    import template_1 from '../components/scripts/template_1'
+    import TXE_Standart from '../components/scripts/TXE_Standart'
 
     const toLower = text => {
         return text.toString().toLowerCase()
@@ -144,7 +144,8 @@
         components: {
             'add': AddTrigeger,
             'edit': EditTrigger,
-            'script_t': template_1,
+
+            'script_t': TXE_Standart,
         },
 
         methods: {

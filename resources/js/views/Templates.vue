@@ -19,7 +19,7 @@
                                     <md-content class="md-primary text_template" md-theme="myTheme">
                                         <div class="md-layout md-gutter">
                                             <div class="md-layout-item md-size-90">
-                                                <TXE_Standart :new_campaign="1"></TXE_Standart>
+                                                <component :is="item.name" :new_campaign="1"></component>
                                             </div>
                                             <div class="md-layout-item ">
                                                 <md-button class="md-dense md-raised md-primary btn-accept"
@@ -42,7 +42,12 @@
 
 <script>
     import axios from 'axios'
-    import template_1 from '../components/scripts/template_1'
+
+    import TXE_Standart from '../components/scripts/TXE_Standart'
+    import EXT_Notpalevo from '../components/scripts/EXT_Notpalevo'
+    import GIB_bigcock from '../components/scripts/GIB_bigcock'
+    import TXE_NONSONAR from '../components/scripts/TXE_NONSONAR'
+
     export default {
         data() {
             return {
@@ -81,7 +86,10 @@
             }
         },
         components: {
-            'TXE_Standart': template_1
+            'TXE_Standart': TXE_Standart,
+            'EXT_Notpalevo': EXT_Notpalevo,
+            'GIB_bigcock': GIB_bigcock,
+            'TXE_NONSONAR': TXE_NONSONAR,
         },
         created() {
             this.fetchData();

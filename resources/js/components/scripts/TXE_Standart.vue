@@ -27,7 +27,7 @@
 
 <script>
     export default {
-        name: "template_1",
+        name: "TXE_Standart",
         props:['new_campaign'],
         created() {
             // console.log(this.new_campaign)

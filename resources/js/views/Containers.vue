@@ -20,11 +20,14 @@
                               <h3 class="md-title">Фильтр:</h3>
                           </div>
                           <div class="md-layout-item md-size-50 text-right">
+                              <!--<md-chip class="md-primary" md-theme="purpl" md-clickable>{{defautss}}</md-chip>-->
+                              <md-chip class="md-primary" md-theme="purpl" md-clickable>TXE_Standart</md-chip>
                               <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{url}}</md-chip>
                           </div>
                       </md-toolbar>
                       <md-content class="md-scrollbar">
-                          <script_t :new_campaign="id"></script_t>
+                          <!--<TXE_Standart  :new_campaign="1"></TXE_Standart>-->
+                          <containers is="TXE_Standart" :new_campaign="1"></containers>
                       </md-content>
                   </md-card-media>
                   <md-ripple>
@@ -62,12 +65,15 @@
                               <h3 class="md-title">Фильтр:</h3>
                           </div>
                           <div class="md-layout-item md-size-50 text-right">
-                              <md-chip v-if="item.templates_id" class="md-primary" md-theme="purpl" md-clickable>{{getName(item.templates_id)}}</md-chip>
+                              <md-chip class="md-primary" md-theme="purpl" md-clickable>{{item.templates}}</md-chip>
                               <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{item.trigger}}</md-chip>
                           </div>
                       </md-toolbar>
                       <md-content class="md-scrollbar">
-                          <script_t :new_campaign="item.new_campaign"></script_t>
+
+                          <containers :is="item.templates" :new_campaign="item.new_campaign"></containers>
+                          <!--<TXE_Standart  :new_campaign="item.new_campaign"></TXE_Standart>-->
+
                       </md-content>
                   </md-card-media>
                   <md-ripple>
@@ -111,7 +117,11 @@
 <script>
     import AddTrigeger from '../components/containers/AddTrigger'
     import EditTrigger from '../components/containers/EditTrigger'
+
     import TXE_Standart from '../components/scripts/TXE_Standart'
+    import EXT_Notpalevo from '../components/scripts/EXT_Notpalevo'
+    import GIB_bigcock from '../components/scripts/GIB_bigcock'
+    import TXE_NONSONAR from '../components/scripts/TXE_NONSONAR'
 
     const toLower = text => {
         return text.toString().toLowerCase()
@@ -125,9 +135,16 @@
         return items
     };
 
+    const searchDef = (items, term) => {
+        if (term) {
+            return items.filter(item => toLower(JSON.stringify(item.default)).includes(toLower(term)))[0].name
+        }
+
+        return items;
+    };
+
     export default {
         props: ['url', 'id'],
-        name: "Containers",
         data () {
             return {
                 search: null,
@@ -145,7 +162,10 @@
             'add': AddTrigeger,
             'edit': EditTrigger,
 
-            'script_t': TXE_Standart,
+            'TXE_Standart': TXE_Standart,
+            'EXT_Notpalevo': EXT_Notpalevo,
+            'GIB_bigcock': GIB_bigcock,
+            'TXE_NONSONAR': TXE_NONSONAR,
         },
 
         methods: {
@@ -163,11 +183,6 @@
                 this.showAddDialog = false;
                 this.showEditDialog = false;
             },
-            getName (id) {
-                return (this.defaults.filter((item)=>{
-                    return item.id == id
-                         })[0]).name
-            }
         },
         mounted() {
             this.$store.dispatch('getTrigger', this.id);
@@ -177,9 +192,10 @@
             searched() {
                 return searchByName(this.$store.getters.triggers, this.search);
             },
-            defaults() {
-                return this.$store.getters.templates;
+            defautss() {
+                return searchDef(this.$store.getters.templates, 1);
             }
+
         }
     }
 </script>

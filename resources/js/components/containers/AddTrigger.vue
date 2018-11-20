@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <form novalidate class="md-layout" @submit.prevent="validateUser">
             <md-card class="md-layout-item md-small-size-100" md-with-hover>
                 <md-toolbar class="md-primary" md-theme="myTheme" md-aligment="space-between">
@@ -51,11 +50,11 @@
                 </md-card-actions>
             </md-card>
         </form>
+        <md-snackbar :md-active.sync="userSaved">Trigger {{ lastUser }} был добавлен успешно!</md-snackbar>
     </div>
 </template>
 
 <script>
-    import axios from 'axios'
     import { validationMixin } from 'vuelidate'
     import {
         required,
@@ -73,13 +72,12 @@
                 id_campaign: null,
                 templates_id: null,
             },
-            defaults: [],
+            lastUser: null,
             userSaved: false,
             sending: false,
         }),
         validations: {
             form: {
-
                 trigger: {
                     required
                 },
@@ -100,36 +98,25 @@
             },
             clearForm () {
                 this.$v.$reset();
-
                 this.form.id_campaign = null;
                 this.form.new_campaign = null;
                 this.form.trigger = null;
 
             },
+
             savePixel () {
                 this.sending = true;
                 this.form.id_campaign = this.old_comaing;
-                axios.post('/api/containers', this.form)
-                    .then(response => {
 
-                        this.form = response.data.data;
-                        // console.log(this.form);
-                        this.$emit('AddTrigger', {data: this.form});
-                    });
+                this.$store.dispatch('addTrigger', this.form);
+                this.lastUser = `${this.form.url}`;
 
-                window.setTimeout(() => {
+                setTimeout(() => {
+                    this.userSaved = true;
                     this.sending = false;
                     this.close();
                     this.clearForm()
-                }, 1500)
-            },
-            fetchTemplates() {
-                axios
-                    .get('/api/defaults')
-                    .then(response => {
-                         this.defaults = response.data.data;
-                         console.log(this.defaults);
-                    });
+                }, 1000)
             },
 
             validateUser () {
@@ -145,8 +132,13 @@
                 this.$emit('CloseTriggerDialog')
             },
         },
-        created() {
-            this.fetchTemplates();
+        mounted() {
+            this.$store.dispatch('getTemplates');
+        },
+        computed: {
+            defaults() {
+                return this.$store.getters.templates;
+            }
         }
     }
 </script>

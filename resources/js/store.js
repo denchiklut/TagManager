@@ -11,6 +11,8 @@ export default {
         auth_error: null,
         analiticData: [],
         companies: [],
+        triggers: [],
+        templates: []
     },
     getters: {
         test(state) {
@@ -33,6 +35,12 @@ export default {
         },
         companies(state) {
             return state.companies;
+        },
+        triggers(state) {
+            return state.triggers;
+        },
+        templates(state) {
+            return state.templates;
         },
     },
     mutations: {
@@ -62,25 +70,97 @@ export default {
         },
         updateCompanies(state, payload) {
             state.companies =  payload;
-        }
+        },
+        deleteCompony(state, payload) {
+            let index = state.companies.indexOf(payload);
+            state.companies.splice(index, 1);
+        },
+        // addTriggers(state, payload) {
+        //     state.triggers.push(payload);
+        // },
+        updateTriggers(state, payload) {
+            state.triggers =  payload;
+        },
+        deleteTriggers(state, payload) {
+            let index = state.triggers.indexOf(payload);
+            state.triggers.splice(index, 1);
+        },
+        updateTemplates(state, payload) {
+            state.templates =  payload;
+        },
     },
     actions: {
         login(context) {
             context.commit("login");
         },
-        getAnaliticData(context) {
+        getAnaliticData: context => {
                 axios
                     .get('/api')
                     .then((responce) => {
                         context.commit('updateAnaliticData', responce.data.data);
                     })
         },
-        getCompanies(context) {
+        getCompanies: context => {
             axios
                 .get('/api/companies')
                 .then((responce) => {
                     context.commit('updateCompanies', responce.data.data);
                 })
-        }
+        },
+        addCompony: (context, form) => {
+            axios.post('/api/companies', form)
+                .then(response => {
+                    context.commit('addTriggers', form);
+                });
+        },
+        editCompony: (context, form) => {
+            axios.patch('/api/companies/' + form.id, form)
+                .then(response => {
+                    context.dispatch('getCompanies');
+                });
+        },
+        deleteCompony: (context, item) => {
+            axios.delete('/api/companies/' + item.id)
+                .then(response => {
+                    context.commit('deleteCompony', item);
+                });
+        },
+        getTrigger: (context, id) => {
+            axios
+                .get('/api/containers/' + id, id)
+                .then(response => {
+                    context.commit('updateTriggers', response.data.data);
+                });
+        },
+        addTrigger: (context, form) => {
+            axios.post('/api/containers', form)
+                .then(response => {
+                    context.dispatch('getTrigger', form.id_campaign);
+                    // context.commit('addTriggers', form);
+                });
+
+        },
+        editTrigger: (context, form) => {
+            axios.patch('/api/containers/' + form.id, form)
+                .then(response => {
+                    context.dispatch('getTrigger', form.id_campaign);
+                    // console.log(this.form);
+
+                });
+
+        },
+        deleteTrigger: (context, item) => {
+            axios.delete('/api/containers/' + item.id)
+                .then(response => {
+                    context.commit('deleteTriggers', item);
+                });
+        },
+        getTemplates: context => {
+            axios
+                .get('/api/defaults')
+                .then(response => {
+                    context.commit('updateTemplates', response.data.data);
+                });
+        },
     },
 }

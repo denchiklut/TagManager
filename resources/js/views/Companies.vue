@@ -2,7 +2,7 @@
     <div>
         <!--Add Form-->
         <div>
-            <add @AddCompaing="fetchData"></add>
+            <add />
         </div>
 
         <!--Data Table-->
@@ -50,14 +50,12 @@
 
         <!--Edit Dialog-->
         <md-dialog :md-active.sync="showDialog">
-            <edit @CloseDialog="closeDialog" @ShowLogSave="LogSave" :form="editCompain"></edit>
-            <md-snackbar :md-active.sync="userSaved">Pixel {{`${this.lastUser}`}} был изменен успешно!</md-snackbar>
+            <edit @CloseDialog="closeDialog" :form="editCompain"></edit>
         </md-dialog>
     </div>
 </template>
 
 <script>
-    import axios from 'axios';
     import AddCompany from '../components/compaing/AddCompany'
     import EditCompany from '../components/compaing/EditCompany'
 
@@ -91,12 +89,7 @@
                 this.$store.dispatch('getCompanies');
             },
             deleteItem(item) {
-                axios.delete('/api/companies/' + item.id)
-                    .then(response => {
-                        let index = this.searched.indexOf(item);
-                        this.searched.splice(index, 1);
-                        //console.log(response.data)
-                    });
+                this.$store.dispatch('deleteCompony', item);
             },
             closeDialog() {
                 this.showDialog = false;
@@ -105,13 +98,6 @@
                 this.editCompain = compaing;
                 this.showDialog = true;
             },
-            LogSave(data) {
-                this.lastUser = data.data;
-                this.userSaved = true;
-                window.setTimeout(() => {
-                    this.userSaved = false;
-                }, 1500)
-            }
         },
         mounted() {
             this.$store.dispatch('getCompanies');

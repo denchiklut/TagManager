@@ -44,19 +44,19 @@
                             </md-field>
                         </div>
 
-                        <div class="md-layout-item md-small-size-100">
-                            <md-field :class="getValidationClass('sig')" md-theme="myTheme">
-                                <label for="sig">sig</label>
-                                <md-input name="sig" id="sig" autocomplete="sig" v-model="form.sig" :disabled="sending" />
-                                <span class="md-error" v-if="!$v.form.sig.required">The sig is required</span>
-                                <span class="md-error" v-else-if="!$v.form.sig.minlength">Invalid sig</span>
-                            </md-field>
-                        </div>
+                        <!--<div class="md-layout-item md-small-size-100">-->
+                            <!--<md-field :class="getValidationClass('sig')" md-theme="myTheme">-->
+                                <!--<label for="sig">sig</label>-->
+                                <!--<md-input name="sig" id="sig" autocomplete="sig" v-model="form.sig" :disabled="sending" />-->
+                                <!--<span class="md-error" v-if="!$v.form.sig.required">The sig is required</span>-->
+                                <!--<span class="md-error" v-else-if="!$v.form.sig.minlength">Invalid sig</span>-->
+                            <!--</md-field>-->
+                        <!--</div>-->
 
                         <div class="md-layout-item md-small-size-100">
                             <md-field :class="getValidationClass('url')" md-theme="myTheme">
-                                <label for="url">url_pixel</label>
-                                <md-input name="url" id="url" autocomplete="url" v-model="form.url" :disabled="sending" />
+                                <label for="urlM">url_pixel</label>
+                                <md-input name="url" id="urlM" autocomplete="url" v-model="form.url" :disabled="sending" />
                                 <span class="md-error" v-if="!$v.form.url.required">The url is required</span>
                                 <span class="md-error" v-else-if="!$v.form.url.minlength">Invalid url</span>
                             </md-field>
@@ -70,12 +70,8 @@
                                 <!--<span class="md-error" v-else-if="!$v.form.trigger.maxlength">Invalid trigger</span>-->
                             <!--</md-field>-->
                         <!--</div>-->
-
                     </div>
-
-
                 </md-card-content>
-
                 <md-progress-bar md-mode="indeterminate" v-if="sending" />
 
                 <md-card-actions>
@@ -83,14 +79,12 @@
                     <md-button type="submit" class="md-primary" md-theme="myTheme" :disabled="sending">Сохранить</md-button>
                 </md-card-actions>
             </md-card>
-
-
         </form>
+        <md-snackbar :md-active.sync="userSaved">Pixel {{`${this.lastUser}`}} был изменен успешно!</md-snackbar>
     </div>
 </template>
 
 <script>
-    import axios from 'axios'
     import { validationMixin } from 'vuelidate'
     import {
         required,
@@ -104,7 +98,8 @@
         mixins: [validationMixin],
         data: () => ({
             sending: false,
-            lastUser: null
+            lastUser: null,
+            userSaved: false,
         }),
         validations: {
             form: {
@@ -125,7 +120,7 @@
                     required
                 },
                 url: {
-                    required
+                    required,
                 },
                 // trigger: {
                 //     required
@@ -145,15 +140,12 @@
 
             updatePixel () {
                 this.sending = true;
-                axios.patch('/api/companies/' + this.form.id, this.form)
-                     .then(response => {
-                         console.log(response.data);
-                         this.$emit('editCompanyE');
-                         this.lastUser = `${this.form.url}`;
-                         this.$emit('ShowLogSave', {data: this.lastUser})
-                     });
+                this.userSaved = true;
+                this.lastUser = `${this.form.url}`;
+                this.$store.dispatch('editCompony', this.form);
 
                 window.setTimeout(() => {
+                    this.userSaved = false;
                     this.sending = false;
                     this.close();
                 }, 1500)

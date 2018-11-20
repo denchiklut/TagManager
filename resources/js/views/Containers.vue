@@ -99,20 +99,16 @@
       </div>
 
       <md-dialog :md-active.sync="showAddDialog">
-          <add @AddTrigger="showLog" @CloseTriggerDialog="closeDialog" :old_comaing="id"></add>
+          <add  @CloseTriggerDialog="closeDialog" :old_comaing="id"></add>
       </md-dialog>
 
       <md-dialog :md-active.sync="showEditDialog">
-          <edit @ShowLogEdit="showLogEdit" @editTriggerE="closeDialog" :form="editTrigger"></edit>
+          <edit @editTriggerE="closeDialog" :form="editTrigger"></edit>
       </md-dialog>
-
-      <md-snackbar :md-active.sync="userSaved">Trigger {{ lastUser }} был добавлен успешно!</md-snackbar>
-      <md-snackbar :md-active.sync="userEdit">Trigger {{ lastUser }} изменен успешно!</md-snackbar>
   </div>
 </template>
 
 <script>
-    import axios from 'axios'
     import AddTrigeger from '../components/containers/AddTrigger'
     import EditTrigger from '../components/containers/EditTrigger'
     import template_1 from '../components/scripts/template_1'
@@ -135,8 +131,6 @@
         data () {
             return {
                 search: null,
-                searched: [],
-                containers: [],
                 showAddDialog: false,
                 showEditDialog: false,
                 editTrigger: null,
@@ -144,7 +138,6 @@
                 userEdit:false,
                 lastUser:null,
                 defUrl: null,
-                defaults: [],
                 showT: false,
             }
         },
@@ -155,23 +148,6 @@
         },
 
         methods: {
-            fetchData() {
-                axios
-                    .get('/api/containers/' + this.id, this.id)
-                    .then(response => {
-                        this.containers = response.data.data;
-                        this.searched = this.containers;
-                        console.log(this.searched)
-                    });
-            },
-            fetchTemplates() {
-                axios
-                    .get('/api/defaults')
-                    .then(response => {
-                        this.defaults = response.data.data;
-                        console.log(this.defaults);
-                    });
-            },
             searchOnTable () {
                 this.searched = searchByName(this.containers, this.search)
             },
@@ -180,32 +156,11 @@
                 this.showEditDialog = true;
             },
             deleteFilter(item) {
-                axios.delete('/api/containers/' + item.id)
-                    .then(response => {
-                        let index = this.containers.indexOf(item);
-                        this.containers.splice(index, 1);
-                    });
+                this.$store.dispatch('deleteTrigger', item);
             },
             closeDialog() {
                 this.showAddDialog = false;
                 this.showEditDialog = false;
-                this.fetchData();
-            },
-            showLog(data) {
-                this.lastUser = data.data.trigger;
-                this.userSaved = true;
-
-                window.setTimeout(() => {
-                    this.userSaved = false;
-                }, 1500)
-            },
-            showLogEdit(data) {
-                this.lastUser = data.data;
-                this.userEdit = true;
-
-                window.setTimeout(() => {
-                    this.userSaved = false;
-                }, 1500)
             },
             getName (id) {
                 return (this.defaults.filter((item)=>{
@@ -213,12 +168,17 @@
                          })[0]).name
             }
         },
-        created() {
-            this.fetchData();
-            this.fetchTemplates();
+        mounted() {
+            this.$store.dispatch('getTrigger', this.id);
+            this.$store.dispatch('getTemplates');
         },
-        filters: {
-
+        computed: {
+            searched() {
+                return searchByName(this.$store.getters.triggers, this.search);
+            },
+            defaults() {
+                return this.$store.getters.templates;
+            }
         }
     }
 </script>

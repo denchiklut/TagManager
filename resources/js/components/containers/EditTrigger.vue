@@ -51,15 +51,15 @@
                 </md-card-actions>
             </md-card>
         </form>
+        <md-snackbar :md-active.sync="userSaved">Trigger {{ lastUser }} изменен успешно!</md-snackbar>
     </div>
 </template>
 
 <script>
-    import axios from 'axios'
+
     import { validationMixin } from 'vuelidate'
     import {
         required,
-        minLength,
 
     } from 'vuelidate/lib/validators'
 
@@ -70,7 +70,6 @@
             userSaved: false,
             lastUser: null,
             sending: false,
-            defaults: [],
         }),
         validations: {
             form: {
@@ -83,14 +82,6 @@
             }
         },
         methods: {
-            fetchTemplates() {
-                axios
-                    .get('/api/defaults')
-                    .then(response => {
-                        this.defaults = response.data.data;
-                        console.log(this.defaults);
-                    });
-            },
 
             getValidationClass (fieldName) {
                 const field = this.$v.form[fieldName];
@@ -104,19 +95,14 @@
 
             savePixel () {
                 this.sending = true;
-                this.sending = true;
-                axios.patch('/api/containers/' + this.form.id, this.form)
-                    .then(response => {
-                        // console.log(this.form);
-                        this.$emit('editTriggerE');
-                        this.lastUser = `${this.form.trigger}`;
-                        this.$emit('ShowLogEdit', {data: this.lastUser})
-                    });
+                this.lastUser = `${this.form.trigger}`;
+                this.$store.dispatch('editTrigger', this.form);
 
                 window.setTimeout(() => {
+                    this.userSaved = true;
                     this.sending = false;
                     this.close();
-                }, 1500)
+                }, 1500);
             },
             validateUser () {
 
@@ -131,8 +117,11 @@
                 this.$emit('editTriggerE')
             },
         },
-        created() {
-            this.fetchTemplates();
+
+        computed: {
+            defaults() {
+                return this.$store.getters.templates;
+            }
         }
     }
 </script>

@@ -16,10 +16,10 @@
               <md-card class="md-accent" md-theme="myTheme" md-with-hover>
                   <md-card-media>
                       <md-toolbar class="md-dense md-primary" md-theme="myTheme">
-                          <div class="md-layout-item md-size-50">
+                          <div class="md-layout-item">
                               <h3 class="md-title">Фильтр:</h3>
                           </div>
-                          <div class="md-layout-item md-size-50 text-right">
+                          <div class="md-layout-item text-right">
                               <md-chip class="md-primary" md-theme="purpl" md-clickable>{{txt_def}}</md-chip>
                               <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{url}}</md-chip>
                           </div>
@@ -31,7 +31,7 @@
                   <md-ripple>
                       <md-card-header>
                           <div class="md-layout md-gutter md-alignment-center-space-between">
-                              <div class="md-layout-item md-size-75">
+                              <div class="md-layout-item">
                                   <div class="md-title" >Код компании: {{id}}</div>
                                   <div class="md-subhead">Поместите этот скрипт в тег
                                       <b>
@@ -41,7 +41,7 @@
                                       </b>
                                       вашего сайта </div>
                               </div>
-                              <div class="md-layout-item md-size-25 text-right">
+                              <div class="md-layout-item text-right">
                                   <md-button class="md-fab md-mini md-primary" md-theme="myBtnTheme" disabled>
                                       <md-icon>edit</md-icon>
                                   </md-button>
@@ -59,10 +59,10 @@
               <md-card class="md-accent" md-theme="myTheme" md-with-hover>
                   <md-card-media>
                       <md-toolbar class="md-dense md-primary" md-theme="myTheme">
-                          <div class="md-layout-item md-size-50">
+                          <div class="md-layout-item ">
                               <h3 class="md-title">Фильтр:</h3>
                           </div>
-                          <div class="md-layout-item md-size-50 text-right">
+                          <div class="md-layout-item text-right">
                               <md-chip class="md-primary" md-theme="purpl" md-clickable>{{item.templates}}</md-chip>
                               <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{item.trigger}}</md-chip>
                           </div>
@@ -74,7 +74,7 @@
                   <md-ripple>
                       <md-card-header>
                           <div class="md-layout md-gutter md-alignment-center-space-between">
-                              <div class="md-layout-item md-size-75">
+                              <div class="md-layout-item">
                                   <div class="md-title" >Код компании: {{item.new_campaign}}</div>
                                   <div class="md-subhead">Поместите этот скрипт в тег
                                       <b>
@@ -84,7 +84,7 @@
                                       </b>
                                       вашего сайта </div>
                               </div>
-                              <div class="md-layout-item md-size-25 text-right">
+                              <div class="md-layout-item text-right">
                                   <md-button class="md-fab md-mini md-primary" md-theme="myBtnTheme" @click="showEditFilterDialog(item)">
                                       <md-icon>edit</md-icon>
                                   </md-button>
@@ -234,7 +234,7 @@
     @import "../../../node_modules/vue-material/dist/theme/all";
 
     .md-card {
-        max-width: 575px;
+        max-width: 600px;
         margin: 4px;
         display: inline-block;
         vertical-align: top;

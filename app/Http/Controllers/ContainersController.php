@@ -46,12 +46,12 @@ class ContainersController extends Controller
 
         $trigger = new Triggers();
 
-        $TemplatesDefaulr  = Templates::where('default',1)->first();
+        $TemplatesDefaulr  = Templates::where('default',1)->value('name');
 
 
 
 
-        isset($request->templates_id) ?  $trigger->templates_id = $request->templates_id : $trigger->templates_id = $TemplatesDefaulr->name;
+        isset($request->templates_id) ?  $trigger->templates_id = $request->templates_id : $trigger->templates_id = $TemplatesDefaulr;
 
         $trigger->trigger = $request->trigger;
         $trigger->id_campaign = $request->id_campaign;

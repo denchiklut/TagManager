@@ -41,7 +41,7 @@ class AddPixel extends Controller
 
 
         /*определение id элементов*/
-        $id_campaign = (int)$resultCampaigns->id_campaign + 1;
+        isset( $resultCampaigns->id_campaign ) ? $id_campaign = (int)$resultCampaigns->id_campaign + 1 : $id_campaign = 1;
         /*определение id элементов*/
 
 

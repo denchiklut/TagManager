@@ -110,7 +110,7 @@ export default {
         addCompony: (context, form) => {
             axios.post('/api/companies', form)
                 .then(response => {
-                    context.commit('addTriggers', form);
+                    context.dispatch('getCompanies');
                 });
         },
         editCompony: (context, form) => {
@@ -130,6 +130,7 @@ export default {
                 .get('/api/containers/' + id, id)
                 .then(response => {
                     context.commit('updateTriggers', response.data.data);
+                    console.log(response.data.data);
                 });
         },
         addTrigger: (context, form) => {

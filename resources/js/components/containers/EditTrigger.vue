@@ -31,9 +31,9 @@
                         <div class="md-layout-item md-small-size-100">
                             <md-field>
                                 <label for="def">Шаблон</label>
-                                <md-select name="templates_id" id="def" v-model="form.templates_id" md-dense :disabled="sending">
+                                <md-select name="templates" id="def" v-model="form.templates" md-dense :disabled="sending">
                                     <div v-for="d in defaults">
-                                        <md-option  v-bind:value="d.id">{{d.name}}</md-option>
+                                        <md-option  v-bind:value="d.name">{{d.name}}</md-option>
                                     </div>
 
 
@@ -102,7 +102,7 @@
                     this.userSaved = true;
                     this.sending = false;
                     this.close();
-                }, 1500);
+                }, 1000);
             },
             validateUser () {
 

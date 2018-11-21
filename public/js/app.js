@@ -69540,7 +69540,7 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         },
         addCompony: function addCompony(context, form) {
             axios.post('/api/companies', form).then(function (response) {
-                context.commit('addTriggers', form);
+                context.dispatch('getCompanies');
             });
         },
         editCompony: function editCompony(context, form) {
@@ -69556,6 +69556,7 @@ var user = Object(__WEBPACK_IMPORTED_MODULE_0__helpers_auth__["a" /* getLocalUse
         getTrigger: function getTrigger(context, id) {
             axios.get('/api/containers/' + id, id).then(function (response) {
                 context.commit('updateTriggers', response.data.data);
+                console.log(response.data.data);
             });
         },
         addTrigger: function addTrigger(context, form) {
@@ -83592,6 +83593,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_containers_EditTrigger___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_containers_EditTrigger__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_scripts_TXE_Standart__ = __webpack_require__(338);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_scripts_TXE_Standart___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_scripts_TXE_Standart__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_scripts_EXT_Notpalevo__ = __webpack_require__(343);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_scripts_EXT_Notpalevo___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_scripts_EXT_Notpalevo__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_scripts_GIB_bigcock__ = __webpack_require__(348);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_scripts_GIB_bigcock___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__components_scripts_GIB_bigcock__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_scripts_TXE_NONSONAR__ = __webpack_require__(353);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_scripts_TXE_NONSONAR___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__components_scripts_TXE_NONSONAR__);
 //
 //
 //
@@ -83702,6 +83709,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
+
+
+
 
 
 
@@ -83721,9 +83738,18 @@ var searchByName = function searchByName(items, term) {
     return items;
 };
 
+var searchDef = function searchDef(items, term) {
+    if (term) {
+        return items.filter(function (item) {
+            return toLower(JSON.stringify(item.default)).includes(toLower(term));
+        })[0].name;
+    }
+
+    return items;
+};
+
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['url', 'id'],
-    name: "Containers",
     data: function data() {
         return {
             search: null,
@@ -83742,7 +83768,10 @@ var searchByName = function searchByName(items, term) {
         'add': __WEBPACK_IMPORTED_MODULE_0__components_containers_AddTrigger___default.a,
         'edit': __WEBPACK_IMPORTED_MODULE_1__components_containers_EditTrigger___default.a,
 
-        'script_t': __WEBPACK_IMPORTED_MODULE_2__components_scripts_TXE_Standart___default.a
+        'TXE_Standart': __WEBPACK_IMPORTED_MODULE_2__components_scripts_TXE_Standart___default.a,
+        'EXT_Notpalevo': __WEBPACK_IMPORTED_MODULE_3__components_scripts_EXT_Notpalevo___default.a,
+        'GIB_bigcock': __WEBPACK_IMPORTED_MODULE_4__components_scripts_GIB_bigcock___default.a,
+        'TXE_NONSONAR': __WEBPACK_IMPORTED_MODULE_5__components_scripts_TXE_NONSONAR___default.a
     },
 
     methods: {
@@ -83759,11 +83788,6 @@ var searchByName = function searchByName(items, term) {
         closeDialog: function closeDialog() {
             this.showAddDialog = false;
             this.showEditDialog = false;
-        },
-        getName: function getName(id) {
-            return this.defaults.filter(function (item) {
-                return item.id == id;
-            })[0].name;
         }
     },
     mounted: function mounted() {
@@ -83775,8 +83799,8 @@ var searchByName = function searchByName(items, term) {
         searched: function searched() {
             return searchByName(this.$store.getters.triggers, this.search);
         },
-        defaults: function defaults() {
-            return this.$store.getters.templates;
+        defautss: function defautss() {
+            return searchDef(this.$store.getters.templates, 1);
         }
     }
 });
@@ -83951,7 +83975,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 new_campaign: null,
                 trigger: null,
                 id_campaign: null,
-                templates_id: null
+                templates: null
             },
             lastUser: null,
             userSaved: false,
@@ -84184,26 +84208,28 @@ var render = function() {
                             "md-select",
                             {
                               attrs: {
-                                name: "templates_id",
+                                name: "templates",
                                 id: "def",
                                 "md-dense": "",
                                 disabled: _vm.sending
                               },
                               model: {
-                                value: _vm.form.templates_id,
+                                value: _vm.form.templates,
                                 callback: function($$v) {
-                                  _vm.$set(_vm.form, "templates_id", $$v)
+                                  _vm.$set(_vm.form, "templates", $$v)
                                 },
-                                expression: "form.templates_id"
+                                expression: "form.templates"
                               }
                             },
                             _vm._l(_vm.defaults, function(d) {
                               return _c(
                                 "div",
                                 [
-                                  _c("md-option", { attrs: { value: d.id } }, [
-                                    _vm._v(_vm._s(d.name))
-                                  ])
+                                  _c(
+                                    "md-option",
+                                    { attrs: { value: d.name } },
+                                    [_vm._v(_vm._s(d.name))]
+                                  )
                                 ],
                                 1
                               )
@@ -84489,7 +84515,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.userSaved = true;
                 _this.sending = false;
                 _this.close();
-            }, 1500);
+            }, 1000);
         },
         validateUser: function validateUser() {
 
@@ -84672,26 +84698,28 @@ var render = function() {
                             "md-select",
                             {
                               attrs: {
-                                name: "templates_id",
+                                name: "templates",
                                 id: "def",
                                 "md-dense": "",
                                 disabled: _vm.sending
                               },
                               model: {
-                                value: _vm.form.templates_id,
+                                value: _vm.form.templates,
                                 callback: function($$v) {
-                                  _vm.$set(_vm.form, "templates_id", $$v)
+                                  _vm.$set(_vm.form, "templates", $$v)
                                 },
-                                expression: "form.templates_id"
+                                expression: "form.templates"
                               }
                             },
                             _vm._l(_vm.defaults, function(d) {
                               return _c(
                                 "div",
                                 [
-                                  _c("md-option", { attrs: { value: d.id } }, [
-                                    _vm._v(_vm._s(d.name))
-                                  ])
+                                  _c(
+                                    "md-option",
+                                    { attrs: { value: d.name } },
+                                    [_vm._v(_vm._s(d.name))]
+                                  )
                                 ],
                                 1
                               )
@@ -84900,6 +84928,18 @@ var render = function() {
                                 {
                                   staticClass: "md-primary",
                                   attrs: {
+                                    "md-theme": "purpl",
+                                    "md-clickable": ""
+                                  }
+                                },
+                                [_vm._v("TXE_Standart")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "md-chip",
+                                {
+                                  staticClass: "md-primary",
+                                  attrs: {
                                     "md-theme": "myBtnTheme",
                                     "md-clickable": ""
                                   }
@@ -84915,7 +84955,12 @@ var render = function() {
                       _c(
                         "md-content",
                         { staticClass: "md-scrollbar" },
-                        [_c("script_t", { attrs: { new_campaign: _vm.id } })],
+                        [
+                          _c("TXE_Standart", {
+                            tag: "containers",
+                            attrs: { new_campaign: 1 }
+                          })
+                        ],
                         1
                       )
                     ],
@@ -85052,23 +85097,17 @@ var render = function() {
                                   "md-layout-item md-size-50 text-right"
                               },
                               [
-                                item.templates_id
-                                  ? _c(
-                                      "md-chip",
-                                      {
-                                        staticClass: "md-primary",
-                                        attrs: {
-                                          "md-theme": "purpl",
-                                          "md-clickable": ""
-                                        }
-                                      },
-                                      [
-                                        _vm._v(
-                                          _vm._s(_vm.getName(item.templates_id))
-                                        )
-                                      ]
-                                    )
-                                  : _vm._e(),
+                                _c(
+                                  "md-chip",
+                                  {
+                                    staticClass: "md-primary",
+                                    attrs: {
+                                      "md-theme": "purpl",
+                                      "md-clickable": ""
+                                    }
+                                  },
+                                  [_vm._v(_vm._s(item.templates))]
+                                ),
                                 _vm._v(" "),
                                 _c(
                                   "md-chip",
@@ -85091,7 +85130,8 @@ var render = function() {
                           "md-content",
                           { staticClass: "md-scrollbar" },
                           [
-                            _c("script_t", {
+                            _c(item.templates, {
+                              tag: "containers",
                               attrs: { new_campaign: item.new_campaign }
                             })
                           ],

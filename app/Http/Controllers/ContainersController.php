@@ -17,7 +17,7 @@ class ContainersController extends Controller
      */
     public function index()
     {
-        return TriggerResource::collection(Triggers::join('templates', 'templates.id', '=', 'triggers.template_id'));
+        return TriggerResource::collection(Triggers::all());
     }
 
     public function defaults()
@@ -46,12 +46,12 @@ class ContainersController extends Controller
 
         $trigger = new Triggers();
 
-        $TemplatesDefaulr  = Templates::where('default',1)->value('name');
+        $TemplatesDefault  = Templates::where('default',1)->value('name');
 
 
 
 
-        isset($request->templates_id) ?  $trigger->templates_id = $request->templates_id : $trigger->templates_id = $TemplatesDefaulr;
+        isset($request->templates) ?  $trigger->templates = $request->templates : $trigger->templates = $TemplatesDefault;
 
         $trigger->trigger = $request->trigger;
         $trigger->id_campaign = $request->id_campaign;
@@ -101,7 +101,7 @@ class ContainersController extends Controller
         $trigger->update([
             'trigger' => $request->input('trigger'),
             'new_campaign' => $request->input('new_campaign'),
-            'templates_id' => $request->input('templates_id'),
+            'templates' => $request->input('templates'),
         ]);
 
         return response()->json(['message' => 'trigger updated successful']);

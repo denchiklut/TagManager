@@ -34323,7 +34323,7 @@ exports.positioners = positioners;
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(304)
+  __webpack_require__(353)
 }
 var normalizeComponent = __webpack_require__(6)
 /* script */
@@ -34374,7 +34374,7 @@ module.exports = Component.exports
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(308)
+  __webpack_require__(359)
 }
 var normalizeComponent = __webpack_require__(6)
 /* script */
@@ -34425,7 +34425,7 @@ module.exports = Component.exports
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(312)
+  __webpack_require__(357)
 }
 var normalizeComponent = __webpack_require__(6)
 /* script */
@@ -34476,7 +34476,7 @@ module.exports = Component.exports
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(316)
+  __webpack_require__(355)
 }
 var normalizeComponent = __webpack_require__(6)
 /* script */
@@ -85006,46 +85006,8 @@ if (false) {
 }
 
 /***/ }),
-/* 304 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(305);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("2be4a947", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f7a75ec6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TXE_Standart.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f7a75ec6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TXE_Standart.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 305 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.has-tag[data-v-f7a75ec6] {\n    color: #89ddff;\n}\n.has-name[data-v-f7a75ec6] {\n    color: #f07178;\n}\n.has-string[data-v-f7a75ec6] {\n    color: #bbdf88;\n}\n.has-attr[data-v-f7a75ec6] {\n    color: #bb8adb;\n}\n.txt-script[data-v-f7a75ec6] {\n    margin-left: 15px;\n}\n.text-p[data-v-f7a75ec6] {\n    padding-left: 20px;\n    margin-top: -20px;\n}\n.has-id[data-v-f7a75ec6] {\n    color: red\n}\n.has_n[data-v-f7a75ec6] {\n    color: orange;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
+/* 304 */,
+/* 305 */,
 /* 306 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -85081,10 +85043,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "TXE_Standart",
-    props: ['new_campaign'],
-    created: function created() {
-        // console.log(this.new_campaign)
-    }
+    props: ['new_campaign']
 });
 
 /***/ }),
@@ -85268,46 +85227,8 @@ if (false) {
 }
 
 /***/ }),
-/* 308 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(309);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("488e605c", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7a554ed4\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./EXT_Notpalevo.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7a554ed4\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./EXT_Notpalevo.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 309 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
-
-// exports
-
-
-/***/ }),
+/* 308 */,
+/* 309 */,
 /* 310 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -85317,9 +85238,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    name: "EXT_Notpalevo"
+    name: "EXT_Notpalevo",
+    props: ['new_campaign']
 });
 
 /***/ }),
@@ -85330,16 +85275,143 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "txt-script" }, [
+    _c("span", { staticClass: "has-tag" }, [_vm._v("<")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-name" }, [_vm._v("script")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-tag" }, [_vm._v(">")]),
+    _vm._v(" "),
+    _c("div", { staticClass: "text-p" }, [
+      _c("span", { staticClass: "has-string" }, [
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("var")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("createElement")]),
+        _vm._v("('script')"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v(" src ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" '//sonar.semantiqo.com/4e3ll/check.js'"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v("."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("getElementsByTagName")]),
+        _vm._v("('head')["),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" 0 ")]),
+        _vm._v("]."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("appendChild")]),
+        _vm._v("(script) "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("var")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("createElement")]),
+        _vm._v("('script')"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v(" src ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign="),
+        _c("span", { staticClass: "has-id" }, [
+          _vm._v(_vm._s(_vm.new_campaign))
+        ]),
+        _vm._v('&password=htnfhutn&type=1&userData=$"."USERDATA"."\''),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v("."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("getElementsByTagName")]),
+        _vm._v("('head')["),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" 0 ")]),
+        _vm._v("]."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("appendChild")]),
+        _vm._v("(script) "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("var")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("createElement")]),
+        _vm._v("('script')"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v(" src ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" '//leadslabpixels.net/Pixel/ext?idClient=16&idCampaign="),
+        _c("span", { staticClass: "has-id" }, [
+          _vm._v(_vm._s(_vm.new_campaign))
+        ]),
+        _vm._v("&password=htnfhutn'"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v("."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("getElementsByTagName")]),
+        _vm._v("('head')["),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" 0 ")]),
+        _vm._v("]."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("appendChild")]),
+        _vm._v("(script) "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br")
+      ])
+    ]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-tag" }, [_vm._v("<")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-name" }, [_vm._v("/script")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-tag" }, [_vm._v(">")])
+  ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [_c("h2", [_vm._v("EXT_Notpalevo")])])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -85350,46 +85422,8 @@ if (false) {
 }
 
 /***/ }),
-/* 312 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(313);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("69ca05ca", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-d08cc49a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./GIB_bigcock.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-d08cc49a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./GIB_bigcock.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 313 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
-
-// exports
-
-
-/***/ }),
+/* 312 */,
+/* 313 */,
 /* 314 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -85401,9 +85435,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    name: "GIB_bigcock"
+    name: "GIB_bigcock",
+    props: ['new_campaign']
 });
 
 /***/ }),
@@ -85414,16 +85467,119 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "txt-script" }, [
+    _c("span", { staticClass: "has-tag" }, [_vm._v("<")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-name" }, [_vm._v("script")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-tag" }, [_vm._v(">")]),
+    _vm._v(" "),
+    _c("div", { staticClass: "text-p" }, [
+      _c("span", { staticClass: "has-string" }, [
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("var")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("createElement")]),
+        _vm._v("('script')"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v("."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("getElementsByTagName")]),
+        _vm._v("('head')["),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" 0 ")]),
+        _vm._v("]."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("appendChild")]),
+        _vm._v("(script) "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("var")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v(" src ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign="),
+        _c("span", { staticClass: "has-id" }, [
+          _vm._v(_vm._s(_vm.new_campaign))
+        ]),
+        _vm._v('&password=htnfhutn&type=1&userData=$"."USERDATA"."\''),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v("."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("getElementsByTagName")]),
+        _vm._v("('head')["),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" 0 ")]),
+        _vm._v("]."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("appendChild")]),
+        _vm._v("(script) "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("createElement")]),
+        _vm._v("('script')"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v(" src ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" '//leadslabpixels.net/Pixel/gib?idClient=16&idCampaign="),
+        _c("span", { staticClass: "has-id" }, [
+          _vm._v(_vm._s(_vm.new_campaign))
+        ]),
+        _vm._v("&password=htnfhutn'"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v("."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("getElementsByTagName")]),
+        _vm._v("('head')["),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" 0 ")]),
+        _vm._v("]."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("appendChild")]),
+        _vm._v("(script) "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br")
+      ])
+    ]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-tag" }, [_vm._v("<")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-name" }, [_vm._v("/script")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-tag" }, [_vm._v(">")])
+  ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [_c("h2", [_vm._v("GIB_bigcock")])])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -85434,46 +85590,8 @@ if (false) {
 }
 
 /***/ }),
-/* 316 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(317);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("b5fa262c", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4bef7bc6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TXE_NONSONAR.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4bef7bc6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TXE_NONSONAR.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 317 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
-
-// exports
-
-
-/***/ }),
+/* 316 */,
+/* 317 */,
 /* 318 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -85485,9 +85603,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    name: "TXE_NONSONAR"
+    name: "TXE_NONSONAR",
+    props: ['new_campaign']
 });
 
 /***/ }),
@@ -85498,16 +85633,97 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "txt-script" }, [
+    _c("span", { staticClass: "has-tag" }, [_vm._v("<")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-name" }, [_vm._v("script")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-tag" }, [_vm._v(">")]),
+    _vm._v(" "),
+    _c("div", { staticClass: "text-p" }, [
+      _c("span", { staticClass: "has-string" }, [
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("var")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("createElement")]),
+        _vm._v("('script')"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v(" src ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" '//leadslabpixels.net/Pixel/studying?idClient=16&idCampaign="),
+        _c("span", { staticClass: "has-id" }, [
+          _vm._v(_vm._s(_vm.new_campaign))
+        ]),
+        _vm._v('&password=htnfhutn&type=1&userData=$"."USERDATA"."\''),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v("."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("getElementsByTagName")]),
+        _vm._v("('head')["),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" 0 ")]),
+        _vm._v("]."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("appendChild")]),
+        _vm._v("(script) "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("createElement")]),
+        _vm._v("('script')"),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v(" "),
+        _c("span", { staticClass: "has_n" }, [_vm._v("script")]),
+        _vm._v(" . "),
+        _c("span", { staticClass: "has_n" }, [_vm._v(" src ")]),
+        _vm._v(" "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" = ")]),
+        _vm._v(" '//leadslabpixels.net/Pixel/txe?idClient=16&idCampaign="),
+        _c("span", { staticClass: "has-id" }, [
+          _vm._v(_vm._s(_vm.new_campaign))
+        ]),
+        _vm._v("&password=htnfhutn';\n            "),
+        _c("span", { staticClass: "has-attr" }, [_vm._v("document")]),
+        _vm._v("."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("getElementsByTagName")]),
+        _vm._v("('head')["),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" 0 ")]),
+        _vm._v("]."),
+        _c("span", { staticClass: "has_n" }, [_vm._v("appendChild")]),
+        _vm._v("(script) "),
+        _c("span", { staticClass: "has-tag" }, [_vm._v(" ; ")]),
+        _vm._v(" "),
+        _c("br")
+      ])
+    ]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-tag" }, [_vm._v("<")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-name" }, [_vm._v("/script")]),
+    _vm._v(" "),
+    _c("span", { staticClass: "has-tag" }, [_vm._v(">")])
+  ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [_c("h2", [_vm._v("TXE_NONSONAR")])])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -87192,6 +87408,182 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 337 */,
+/* 338 */,
+/* 339 */,
+/* 340 */,
+/* 341 */,
+/* 342 */,
+/* 343 */,
+/* 344 */,
+/* 345 */,
+/* 346 */,
+/* 347 */,
+/* 348 */,
+/* 349 */,
+/* 350 */,
+/* 351 */,
+/* 352 */,
+/* 353 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(354);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("533c7e7e", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f7a75ec6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TXE_Standart.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f7a75ec6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TXE_Standart.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 354 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.has-tag[data-v-f7a75ec6] {\n  color: #89ddff;\n}\n.has-name[data-v-f7a75ec6] {\n  color: #f07178;\n}\n.has-string[data-v-f7a75ec6] {\n  color: #bbdf88;\n}\n.has-attr[data-v-f7a75ec6] {\n  color: #bb8adb;\n}\n.txt-script[data-v-f7a75ec6] {\n  margin-left: 15px;\n}\n.text-p[data-v-f7a75ec6] {\n  padding-left: 20px;\n  margin-top: -20px;\n}\n.has-id[data-v-f7a75ec6] {\n  color: red;\n}\n.has_n[data-v-f7a75ec6] {\n  color: orange;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 355 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(356);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("544e7dbb", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4bef7bc6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TXE_NONSONAR.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4bef7bc6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TXE_NONSONAR.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 356 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.has-tag[data-v-4bef7bc6] {\n  color: #89ddff;\n}\n.has-name[data-v-4bef7bc6] {\n  color: #f07178;\n}\n.has-string[data-v-4bef7bc6] {\n  color: #bbdf88;\n}\n.has-attr[data-v-4bef7bc6] {\n  color: #bb8adb;\n}\n.txt-script[data-v-4bef7bc6] {\n  margin-left: 15px;\n}\n.text-p[data-v-4bef7bc6] {\n  padding-left: 20px;\n  margin-top: -20px;\n}\n.has-id[data-v-4bef7bc6] {\n  color: red;\n}\n.has_n[data-v-4bef7bc6] {\n  color: orange;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 357 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(358);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("fec4d0f4", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-d08cc49a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./GIB_bigcock.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-d08cc49a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./GIB_bigcock.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 358 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.has-tag[data-v-d08cc49a] {\n  color: #89ddff;\n}\n.has-name[data-v-d08cc49a] {\n  color: #f07178;\n}\n.has-string[data-v-d08cc49a] {\n  color: #bbdf88;\n}\n.has-attr[data-v-d08cc49a] {\n  color: #bb8adb;\n}\n.txt-script[data-v-d08cc49a] {\n  margin-left: 15px;\n}\n.text-p[data-v-d08cc49a] {\n  padding-left: 20px;\n  margin-top: -20px;\n}\n.has-id[data-v-d08cc49a] {\n  color: red;\n}\n.has_n[data-v-d08cc49a] {\n  color: orange;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 359 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(360);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("88d5001e", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7a554ed4\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./EXT_Notpalevo.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7a554ed4\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./EXT_Notpalevo.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 360 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.has-tag[data-v-7a554ed4] {\n  color: #89ddff;\n}\n.has-name[data-v-7a554ed4] {\n  color: #f07178;\n}\n.has-string[data-v-7a554ed4] {\n  color: #bbdf88;\n}\n.has-attr[data-v-7a554ed4] {\n  color: #bb8adb;\n}\n.txt-script[data-v-7a554ed4] {\n  margin-left: 15px;\n}\n.text-p[data-v-7a554ed4] {\n  padding-left: 20px;\n  margin-top: -20px;\n}\n.has-id[data-v-7a554ed4] {\n  color: red;\n}\n.has_n[data-v-7a554ed4] {\n  color: orange;\n}\n", ""]);
+
+// exports
+
 
 /***/ })
 /******/ ]);

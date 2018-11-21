@@ -29,14 +29,11 @@
     export default {
         name: "TXE_Standart",
         props:['new_campaign'],
-        created() {
-            // console.log(this.new_campaign)
-        }
     }
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     .has-tag {
         color: #89ddff;;
     }

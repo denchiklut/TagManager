@@ -20,14 +20,12 @@
                               <h3 class="md-title">Фильтр:</h3>
                           </div>
                           <div class="md-layout-item md-size-50 text-right">
-                              <!--<md-chip class="md-primary" md-theme="purpl" md-clickable>{{defautss}}</md-chip>-->
-                              <md-chip class="md-primary" md-theme="purpl" md-clickable>TXE_Standart</md-chip>
+                              <md-chip class="md-primary" md-theme="purpl" md-clickable>{{txt_def}}</md-chip>
                               <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{url}}</md-chip>
                           </div>
                       </md-toolbar>
                       <md-content class="md-scrollbar">
-                          <!--<TXE_Standart  :new_campaign="1"></TXE_Standart>-->
-                          <containers is="TXE_Standart" :new_campaign="1"></containers>
+                          <component :is="txt_def" :new_campaign="1"></component>
                       </md-content>
                   </md-card-media>
                   <md-ripple>
@@ -70,10 +68,7 @@
                           </div>
                       </md-toolbar>
                       <md-content class="md-scrollbar">
-
-                          <containers :is="item.templates" :new_campaign="item.new_campaign"></containers>
-                          <!--<TXE_Standart  :new_campaign="item.new_campaign"></TXE_Standart>-->
-
+                          <component :is="item.templates" :new_campaign="item.new_campaign"></component>
                       </md-content>
                   </md-card-media>
                   <md-ripple>
@@ -102,6 +97,8 @@
                   </md-ripple>
               </md-card>
           </div>
+
+
       </div>
 
       <md-dialog :md-active.sync="showAddDialog">
@@ -137,7 +134,7 @@
 
     const searchDef = (items, term) => {
         if (term) {
-            return items.filter(item => toLower(JSON.stringify(item.default)).includes(toLower(term)))[0].name
+            return items.filter(item => toLower(JSON.stringify(item.default)).includes(toLower(term)))
         }
 
         return items;
@@ -184,6 +181,10 @@
                 this.showEditDialog = false;
             },
         },
+        created() {
+
+
+        },
         mounted() {
             this.$store.dispatch('getTrigger', this.id);
             this.$store.dispatch('getTemplates');
@@ -192,10 +193,13 @@
             searched() {
                 return searchByName(this.$store.getters.triggers, this.search);
             },
-            defautss() {
-                return searchDef(this.$store.getters.templates, 1);
-            }
+            txt_def() {
 
+                if(this.$store.getters.templates.length == 0) {
+                    return
+                }
+                return searchDef(this.$store.getters.templates, 1)[0].name;
+            }
         }
     }
 </script>

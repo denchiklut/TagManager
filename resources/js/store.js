@@ -130,7 +130,6 @@ export default {
                 .get('/api/containers/' + id, id)
                 .then(response => {
                     context.commit('updateTriggers', response.data.data);
-                    console.log(response.data.data);
                 });
         },
         addTrigger: (context, form) => {

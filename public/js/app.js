@@ -83992,7 +83992,6 @@ var searchDef = function searchDef(items, term) {
     created: function created() {},
     mounted: function mounted() {
         this.$store.dispatch('getTrigger', this.id);
-        this.$store.dispatch('getTemplates');
     },
 
     computed: {
@@ -87127,6 +87126,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.$router.push("/login");
         }
     },
+    mounted: function mounted() {
+        this.$store.dispatch('getTemplates');
+    },
+
     computed: {
         currentUser: function currentUser() {
             return this.$store.getters.currentUser;

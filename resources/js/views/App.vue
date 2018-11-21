@@ -90,6 +90,9 @@
                 this.$router.push("/login");
             }
         },
+        mounted() {
+            this.$store.dispatch('getTemplates');
+        },
         computed: {
             currentUser() {
                return this.$store.getters.currentUser;

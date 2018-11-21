@@ -187,7 +187,6 @@
         },
         mounted() {
             this.$store.dispatch('getTrigger', this.id);
-            this.$store.dispatch('getTemplates');
         },
         computed: {
             searched() {

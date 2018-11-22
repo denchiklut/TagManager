@@ -18,6 +18,9 @@ use Illuminate\Http\Request;
 //    return $request->user();
 //});
 
+
+
+
 Route::group(['prefix' => 'pixel'], function () {
 
     Route::get('/tags/{hash_advertisings}', 'AdvertisingCampaigns@index');
@@ -25,6 +28,7 @@ Route::group(['prefix' => 'pixel'], function () {
 
 Route::group(['prefix' => 'add'], function () {
     Route::get('/pixel/{url}', 'AddPixel@store');
+    Route::get('/test/', 'AddPixel@test');
 });
 
 

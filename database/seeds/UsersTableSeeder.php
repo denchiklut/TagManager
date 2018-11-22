@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Analitics;
 
 class UsersTableSeeder extends Seeder
 {
     public function run()
     {
-        factory(App\User::class, 50)->create();
+        factory(Analitics::class, 50)->create();
     }
 }

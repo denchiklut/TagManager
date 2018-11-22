@@ -23,6 +23,7 @@ class ComponyResource extends Resource
             'sig' => $this->sig,
             'url' => $this->url,
             'trigger' => $this->trigger,
+            'templates' => $this->templates,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

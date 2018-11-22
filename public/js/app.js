@@ -82343,7 +82343,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 
 
@@ -83674,15 +83673,19 @@ var render = function() {
                   }
                 },
                 [
-                  _c("md-table-empty-state", {
-                    attrs: {
-                      "md-label": "No users found",
-                      "md-description":
-                        "No user found for this '" +
-                        _vm.search +
-                        "' query. Try a different search term or create a new user."
-                    }
-                  })
+                  _c(
+                    "md-table-empty-state",
+                    [
+                      _c("md-progress-spinner", {
+                        attrs: {
+                          "md-diameter": 100,
+                          "md-stroke": 10,
+                          "md-mode": "indeterminate"
+                        }
+                      })
+                    ],
+                    1
+                  )
                 ],
                 1
               )
@@ -83834,11 +83837,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_scripts_GIB_bigcock___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__components_scripts_GIB_bigcock__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_scripts_TXE_NONSONAR__ = __webpack_require__(163);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_scripts_TXE_NONSONAR___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__components_scripts_TXE_NONSONAR__);
-//
-//
-//
-//
-//
 //
 //
 //

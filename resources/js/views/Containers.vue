@@ -13,8 +13,6 @@
 
         <div class="md-layout">
             <div class="md-layout-item">
-
-
                 <md-card class="md-accent" md-theme="myTheme" md-with-hover>
                     <md-ripple>
                         <md-card-area>
@@ -41,7 +39,6 @@
             </div>
 
             <div  v-for="item in searched" class="md-layout-item">
-
                 <md-card class="md-accent" md-theme="myTheme" md-with-hover>
                     <md-ripple>
                         <md-card-area>
@@ -66,8 +63,6 @@
                     </md-ripple>
                 </md-card>
             </div>
-
-
         </div>
 
         <md-dialog :md-active.sync="showAddDialog">

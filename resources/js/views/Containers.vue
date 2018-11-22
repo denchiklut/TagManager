@@ -31,7 +31,7 @@
                             </md-content>
                         </md-card-area>
                         <md-card-actions>
-                            <md-button disabled>Edit</md-button>
+                            <md-button @click="showEditFilterTimplase(txt_def)">Edit</md-button>
                             <md-button disabled>remove</md-button>
                         </md-card-actions>
                     </md-ripple>
@@ -72,7 +72,50 @@
         <md-dialog :md-active.sync="showEditDialog">
             <edit @editTriggerE="closeDialog" :form="editTrigger"></edit>
         </md-dialog>
+
+        <div>
+            <md-dialog :md-active.sync="active">
+                <form @submit.prevent="saveDef">
+
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item">
+                            <form novalidate class="md-layout" @submit.prevent="saveDef">
+                                <md-card class="md-layout-item md-size-100">
+                                    <md-card-header>
+                                        <div class="md-title">ШАблоны</div>
+                                    </md-card-header>
+
+                                    <md-card-content>
+                                        <div class="md-layout md-gutter">
+                                            <div class="md-layout-item md-small-size-100">
+                                                <md-field>
+                                                    <label for="def">Шаблон</label>
+                                                    <md-select name="templates" v-model="tmpl_comp" id="def" md-dense >
+                                                        <div v-for="d in tmpl">
+                                                            <md-option  v-bind:value="d.name">{{d.name}}</md-option>
+                                                        </div>
+                                                    </md-select>
+                                                </md-field>
+                                            </div>
+                                        </div>
+                                    </md-card-content>
+                                    <md-card-actions>
+                                        <md-button class="md-primary" md-theme="myTheme" @click="active=false">Отмена</md-button>
+                                        <md-button type="submit" class="md-primary" md-theme="myTheme">Сохранить</md-button>
+                                    </md-card-actions>
+                                </md-card>
+                            </form>
+
+                        </div>
+                    </div>
+                </form>
+            </md-dialog>
+        </div>
+
+
     </div>
+
+
 </template>
 
 <script>
@@ -117,6 +160,12 @@
                 lastUser:null,
                 defUrl: null,
                 showT: false,
+                active: false,
+                tmpl_comp: null,
+                teml_obj: {
+                    id: '',
+                    text: '',
+                }
             }
         },
         components: {
@@ -144,6 +193,17 @@
                 this.showAddDialog = false;
                 this.showEditDialog = false;
             },
+            showEditFilterTimplase(txt_def)
+            {
+                this.active = true;
+            },
+            saveDef() {
+                this.active = false;
+                this.teml_obj.id = this.id;
+                this.teml_obj.text = this.tmpl_comp;
+                this.$store.dispatch('editComponyTimplate', this.teml_obj);
+
+            }
         },
         created() {
 
@@ -155,6 +215,9 @@
         computed: {
             searched() {
                 return searchByName(this.$store.getters.triggers, this.search);
+            },
+            tmpl() {
+                return this.$store.getters.templates;
             },
             txt_def() {
 

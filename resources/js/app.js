@@ -5,12 +5,15 @@ import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import  {initialize} from "./helpers/utilities";
 import VueMaterial from 'vue-material'
+import Vuetify from 'vuetify'
+
 
 import storeData from './store'
 import {routes} from './routes'
 import moment from 'moment'
 import App from './views/App'
 
+Vue.use(Vuetify);
 Vue.use(Vuex);
 Vue.use(VueRouter);
 Vue.use(VueMaterial);

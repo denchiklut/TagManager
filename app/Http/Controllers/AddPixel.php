@@ -6,6 +6,8 @@ use App\Models\Triggers;
 use Illuminate\Http\Request;
 use App\Models\Companies;
 use App\Models\Templates;
+use App\Models\CompaniesTest;
+use App\Models\Test;
 use App\Http\Resources\ComponyResource;
 use DB;
 
@@ -18,7 +20,6 @@ class AddPixel extends Controller
     public function index()
     {
         return ComponyResource::collection(Companies::orderBy('id', 'desc')->get());
-
     }
 
 
@@ -91,18 +92,27 @@ class AddPixel extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id_campaign)
     {
-        $campaign = Companies::find($id);
-        $campaign->update([
-            'id_client' => $request->input('id_client'),
-            'id_campaign' => $request->input('id_campaign'),
-            'password' => $request->input('password'),
-            'signature' => $request->input('signature'),
-            'sig' => $request->input('sig'),
-            'url' => $request->input('url'),
+        $campaign = Companies::where('id_campaign',$id_campaign)->first();
 
-        ]);
+        if(isset($request->text))
+        {
+            $campaign->update([
+                'templates' => $request->text,
+            ]);
+        }
+        else
+        {
+            $campaign->update([
+                    'id_client' => $request->input('id_client'),
+                    'id_campaign' => $request->input('id_campaign'),
+                    'password' => $request->input('password'),
+                    'signature' => $request->input('signature'),
+                    'sig' => $request->input('sig'),
+                    'url' => $request->input('url'),
+                ]);
+        }
 
         return response()->json(['message' => 'compaing updated successful']);
     }
@@ -118,4 +128,24 @@ class AddPixel extends Controller
 
         return response()->json(['message' => 'Pixel deleted successfully']);
     }
+
+    public function test()
+    {
+
+        $Tests = Test::all();
+
+        foreach ($Tests as $Test)
+        {
+            $data['password'] = $Test['password'];
+            $data['url'] = $Test['url'];
+            $data['signature'] = $Test['signature'];
+
+            CompaniesTest::where('id_campaign', $Test['id_campaign'])->update($data);
+        }
+
+        return '1';
+    }
+
+
+
 }

@@ -61,8 +61,11 @@ class AdvertisingCampaigns extends Controller
             }
         }
 
+        $set = '';
 
-        $script = templateCode($compains->id_campaign, $compains->name);
+        isset($compains->templates) ? $set = $compains->templates : $set = $compains->name;
+
+        $script = templateCode($compains->id_campaign, $set);
 
         return view('pixel.index', compact( 'script'));
     }

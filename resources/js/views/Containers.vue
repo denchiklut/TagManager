@@ -1,114 +1,83 @@
 <template>
-  <div>
-      <md-toolbar class="md-transparent" md-elevation="0">
-          <div class="md-title" style="flex: 1">
-              <md-field>
-                  <label>Тригеры</label>
-                  <md-input placeholder="Введите уникальное имя проекта лиюо id компании" v-model="search" @input="searchOnTable"></md-input>
-              </md-field>
-          </div>
-          <md-button><router-link :to="{ name: 'companies' }"  class="nav-link active">Назад</router-link></md-button>
-          <md-button class="md-primary md-raised" @click="showAddDialog = true">Создать</md-button>
-      </md-toolbar>
+    <div>
+        <md-toolbar class="md-transparent" md-elevation="0">
+            <div class="md-title" style="flex: 1">
+                <md-field>
+                    <label>Тригеры</label>
+                    <md-input placeholder="Введите уникальное имя проекта лиюо id компании" v-model="search" @input="searchOnTable"></md-input>
+                </md-field>
+            </div>
+            <md-button><router-link :to="{ name: 'companies' }"  class="nav-link active">Назад</router-link></md-button>
+            <md-button class="md-primary md-raised" @click="showAddDialog = true">Создать</md-button>
+        </md-toolbar>
 
-      <div class="md-layout">
-          <div class="md-layout-item">
-              <md-card class="md-accent" md-theme="myTheme" md-with-hover>
-                  <md-card-media>
-                      <md-toolbar class="md-dense md-primary" md-theme="myTheme">
-                          <div class="md-layout-item">
-                              <h3 class="md-title">Фильтр:</h3>
-                          </div>
-                          <div class="md-layout-item text-right">
-                              <md-chip class="md-primary" md-theme="purpl" md-clickable>{{txt_def}}</md-chip>
-                              <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{url}}</md-chip>
-                          </div>
-                      </md-toolbar>
-                      <md-content class="md-scrollbar">
-                          <component :is="txt_def" :new_campaign="1"></component>
-                      </md-content>
-                  </md-card-media>
-                  <md-ripple>
-                      <md-card-header>
-                          <div class="md-layout md-gutter md-alignment-center-space-between">
-                              <div class="md-layout-item">
-                                  <div class="md-title" >Код компании: {{id}}</div>
-                                  <div class="md-subhead">Поместите этот скрипт в тег
-                                      <b>
-                                          <span class="has-tag">&lt;</span>
-                                          <span class="has-name">head</span>
-                                          <span class="has-tag">&gt;</span>
-                                      </b>
-                                      вашего сайта </div>
-                              </div>
-                              <div class="md-layout-item text-right">
-                                  <md-button class="md-fab md-mini md-primary" md-theme="myBtnTheme" disabled>
-                                      <md-icon>edit</md-icon>
-                                  </md-button>
-                                  <md-button class="md-fab md-mini md-primary" md-theme="myBtnTheme" disabled>
-                                      <md-icon>delete</md-icon>
-                                  </md-button>
-                              </div>
-                          </div>
-                      </md-card-header>
-                  </md-ripple>
-              </md-card>
-          </div>
-
-          <div  v-for="item in searched" class="md-layout-item">
-              <md-card class="md-accent" md-theme="myTheme" md-with-hover>
-                  <md-card-media>
-                      <md-toolbar class="md-dense md-primary" md-theme="myTheme">
-                          <div class="md-layout-item ">
-                              <h3 class="md-title">Фильтр:</h3>
-                          </div>
-                          <div class="md-layout-item text-right">
-                              <md-chip class="md-primary" md-theme="purpl" md-clickable>{{item.templates}}</md-chip>
-                              <md-chip class="md-primary" md-theme="myBtnTheme" md-clickable>{{item.trigger}}</md-chip>
-                          </div>
-                      </md-toolbar>
-                      <md-content class="md-scrollbar">
-                          <component :is="item.templates" :new_campaign="item.new_campaign"></component>
-                      </md-content>
-                  </md-card-media>
-                  <md-ripple>
-                      <md-card-header>
-                          <div class="md-layout md-gutter md-alignment-center-space-between">
-                              <div class="md-layout-item">
-                                  <div class="md-title" >Код компании: {{item.new_campaign}}</div>
-                                  <div class="md-subhead">Поместите этот скрипт в тег
-                                      <b>
-                                          <span class="has-tag">&lt;</span>
-                                          <span class="has-name">head</span>
-                                          <span class="has-tag">&gt;</span>
-                                      </b>
-                                      вашего сайта </div>
-                              </div>
-                              <div class="md-layout-item text-right">
-                                  <md-button class="md-fab md-mini md-primary" md-theme="myBtnTheme" @click="showEditFilterDialog(item)">
-                                      <md-icon>edit</md-icon>
-                                  </md-button>
-                                  <md-button class="md-fab md-mini md-primary" md-theme="myBtnTheme" @click="deleteFilter(item)">
-                                      <md-icon>delete</md-icon>
-                                  </md-button>
-                              </div>
-                          </div>
-                      </md-card-header>
-                  </md-ripple>
-              </md-card>
-          </div>
+        <div class="md-layout">
+            <div class="md-layout-item">
 
 
-      </div>
+                <md-card class="md-accent" md-theme="myTheme" md-with-hover>
+                    <md-ripple>
+                        <md-card-area>
+                            <md-toolbar class="md-dense md-tlbr">
+                                <md-card-header>
+                                    <div class="md-title">компания: {{id}}</div>
+                                    <div class="md-subhead">{{txt_def}} /  {{url}}</div>
+                                </md-card-header>
 
-      <md-dialog :md-active.sync="showAddDialog">
-          <add  @CloseTriggerDialog="closeDialog" :old_comaing="id"></add>
-      </md-dialog>
+                            </md-toolbar>
 
-      <md-dialog :md-active.sync="showEditDialog">
-          <edit @editTriggerE="closeDialog" :form="editTrigger"></edit>
-      </md-dialog>
-  </div>
+                            <md-content class="md-scrollbar">
+                                <md-card-media>
+                                    <component :is="txt_def" :new_campaign="id"></component>
+                                </md-card-media>
+                            </md-content>
+                        </md-card-area>
+                        <md-card-actions>
+                            <md-button disabled>Edit</md-button>
+                            <md-button disabled>remove</md-button>
+                        </md-card-actions>
+                    </md-ripple>
+                </md-card>
+            </div>
+
+            <div  v-for="item in searched" class="md-layout-item">
+
+                <md-card class="md-accent" md-theme="myTheme" md-with-hover>
+                    <md-ripple>
+                        <md-card-area>
+                            <md-toolbar class="md-dense md-tlbr">
+                                <md-card-header>
+                                    <div class="md-title">компания: {{item.new_campaign}}</div>
+                                    <div class="md-subhead">{{item.templates}} /  {{item.trigger}}</div>
+                                </md-card-header>
+
+                            </md-toolbar>
+
+                            <md-content class="md-scrollbar">
+                                <md-card-media>
+                                    <component :is="item.templates" :new_campaign="item.new_campaign"></component>
+                                </md-card-media>
+                            </md-content>
+                        </md-card-area>
+                        <md-card-actions>
+                            <md-button @click="showEditFilterDialog(item)">Edit</md-button>
+                            <md-button @click="deleteFilter(item)">remove</md-button>
+                        </md-card-actions>
+                    </md-ripple>
+                </md-card>
+            </div>
+
+
+        </div>
+
+        <md-dialog :md-active.sync="showAddDialog">
+            <add  @CloseTriggerDialog="closeDialog" :old_comaing="id"></add>
+        </md-dialog>
+
+        <md-dialog :md-active.sync="showEditDialog">
+            <edit @editTriggerE="closeDialog" :form="editTrigger"></edit>
+        </md-dialog>
+    </div>
 </template>
 
 <script>
@@ -213,7 +182,7 @@
             primary: #616161,
 
         // The secondary color of your brand
-            accent: #616161,
+            accent: #525252,
     ));
 
     @include md-register-theme("myBtnTheme", (
@@ -233,27 +202,38 @@
     @import "../../../node_modules/vue-material/dist/theme/all";
 
     .md-card {
-        max-width: 600px;
+        max-width: 450px;
         margin: 4px;
         display: inline-block;
         vertical-align: top;
+        font-size: 8px;
+        line-height: 11px;
+    }
+    .md-title {
+        margin-top: 0!important;
+        font-size: 16px;
     }
 
     .md-content {
         /*max-width: 600px;*/
-        height: 300px;
+        height: 160px;
         overflow: auto;
-        background: #282c33!important;
+        background: #525252!important;
     }
 
     .md-card-header {
-        /*background: #5d3666e3;*/
-        background: #e1515a3b;
+        padding: 6px 16px;
+        /*background: #a06560;*/
         margin-bottom: 0;
     }
 
-    .md-chips {
-        margin-bottom: 24px;
+    .md-tlbr {
+        background: #a06560!important;
+    }
+
+    .md-chip {
+        font-size: 9px!important;
+        /*margin-bottom: 24px;*/
     }
 
     small {
@@ -277,10 +257,19 @@
 
     .txt-script {
         margin-left: 15px;
+        width: initial;
+    }
+
+    .md-toolbar .md-title {
+
+        margin-left: 0;
+        font-weight: bold;
+        color: #fff!important;
+
     }
 
     .text-p {
-        padding-left: 20px;
+        padding-left: 0!important;
         margin-top: -20px;
     }
     .has-id {

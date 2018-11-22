@@ -50,11 +50,11 @@
     }
 
     .txt-script {
-        margin-left: 15px;
+        margin-left: 5px;
     }
 
     .text-p {
-        padding-left: 20px;
+        padding-left: 0;
         margin-top: -20px;
     }
     .has-id {

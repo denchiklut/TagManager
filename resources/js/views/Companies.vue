@@ -28,16 +28,19 @@
 
                     <md-table-row slot="md-table-row" slot-scope="{ item }" md-with-hover>
                         <md-table-cell md-label="#" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
-                        <md-table-cell md-label="id_client" md-sort-by="id_client">{{ item.id_client }}</md-table-cell>
-                        <md-table-cell md-label="id_campaign" md-sort-by="id_campaign">{{ item.id_campaign }}</md-table-cell>
-                        <md-table-cell md-label="signature" md-sort-by="signature">{{ item.signature }}</md-table-cell>
-                        <md-table-cell md-label="url" md-sort-by="url">
-                            <router-link :to="{ name: 'containers', params:{ id: item.id_campaign, url: item.url }}" class="nav-link active">{{ item.url }}</router-link>
+                        <!--<md-table-cell md-label="id_client" md-sort-by="id_client">{{ item.id_client }}</md-table-cell>-->
+                        <!--<md-table-cell md-label="id_campaign" md-sort-by="id_campaign">{{ item.id_campaign }}</md-table-cell>-->
+                        <md-table-cell md-label="signature" md-sort-by="signature">
+                            <router-link :to="{ name: 'containers', params:{ id: item.id_campaign, url: item.url }}" class="nav-link active">{{ item.signature }}</router-link>
                         </md-table-cell>
-                        <md-table-cell md-label="password" md-sort-by="password">{{ item.password }}</md-table-cell>
-                        <md-table-cell md-label="sig" md-sort-by="sig">{{ item.sig }}</md-table-cell>
+                        <!--<md-table-cell md-label="url" md-sort-by="url">-->
+                           <!--{{ item.url }}-->
+                        <!--</md-table-cell>-->
+                        <!--<md-table-cell md-label="password" md-sort-by="password">{{ item.password }}</md-table-cell>-->
+                        <!--<md-table-cell md-label="sig" md-sort-by="sig">{{ item.sig }}</md-table-cell>-->
                         <md-table-cell md-label="trigger" md-sort-by="trigger">{{ item.trigger }}</md-table-cell>
-                        <md-table-cell md-label="created_at" md-sort-by="created_at.date" md-numeric>{{ item.created_at.date | formatDate }}</md-table-cell>
+                        <!--<md-table-cell md-label="created_at" md-sort-by="created_at.date" md-numeric>{{ item.created_at.date | formatDate }}</md-table-cell>-->
+                        <md-table-cell md-label="template" md-sort-by="template">{{ item.templates ? item.templates : txt_def}}</md-table-cell>
                         <md-table-cell md-label="edit">
                             <md-button class="md-fab md-mini md-primary" @click="showEditForm(item)"><md-icon>edit</md-icon></md-button>
                             <md-button class="md-fab md-mini" @click="deleteItem(item)"><md-icon>delete</md-icon></md-button>
@@ -70,6 +73,13 @@
         return items
     };
 
+    const searchDef = (items, term) => {
+        if (term) {
+            return items.filter(item => toLower(JSON.stringify(item.default)).includes(toLower(term)))
+        }
+
+        return items;
+    };
     export default {
         name: 'TableSearch',
         data: () => ({
@@ -109,7 +119,14 @@
 
             currentUser() {
                 return this.$store.getters.currentUser;
-            }
+            },
+            txt_def() {
+
+                if(this.$store.getters.templates.length == 0) {
+                    return
+                }
+                return searchDef(this.$store.getters.templates, 1)[0].name;
+            },
         }
     }
 </script>

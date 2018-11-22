@@ -90,7 +90,17 @@ class AddPixel extends Controller
      return response()->json(['hash_code' => $hash_code,  'signature' => $signature, 'data' => $campaing]);
 
     }
+    public function show($id)
+    {
+        return ComponyResource::collection(Companies::where('id_campaign', $id)->get());
+    }
 
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
 
     public function update(Request $request, $id_campaign)
     {

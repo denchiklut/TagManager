@@ -29,14 +29,11 @@
     export default {
         name: "TXE_Standart",
         props:['new_campaign'],
-        created() {
-            // console.log(this.new_campaign)
-        }
     }
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     .has-tag {
         color: #89ddff;;
     }
@@ -53,11 +50,11 @@
     }
 
     .txt-script {
-        margin-left: 15px;
+        margin-left: 5px;
     }
 
     .text-p {
-        padding-left: 20px;
+        padding-left: 0;
         margin-top: -20px;
     }
     .has-id {

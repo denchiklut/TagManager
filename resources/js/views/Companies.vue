@@ -22,20 +22,19 @@
 
             <md-card-content>
                 <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card md-fixed-header>
-                    <md-table-empty-state
-                            md-label="No users found"
-                            :md-description="`No user found for this '${search}' query. Try a different search term or create a new user.`">
+                    <md-table-empty-state>
+                            <md-progress-spinner :md-diameter="100" :md-stroke="10" md-mode="indeterminate"></md-progress-spinner>
                     </md-table-empty-state>
 
                     <md-table-row slot="md-table-row" slot-scope="{ item }" md-with-hover>
                         <md-table-cell md-label="#" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
-                        <!--<md-table-cell md-label="id_client" md-sort-by="id_client">{{ item.id_client }}</md-table-cell>-->
-                        <!--<md-table-cell md-label="id_campaign" md-sort-by="id_campaign">{{ item.id_campaign }}</md-table-cell>-->
+                        <md-table-cell md-label="id_client" md-sort-by="id_client">{{ item.id_client }}</md-table-cell>
+                        <md-table-cell md-label="id_campaign" md-sort-by="id_campaign">{{ item.id_campaign }}</md-table-cell>
                         <md-table-cell md-label="signature" md-sort-by="signature">{{ item.signature }}</md-table-cell>
                         <md-table-cell md-label="url" md-sort-by="url">
                             <router-link :to="{ name: 'containers', params:{ id: item.id_campaign, url: item.url }}" class="nav-link active">{{ item.url }}</router-link>
                         </md-table-cell>
-                        <!--<md-table-cell md-label="password" md-sort-by="password">{{ item.password }}</md-table-cell>-->
+                        <md-table-cell md-label="password" md-sort-by="password">{{ item.password }}</md-table-cell>
                         <md-table-cell md-label="sig" md-sort-by="sig">{{ item.sig }}</md-table-cell>
                         <md-table-cell md-label="trigger" md-sort-by="trigger">{{ item.trigger }}</md-table-cell>
                         <md-table-cell md-label="created_at" md-sort-by="created_at.date" md-numeric>{{ item.created_at.date | formatDate }}</md-table-cell>

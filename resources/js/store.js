@@ -104,6 +104,8 @@ export default {
             axios
                 .get('/api/companies')
                 .then((responce) => {
+                    console.log(responce.data.data)
+                    responce.data.data;//= [JSON.parse('{"id":398,"id_client":"16","id_campaign":"581","password":"htnfhutn","signature":"test_581","sig":"66307c9455b0c9b37c5423951ff46c9e60cfe49b","url":"test","trigger":0,"created_at":{"date":"2018-11-22 09:14:06.000000","timezone_type":3,"timezone":"UTC"},"updated_at":{"date":"2018-11-22 09:14:06.000000","timezone_type":3,"timezone":"UTC"}}')];
                     context.commit('updateCompanies', responce.data.data);
                 })
         },
@@ -115,6 +117,16 @@ export default {
         },
         editCompony: (context, form) => {
             axios.patch('/api/companies/' + form.id, form)
+                .then(response => {
+                    context.dispatch('getCompanies');
+                });
+        },
+        editComponyTimplate: (context, form_timplase) => {
+
+            console.log(form_timplase.id);
+            console.log(form_timplase.text);
+
+            axios.patch('/api/companies/' + form_timplase.id, form_timplase)
                 .then(response => {
                     context.dispatch('getCompanies');
                 });
@@ -162,5 +174,6 @@ export default {
                     context.commit('updateTemplates', response.data.data);
                 });
         },
+
     },
 }

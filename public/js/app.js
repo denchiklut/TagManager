@@ -82343,6 +82343,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 
@@ -83515,41 +83517,8 @@ var render = function() {
                               "md-table-cell",
                               {
                                 attrs: {
-                                  "md-label": "id_client",
-                                  "md-sort-by": "id_client"
-                                }
-                              },
-                              [_vm._v(_vm._s(item.id_client))]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "md-table-cell",
-                              {
-                                attrs: {
-                                  "md-label": "id_campaign",
-                                  "md-sort-by": "id_campaign"
-                                }
-                              },
-                              [_vm._v(_vm._s(item.id_campaign))]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "md-table-cell",
-                              {
-                                attrs: {
                                   "md-label": "signature",
                                   "md-sort-by": "signature"
-                                }
-                              },
-                              [_vm._v(_vm._s(item.signature))]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "md-table-cell",
-                              {
-                                attrs: {
-                                  "md-label": "url",
-                                  "md-sort-by": "url"
                                 }
                               },
                               [
@@ -83567,32 +83536,10 @@ var render = function() {
                                       }
                                     }
                                   },
-                                  [_vm._v(_vm._s(item.url))]
+                                  [_vm._v(_vm._s(item.signature))]
                                 )
                               ],
                               1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "md-table-cell",
-                              {
-                                attrs: {
-                                  "md-label": "password",
-                                  "md-sort-by": "password"
-                                }
-                              },
-                              [_vm._v(_vm._s(item.password))]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "md-table-cell",
-                              {
-                                attrs: {
-                                  "md-label": "sig",
-                                  "md-sort-by": "sig"
-                                }
-                              },
-                              [_vm._v(_vm._s(item.sig))]
                             ),
                             _vm._v(" "),
                             _c(
@@ -83604,24 +83551,6 @@ var render = function() {
                                 }
                               },
                               [_vm._v(_vm._s(item.trigger))]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "md-table-cell",
-                              {
-                                attrs: {
-                                  "md-label": "created_at",
-                                  "md-sort-by": "created_at.date",
-                                  "md-numeric": ""
-                                }
-                              },
-                              [
-                                _vm._v(
-                                  _vm._s(
-                                    _vm._f("formatDate")(item.created_at.date)
-                                  )
-                                )
-                              ]
                             ),
                             _vm._v(" "),
                             _c(

@@ -19,7 +19,7 @@
                             <md-toolbar class="md-dense md-tlbr">
                                 <md-card-header>
                                     <div class="md-title">компания: {{id}}</div>
-                                    <div class="md-subhead">{{txt_def}} /  {{url}}</div>
+                                    <div class="md-subhead">{{currentCompony[0].templates ? currentCompony[0].templates : txt_def}} /  {{url}}</div>
                                 </md-card-header>
 
                             </md-toolbar>
@@ -211,6 +211,7 @@
         },
         mounted() {
             this.$store.dispatch('getTrigger', this.id);
+            this.$store.dispatch('getCurrentCompony', this.id);
         },
         computed: {
             searched() {
@@ -225,6 +226,9 @@
                     return
                 }
                 return searchDef(this.$store.getters.templates, 1)[0].name;
+            },
+            currentCompony() {
+                return this.$store.getters.curentCompony;
             }
         }
     }

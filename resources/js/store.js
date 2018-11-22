@@ -12,7 +12,8 @@ export default {
         analiticData: [],
         companies: [],
         triggers: [],
-        templates: []
+        templates: [],
+        curentCompony: null
     },
     getters: {
         test(state) {
@@ -41,6 +42,9 @@ export default {
         },
         templates(state) {
             return state.templates;
+        },
+        curentCompony(state) {
+            return state.curentCompony;
         },
     },
     mutations: {
@@ -88,6 +92,9 @@ export default {
         updateTemplates(state, payload) {
             state.templates =  payload;
         },
+        updateCurrentCompony(state, payload) {
+            state.curentCompony = payload
+        }
     },
     actions: {
         login(context) {
@@ -174,6 +181,13 @@ export default {
                     context.commit('updateTemplates', response.data.data);
                 });
         },
+        getCurrentCompony: (context, id) => {
+            axios
+                .get('/api/companies/' + id)
+                .then(response => {
+                    context.commit('updateCurrentCompony', response.data.data);
+                });
+        }
 
     },
 }

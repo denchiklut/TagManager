@@ -1,5 +1,5 @@
-<template>
-    <div>
+<template >
+    <div v-if="currentCompony">
         <md-toolbar class="md-transparent" md-elevation="0">
             <div class="md-title" style="flex: 1">
                 <md-field>
@@ -19,20 +19,21 @@
                             <md-toolbar class="md-dense md-tlbr">
                                 <md-card-header>
                                     <div class="md-title">компания: {{id}}</div>
-                                    <div class="md-subhead">{{currentCompony[0].templates ? currentCompony[0].templates : txt_def}} /  {{url}}</div>
+                                    <div class="md-subhead">
+                                        {{tmpl_comp ? tmpl_comp : (currentCompony[0].templates ? currentCompony[0].templates : defTemplate) }} / {{currentCompony[0].url}}
+                                    </div>
                                 </md-card-header>
 
                             </md-toolbar>
 
                             <md-content class="md-scrollbar">
                                 <md-card-media>
-                                    <component :is="txt_def" :new_campaign="id"></component>
+                                    <component :is="defTemplate" :new_campaign="id"></component>
                                 </md-card-media>
                             </md-content>
                         </md-card-area>
                         <md-card-actions>
-                            <md-button @click="showEditFilterTimplase(txt_def)">Edit</md-button>
-                            <md-button disabled>remove</md-button>
+                            <md-button @click="showEditFilterTimplase()">Edit</md-button>
                         </md-card-actions>
                     </md-ripple>
                 </md-card>
@@ -45,7 +46,7 @@
                             <md-toolbar class="md-dense md-tlbr">
                                 <md-card-header>
                                     <div class="md-title">компания: {{item.new_campaign}}</div>
-                                    <div class="md-subhead">{{item.templates}} /  {{item.trigger}}</div>
+                                    <div class="md-subhead">{{item.templates}} / {{item.trigger}}</div>
                                 </md-card-header>
 
                             </md-toolbar>
@@ -75,47 +76,25 @@
 
         <div>
             <md-dialog :md-active.sync="active">
-                <form @submit.prevent="saveDef">
 
-                    <div class="md-layout md-gutter">
-                        <div class="md-layout-item">
-                            <form novalidate class="md-layout" @submit.prevent="saveDef">
-                                <md-card class="md-layout-item md-size-100">
-                                    <md-card-header>
-                                        <div class="md-title">ШАблоны</div>
-                                    </md-card-header>
-
-                                    <md-card-content>
-                                        <div class="md-layout md-gutter">
-                                            <div class="md-layout-item md-small-size-100">
-                                                <md-field>
-                                                    <label for="def">Шаблон</label>
-                                                    <md-select name="templates" v-model="tmpl_comp" id="def" md-dense >
-                                                        <div v-for="d in tmpl">
-                                                            <md-option  v-bind:value="d.name">{{d.name}}</md-option>
-                                                        </div>
-                                                    </md-select>
-                                                </md-field>
-                                            </div>
-                                        </div>
-                                    </md-card-content>
-                                    <md-card-actions>
-                                        <md-button class="md-primary" md-theme="myTheme" @click="active=false">Отмена</md-button>
-                                        <md-button type="submit" class="md-primary" md-theme="myTheme">Сохранить</md-button>
-                                    </md-card-actions>
-                                </md-card>
-                            </form>
-
-                        </div>
-                    </div>
+                <form novalidate @submit.prevent="saveDef">
+                    <md-field>
+                        <label for="templates_list">Шаблон</label>
+                        <md-select name="templates" v-model="tmpl_comp" id="templates_list" md-dense >
+                            <div v-for="d in tmplates">
+                                <md-option  v-bind:value="d.name">{{d.name}}</md-option>
+                            </div>
+                        </md-select>
+                    </md-field>
+                    <md-dialog-actions class="text-right">
+                        <md-button class="md-primary" md-theme="myTheme" @click="active=false">Отмена</md-button>
+                        <md-button type="submit" class="md-primary" md-theme="myTheme">Сохранить</md-button>
+                    </md-dialog-actions>
                 </form>
+
             </md-dialog>
         </div>
-
-
     </div>
-
-
 </template>
 
 <script>
@@ -139,16 +118,8 @@
         return items
     };
 
-    const searchDef = (items, term) => {
-        if (term) {
-            return items.filter(item => toLower(JSON.stringify(item.default)).includes(toLower(term)))
-        }
-
-        return items;
-    };
-
     export default {
-        props: ['url', 'id'],
+        props: ['id'],
         data () {
             return {
                 search: null,
@@ -193,7 +164,7 @@
                 this.showAddDialog = false;
                 this.showEditDialog = false;
             },
-            showEditFilterTimplase(txt_def)
+            showEditFilterTimplase()
             {
                 this.active = true;
             },
@@ -202,13 +173,9 @@
                 this.teml_obj.id = this.id;
                 this.teml_obj.text = this.tmpl_comp;
                 this.$store.dispatch('editComponyTimplate', this.teml_obj);
-
             }
         },
-        created() {
 
-
-        },
         mounted() {
             this.$store.dispatch('getTrigger', this.id);
             this.$store.dispatch('getCurrentCompony', this.id);
@@ -217,15 +184,11 @@
             searched() {
                 return searchByName(this.$store.getters.triggers, this.search);
             },
-            tmpl() {
+            tmplates() {
                 return this.$store.getters.templates;
             },
-            txt_def() {
-
-                if(this.$store.getters.templates.length == 0) {
-                    return
-                }
-                return searchDef(this.$store.getters.templates, 1)[0].name;
+            defTemplate() {
+                return this.$store.getters.defTemplate;
             },
             currentCompony() {
                 return this.$store.getters.curentCompony;

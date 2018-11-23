@@ -22,41 +22,38 @@
                 </md-ripple>
 
                 <md-card-content>
+                    <v-data-table
+                            :headers="headers"
+                            :items="componies"
+                            :search="search"
+                    >
+                        <template slot="items" slot-scope="props">
+                            <td>{{ props.item.id }}</td>
+                            <!--<td class="text-xs-left">{{ props.item.id_client }}</td>-->
+                            <td class="text-xs-left">{{ props.item.id_campaign }}</td>
 
-                        <v-card>
-                        <v-data-table
-                                :headers="headers"
-                                :items="componies"
-                                :search="search"
-                        >
-                            <template slot="items" slot-scope="props">
-                                <td>{{ props.item.id }}</td>
-                                <!--<td class="text-xs-left">{{ props.item.id_client }}</td>-->
-                                <td class="text-xs-left">{{ props.item.id_campaign }}</td>
+                            <td class="text-xs-left">{{ props.item.signature }}</td>
 
-                                <td class="text-xs-left">{{ props.item.signature }}</td>
-                                <td class="text-xs-left">
-                                    <router-link :to="{ name: 'containers', params:{ id: props.item.id_campaign, url: props.item.url }}" class="nav-link active">
-                                        {{ props.item.url }}
-                                    </router-link>
-                                </td>
-                                <!--<td class="text-xs-left">{{ props.item.password }}</td>-->
-                                <td class="text-xs-left">{{ props.item.sig }}</td>
-                                <td class="text-xs-left">{{ props.item.trigger }}</td>
-                                <td class="text-xs-left">{{ props.item.templates ? props.item.templates : txt_def}}</td>
-                                <td class="text-xs-left">{{ props.item.created_at.date | formatDate }}</td>
-                                <td class="text-xs-left">
-                                    <md-button class="md-fab md-mini md-primary" @click="showEditForm( props.item)"><md-icon>edit</md-icon></md-button>
-                                    <md-button class="md-fab md-mini" @click="deleteItem( props.item)"><md-icon>delete</md-icon></md-button>
-                                </td>
-                            </template>
+                            <td class="text-xs-left">
+                                <router-link :to="{ name: 'containers', params:{ id: props.item.id_campaign }}" class="nav-link active">
+                                    {{ props.item.url }}
+                                </router-link>
+                            </td>
+                            <!--<td class="text-xs-left">{{ props.item.password }}</td>-->
+                            <td class="text-xs-left">{{ props.item.sig }}</td>
+                            <td class="text-xs-left">{{ props.item.trigger }}</td>
+                            <td class="text-xs-left">{{ props.item.templates ? props.item.templates : defTemplate}}</td>
+                            <td class="text-xs-left">{{ props.item.created_at.date | formatDate }}</td>
+                            <td class="text-xs-left act_btn">
+                                <md-button class="md-fab md-mini md-primary" @click="showEditForm( props.item)"><md-icon>edit</md-icon></md-button>
+                                <md-button class="md-fab md-mini" @click="deleteItem( props.item)"><md-icon>delete</md-icon></md-button>
+                            </td>
+                        </template>
 
-                            <v-alert slot="no-results" :value="true" color="error" icon="warning">
-                                Your search for "{{ search }}" found no results.
-                            </v-alert>
-                        </v-data-table>
-                        </v-card>
-
+                        <v-alert slot="no-results" :value="true" color="error" icon="warning">
+                            Your search for "{{ search }}" found no results.
+                        </v-alert>
+                    </v-data-table>
                 </md-card-content>
             </md-card>
 
@@ -84,13 +81,6 @@
         return items
     };
 
-    const searchDef = (items, term) => {
-        if (term) {
-            return items.filter(item => toLower(JSON.stringify(item.default)).includes(toLower(term)))
-        }
-
-        return items;
-    };
     export default {
         name: 'TableSearch',
         data: () => ({
@@ -135,6 +125,7 @@
         },
         mounted() {
             this.$store.dispatch('getCompanies');
+
         },
 
         computed: {
@@ -145,12 +136,8 @@
             currentUser() {
                 return this.$store.getters.currentUser;
             },
-            txt_def() {
-
-                if(this.$store.getters.templates.length == 0) {
-                    return
-                }
-                return searchDef(this.$store.getters.templates, 1)[0].name;
+            defTemplate() {
+                return this.$store.getters.defTemplate;
             },
         }
     }
@@ -172,5 +159,8 @@
 
     .md-dialog {
         max-width: 768px;
+    }
+    .act_btn {
+        min-width: 160px!important;
     }
 </style>

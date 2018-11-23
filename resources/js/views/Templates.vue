@@ -76,6 +76,7 @@
                     });
 
             },
+
             apply_template(item, idx) {
                 this.activeIndex = idx;
 

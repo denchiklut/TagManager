@@ -29,7 +29,7 @@ export const routes = [
         }
     },
     {
-        path: '/containers/:url/:id',
+        path: '/containers/:id',
         props: true,
         name: 'containers',
         component: Containers,

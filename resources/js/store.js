@@ -2,9 +2,20 @@ import {getLocalUser} from "./helpers/auth";
 
 const user = getLocalUser();
 
+const toLower = text => {
+    return text.toString().toLowerCase()
+};
+
+const defaultTemplate = (items, term) => {
+    if (term) {
+        return items.filter(item => toLower(JSON.stringify(item.default)).includes(toLower(term)))
+    }
+
+    return items;
+};
+
 export default {
     state: {
-        testStoore: 'Store works',
         currentUser: user,
         isLoggedIn: !!user,
         loading: false,
@@ -13,6 +24,7 @@ export default {
         companies: [],
         triggers: [],
         templates: [],
+        defTemplate: null,
         curentCompony: null
     },
     getters: {
@@ -42,6 +54,9 @@ export default {
         },
         templates(state) {
             return state.templates;
+        },
+        defTemplate(state) {
+            return state.defTemplate;
         },
         curentCompony(state) {
             return state.curentCompony;
@@ -79,9 +94,6 @@ export default {
             let index = state.companies.indexOf(payload);
             state.companies.splice(index, 1);
         },
-        // addTriggers(state, payload) {
-        //     state.triggers.push(payload);
-        // },
         updateTriggers(state, payload) {
             state.triggers =  payload;
         },
@@ -91,6 +103,9 @@ export default {
         },
         updateTemplates(state, payload) {
             state.templates =  payload;
+        },
+        updateDefaultTemplates(state, payload) {
+            state.defTemplate =  payload;
         },
         updateCurrentCompony(state, payload) {
             state.curentCompony = payload
@@ -110,10 +125,8 @@ export default {
         getCompanies: context => {
             axios
                 .get('/api/companies')
-                .then((responce) => {
-                    console.log(responce.data.data)
-                    responce.data.data;//= [JSON.parse('{"id":398,"id_client":"16","id_campaign":"581","password":"htnfhutn","signature":"test_581","sig":"66307c9455b0c9b37c5423951ff46c9e60cfe49b","url":"test","trigger":0,"created_at":{"date":"2018-11-22 09:14:06.000000","timezone_type":3,"timezone":"UTC"},"updated_at":{"date":"2018-11-22 09:14:06.000000","timezone_type":3,"timezone":"UTC"}}')];
-                    context.commit('updateCompanies', responce.data.data);
+                .then(response => {
+                    context.commit('updateCompanies', response.data.data);
                 })
         },
         addCompony: (context, form) => {
@@ -163,8 +176,6 @@ export default {
             axios.patch('/api/containers/' + form.id, form)
                 .then(response => {
                     context.dispatch('getTrigger', form.id_campaign);
-                    // console.log(this.form);
-
                 });
 
         },
@@ -179,7 +190,8 @@ export default {
                 .get('/api/defaults')
                 .then(response => {
                     context.commit('updateTemplates', response.data.data);
-                });
+                    context.commit('updateDefaultTemplates', defaultTemplate(response.data.data, 1)[0].name);
+                })
         },
         getCurrentCompony: (context, id) => {
             axios
@@ -187,7 +199,7 @@ export default {
                 .then(response => {
                     context.commit('updateCurrentCompony', response.data.data);
                 });
-        }
+        },
 
     },
 }

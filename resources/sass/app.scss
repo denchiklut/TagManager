@@ -10,6 +10,9 @@ $fa-font-path: "../webfonts";
 //@import '~bootstrap/scss/bootstrap';
 @import '~vue-material/dist/theme/default.css';
 @import '~vue-material/dist/vue-material.min.css';
+// index.js or main.js
+@import '~vuetify/dist/vuetify.min.css';
+//@import '~vuetify/src/stylus/main';
 
 @import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
 @import "~@fortawesome/fontawesome-free/scss/solid.scss";

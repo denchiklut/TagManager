@@ -26,7 +26,7 @@
                         <v-card>
                         <v-data-table
                                 :headers="headers"
-                                :items="searched"
+                                :items="componies"
                                 :search="search"
                         >
                             <template slot="items" slot-scope="props">
@@ -41,7 +41,7 @@
                                     </router-link>
                                 </td>
                                 <!--<td class="text-xs-left">{{ props.item.password }}</td>-->
-                                <!--<td class="text-xs-left">{{ props.item.sig }}</td>-->
+                                <td class="text-xs-left">{{ props.item.sig }}</td>
                                 <td class="text-xs-left">{{ props.item.trigger }}</td>
                                 <td class="text-xs-left">{{ props.item.templates ? props.item.templates : txt_def}}</td>
                                 <td class="text-xs-left">{{ props.item.created_at.date | formatDate }}</td>
@@ -94,12 +94,11 @@
     export default {
         name: 'TableSearch',
         data: () => ({
-            // search: null,
+            search: null,
             showDialog: false,
             editCompain: null,
             userSaved: false,
             lastUser: null,
-            search: '',
             headers: [
                 { text: 'id ', value: 'id'},
                 // { text: 'id_client', value: 'id_client' },
@@ -107,10 +106,10 @@
                 { text: 'signature', value: 'signature' },
                 { text: 'url', value: 'url' },
                 // { text: 'password', value: 'password' },
-                // { text: 'sig', value: 'sig' },
+                { text: 'sig', value: 'sig' },
                 { text: 'trigger', value: 'trigger' },
-                { text: 'date', value: 'date' },
                 { text: 'templates', value: 'templates' },
+                { text: 'date', value: 'date' },
                 { text: 'Action', value: 'Action' },
             ],
 
@@ -139,7 +138,7 @@
         },
 
         computed: {
-            searched() {
+            componies() {
                 return searchByName(this.$store.getters.companies, this.search);
             },
 

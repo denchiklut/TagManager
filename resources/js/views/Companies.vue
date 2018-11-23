@@ -1,70 +1,70 @@
 <template>
     <v-app>
-    <div>
-        <!--Add Form-->
         <div>
-            <add />
+            <!--Add Form-->
+            <div>
+                <add />
+            </div>
+
+            <!--Data Table-->
+            <md-card class="md-accent mt-15" md-with-hover>
+
+                <md-ripple>
+                    <md-toolbar class="md-accent" md-elevation="1">
+                        <div class="md-toolbar-section-start">
+                            <h1 class="md-title">Companies</h1>
+                        </div>
+
+                        <md-field md-clearable>
+                            <md-input placeholder="Search by name..." v-model="search" />
+                        </md-field>
+                    </md-toolbar>
+                </md-ripple>
+
+                <md-card-content>
+
+                        <v-card>
+                        <v-data-table
+                                :headers="headers"
+                                :items="searched"
+                                :search="search"
+                        >
+                            <template slot="items" slot-scope="props">
+                                <td>{{ props.item.id }}</td>
+                                <!--<td class="text-xs-left">{{ props.item.id_client }}</td>-->
+                                <td class="text-xs-left">{{ props.item.id_campaign }}</td>
+
+                                <td class="text-xs-left">{{ props.item.signature }}</td>
+                                <td class="text-xs-left">
+                                    <router-link :to="{ name: 'containers', params:{ id: props.item.id_campaign, url: props.item.url }}" class="nav-link active">
+                                        {{ props.item.url }}
+                                    </router-link>
+                                </td>
+                                <!--<td class="text-xs-left">{{ props.item.password }}</td>-->
+                                <!--<td class="text-xs-left">{{ props.item.sig }}</td>-->
+                                <td class="text-xs-left">{{ props.item.trigger }}</td>
+                                <td class="text-xs-left">{{ props.item.templates ? item.templates : txt_def}}</td>
+                                <td class="text-xs-left">{{ props.item.created_at.date | formatDate }}</td>
+                                <td class="text-xs-left">
+                                    <md-button class="md-fab md-mini md-primary" @click="showEditForm( props.item)"><md-icon>edit</md-icon></md-button>
+                                    <md-button class="md-fab md-mini" @click="deleteItem( props.item)"><md-icon>delete</md-icon></md-button>
+                                </td>
+                            </template>
+
+                            <v-alert slot="no-results" :value="true" color="error" icon="warning">
+                                Your search for "{{ search }}" found no results.
+                            </v-alert>
+                        </v-data-table>
+                        </v-card>
+
+                </md-card-content>
+            </md-card>
+
+            <!--Edit Dialog-->
+            <md-dialog :md-active.sync="showDialog">
+                <edit @CloseDialog="closeDialog" :form="editCompain"></edit>
+            </md-dialog>
         </div>
-
-        <!--Data Table-->
-        <md-card class="md-accent mt-15" md-with-hover>
-
-            <md-ripple>
-                <md-toolbar class="md-accent" md-elevation="1">
-                    <div class="md-toolbar-section-start">
-                        <h1 class="md-title">Companies</h1>
-                    </div>
-
-                    <md-field md-clearable>
-                        <md-input placeholder="Search by name..." v-model="search" />
-                    </md-field>
-                </md-toolbar>
-            </md-ripple>
-
-            <md-card-content>
-
-                    <v-card>
-                    <v-data-table
-                            :headers="headers"
-                            :items="searched"
-                            :search="search"
-                    >
-                        <template slot="items" slot-scope="props">
-                            <td>{{ props.item.id }}</td>
-                            <!--<td class="text-xs-left">{{ props.item.id_client }}</td>-->
-                            <td class="text-xs-left">{{ props.item.id_campaign }}</td>
-
-                            <td class="text-xs-left">{{ props.item.signature }}</td>
-                            <td class="text-xs-left">
-                                <router-link :to="{ name: 'containers', params:{ id: props.item.id_campaign, url: props.item.url }}" class="nav-link active">
-                                    {{ props.item.url }}
-                                </router-link>
-                            </td>
-                            <!--<td class="text-xs-left">{{ props.item.password }}</td>-->
-                            <!--<td class="text-xs-left">{{ props.item.sig }}</td>-->
-                            <td class="text-xs-left">{{ props.item.trigger }}</td>
-                            <td class="text-xs-left">{{ props.item.templates ? item.templates : txt_def}}</td>
-                            <td class="text-xs-left">{{ props.item.created_at.date | formatDate }}</td>
-                            <td class="text-xs-left">
-                                <md-button class="md-fab md-mini md-primary" @click="showEditForm( props.item)"><md-icon>edit</md-icon></md-button>
-                                <md-button class="md-fab md-mini" @click="deleteItem( props.item)"><md-icon>delete</md-icon></md-button>
-                            </td>
-                        </template>
-
-                        <v-alert slot="no-results" :value="true" color="error" icon="warning">
-                            Your search for "{{ search }}" found no results.
-                        </v-alert>
-                    </v-data-table>
-                    </v-card>
-
-            </md-card-content>
-        </md-card>
-
-        <!--Edit Dialog-->
-        <md-dialog :md-active.sync="showDialog">
-            <edit @CloseDialog="closeDialog" :form="editCompain"></edit>
-        </md-dialog>
-    </div>
     </v-app>
 </template>
 

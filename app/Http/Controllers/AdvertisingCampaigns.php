@@ -51,7 +51,7 @@ class AdvertisingCampaigns extends Controller
             {
                 if($trigger)
                 {
-                    if ((strpos(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER']: $_SERVER['REQUEST_URI'], $trigger->trigger) !== false))
+                    if (strpos($_SERVER['HTTP_REFERER'], $trigger->trigger) !== false )
                     {
                         $script = templateCode($triggers->new_campaign, $triggers->templates );
 

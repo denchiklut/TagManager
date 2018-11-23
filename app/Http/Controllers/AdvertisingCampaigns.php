@@ -42,7 +42,7 @@ class AdvertisingCampaigns extends Controller
 
 
         //если есть тригер
-        if($compains->trigger)
+        if(isset($compains->trigger))
         {
             //выбираем все тригеры
             $triggers = Triggers::where('id_campaign', $compains->id_campaign)->get();

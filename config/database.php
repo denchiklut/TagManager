@@ -42,11 +42,11 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'tag_manager'),
-            'username' => env('DB_USERNAME', 'root'),
+            'port' => env('DB_PORT', '8888'),
+            'database' => env('DB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
+            'unix_socket'   => '/Applications/MAMP/tmp/mysql/mysql.sock',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -67,17 +67,16 @@ return [
             'sslmode' => 'prefer',
         ],
 
-        'sqlsrv2' => [
+        'sqlsrv' => [
             'driver' => 'sqlsrv',
-            'host' => env('DB_HOST', 'websms.database.windows.net'),
+            'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'WebSMS'),
-            'username' => env('DB_USERNAME', 'websms_admin@websms'),
-            'password' => env('DB_PASSWORD', 'balnb2IC2LcyjdlHDcmC'),
+            'database' => env('DB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
+            'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
         ],
-
 
     ],
 

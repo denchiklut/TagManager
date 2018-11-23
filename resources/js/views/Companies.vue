@@ -43,7 +43,7 @@
                                 <!--<td class="text-xs-left">{{ props.item.password }}</td>-->
                                 <!--<td class="text-xs-left">{{ props.item.sig }}</td>-->
                                 <td class="text-xs-left">{{ props.item.trigger }}</td>
-                                <td class="text-xs-left">{{ props.item.templates ? item.templates : txt_def}}</td>
+                                <td class="text-xs-left">{{ props.item.templates ? props.item.templates : txt_def}}</td>
                                 <td class="text-xs-left">{{ props.item.created_at.date | formatDate }}</td>
                                 <td class="text-xs-left">
                                     <md-button class="md-fab md-mini md-primary" @click="showEditForm( props.item)"><md-icon>edit</md-icon></md-button>

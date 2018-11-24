@@ -45,6 +45,8 @@ Route::group(['prefix' => 'auth' ], function ($router) {
 Route::group(['middleware' => 'jwt.auth' ], function ($router) {
     Route::resource('/', 'AnaliticsController');
     Route::resource('companies', 'AddPixel');
+    Route::resource('contacts', 'ContactsController');
+    Route::get('conversation/{id}', 'ContactsController@getMessagesFor');
     Route::get('/defaults', 'ContainersController@defaults');
     Route::resource('containers', 'ContainersController');
     Route::resource('templates', 'TemplatesController');

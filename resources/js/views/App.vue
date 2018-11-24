@@ -64,6 +64,14 @@
                 <md-list-item>
                     <md-icon>error</md-icon>
                     <span class="md-list-item-text">
+                        <router-link :to="{ name: 'messenger' }" exact>Messenger</router-link>
+                    </span>
+                </md-list-item>
+
+
+                <md-list-item>
+                    <md-icon>error</md-icon>
+                    <span class="md-list-item-text">
                         <router-link :to="{ name: 'relax' }" exact>Relax</router-link>
                     </span>
                 </md-list-item>

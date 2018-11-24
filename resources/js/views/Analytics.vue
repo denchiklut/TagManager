@@ -1,11 +1,13 @@
 <template>
     <div class="md-layout md-gutter">
-        <div class="md-layout-item"> <pre>{{this.analiticData}}</pre></div>
         <div class="md-layout-item">
             <div class="small">
                 <md-button class="md-dense md-raised md-primary" @click="fillData()">Randomize</md-button>
                 <line-chart :chart-data="datacollection" :height="120" :options="{responsive: true, maintainAspectRatio: true}" ></line-chart>
             </div>
+        </div>
+        <div class="md-layout-item">
+
             <div>
                 <md-table v-model="people" md-card @md-selected="onSelect">
                     <md-table-toolbar>
@@ -22,10 +24,10 @@
                         </div>
                     </md-table-toolbar>
 
-                    <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
-                        <md-table-cell md-label="Name" md-sort-by="name">{{ item.url }}</md-table-cell>
-                        <md-table-cell md-label="Email" md-sort-by="email">{{ item.call }}</md-table-cell>
-                        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.created_at.date | formatDate}}</md-table-cell>
+                    <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple"  v-bind:style="{ background: item.backgroundColor }"  md-auto-select>
+                        <md-table-cell md-label="Name" md-sort-by="name">{{ item.label }}</md-table-cell>
+                        <md-table-cell md-label="Email" md-sort-by="email">{{ item.backgroundColor }}</md-table-cell>
+                        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.data[0]}}</md-table-cell>
                     </md-table-row>
                 </md-table>
 
@@ -38,6 +40,9 @@
 
 <script>
     import LineChart from '../components/charts/LineChart.js'
+    const  getRandomInt = () => {
+        return Math.floor(Math.random() * (50 - 5 + 1)) + 5
+    };
     export default {
         data: () => ({
             datacollection: null,
@@ -46,14 +51,20 @@
             },
             people: [
                 {
-                    url: 'denchklut.com',
-                    call: '10',
-                    created_at: {
-                        "date": "2018-11-13 00:00:00.000000",
-                        "timezone_type": 3,
-                        "timezone": "UTC"
-                    },
+                    label: 'Data One',
+                    backgroundColor: '#f8797966',
+                    data: [getRandomInt(), getRandomInt(), getRandomInt(),]
                 },
+                {
+                    label: 'Data Two',
+                    backgroundColor: '#5167f8a8',
+                    data: [getRandomInt(), getRandomInt(), getRandomInt(),]
+                },
+                {
+                    label: 'Data Three',
+                    backgroundColor: '#f518f8bf',
+                    data: [getRandomInt(), getRandomInt(), getRandomInt(),]
+                }
             ],
             selected:[]
         }),
@@ -63,24 +74,24 @@
         methods: {
             fillData () {
                 this.datacollection = {
-                    labels: ['пн', 'вт','ср','чт','пт','сб','вс'],
                     datasets: [
                         {
                             label: 'Data One',
                             backgroundColor: '#f8797966',
-                            data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()]
+                            data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(),]
                         },
                         {
                             label: 'Data Two',
                             backgroundColor: '#5167f8a8',
-                            data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()]
+                            data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(),]
                         },
                         {
                             label: 'Data Three',
                             backgroundColor: '#f518f8bf',
-                            data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()]
+                            data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(),]
                         }
                     ],
+                    labels: ['пн', 'вт','ср',],
                     option: {
                         responsive: true,
                     }

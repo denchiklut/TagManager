@@ -148,7 +148,7 @@ export default {
 
             axios.patch('/api/companies/' + form_timplase.id, form_timplase)
                 .then(response => {
-                    context.dispatch('getCompanies');
+
                 });
         },
         deleteCompony: (context, item) => {
@@ -192,6 +192,12 @@ export default {
                     context.commit('updateTemplates', response.data.data);
                     context.commit('updateDefaultTemplates', defaultTemplate(response.data.data, 1)[0].name);
                 })
+        },
+        apply_template: (context, item) => {
+            axios.patch('/api/templates/' + item.id, item)
+                .then(response => {
+                    context.commit('updateDefaultTemplates', item.name);
+                });
         },
         getCurrentCompony: (context, id) => {
             axios

@@ -51,7 +51,6 @@
     export default {
         data() {
             return {
-                templates: [],
                 expandSingle: false,
                 applied: false,
                 activeIndex: null,
@@ -63,9 +62,6 @@
                 axios
                     .get('/api/templates')
                     .then(response => {
-                        this.templates = response.data.data;
-                        // console.log(response.data.data);
-
                         response.data.data.forEach((item) => {
 
                             if (item.default == '1')
@@ -79,11 +75,7 @@
 
             apply_template(item, idx) {
                 this.activeIndex = idx;
-
-                axios.patch('/api/templates/' + item.id, item)
-                    .then(response => {
-
-                    });
+                this.$store.dispatch('apply_template', item);
             }
         },
         components: {
@@ -95,6 +87,11 @@
         created() {
             this.fetchData();
             this.expandSingle = true;
+        },
+        computed: {
+            templates() {
+                return this.$store.getters.templates;
+                }
         }
     }
 </script>
